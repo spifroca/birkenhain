@@ -176,6 +176,10 @@ Rate-Limit, Locale-Zuordnung. Läuft auch in der CI.
 Klassisches PHP-Hosting. Runbook und Launch-Checkliste:
 [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
+Statische Vorschau des jeweils letzten Stands:
+<https://spifroca.github.io/birkenhain/> — zum Anschauen, nicht als
+Deployment. Dort läuft kein PHP, das Anmeldeformular kann nicht absenden.
+
 `npm run build` erzeugt `dist/`; dessen Inhalt gehört ins Webroot. Darin
 sind auch `.htaccess` (Caching, Security-Header, CSP, Fehlerseiten),
 `404.html`, `robots.txt`, `sitemap.xml` und `api/`.
