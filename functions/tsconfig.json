@@ -1,6 +1,8 @@
 {
   "extends": "../tsconfig.json",
   "compilerOptions": {
+    // Workers-Runtime: hier kommen PagesFunction, KVNamespace und die
+    // uebrigen Cloudflare-Globals her.
     "types": ["@cloudflare/workers-types"],
     "lib": ["ES2022", "WebWorker"],
     "moduleResolution": "bundler",
@@ -8,5 +10,8 @@
     "target": "ES2022",
     "noEmit": true
   },
-  "include": ["**/*.ts"]
+  "include": ["**/*.ts"],
+  // Muss gesetzt sein: sonst erbt diese Config das "functions" aus der
+  // Eltern-Config, relativ zum Repo-Root aufgeloest — und pruefte nichts.
+  "exclude": []
 }
