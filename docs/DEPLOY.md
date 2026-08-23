@@ -155,6 +155,14 @@ Solange Platzhalter ausgeliefert werden, die Vorschau zusätzlich zum
 `noindex` mit einem Passwort schützen (`.htpasswd` beim Hoster).
 `robots.txt` hält Suchmaschinen fern, aber nicht Menschen mit dem Link.
 
+## Aufschaltung durch einen Browser-Agenten
+
+Für einen Claude-Chat mit Browser-MCP, der Plesk über die Weboberfläche
+bedient, liegt ein selbsttragendes Briefing bereit:
+[`PLESK-BRIEFING.md`](PLESK-BRIEFING.md). Es setzt kein Repo voraus und
+nennt die Plesk-spezifischen Fallen — vor allem die Frage, ob nginx vor
+Apache sitzt und `.htaccess` damit ignoriert wird.
+
 ## Launch-Checkliste
 
 - [ ] `HANDOFF-TODO.md` abgearbeitet, `npm run check:data` ohne offene Punkte

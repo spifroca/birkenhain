@@ -61,6 +61,16 @@ jobs:
       - name: Projektfakten
         run: npm run check:data
 
+      # Die woff2 ist gitignored, muss aber ins Artefakt: sonst zeigt
+      # fonts/readex-pro.css auf eine 404 und der Browser faellt still auf
+      # system-ui zurueck. Tolerant, weil Google Fonts ein externer Dienst
+      # ist und den Lauf nicht roeten soll — die Pruefung unten macht ein
+      # unvollstaendiges Artefakt aber sichtbar.
+      - name: Schriften für das Artefakt
+        id: artifact_fonts
+        continue-on-error: true
+        run: npm run fonts
+
       - name: Build
         run: npm run build
 
@@ -77,6 +87,17 @@ jobs:
           test -f dist/api/bestaetigen.php
           # Die @font-face-Regel liegt in public/ und muss mitkommen.
           test -f dist/fonts/readex-pro.css
+          # Die Schriftdatei selbst entscheidet, ob das Artefakt direkt
+          # hochladbar ist. Fehlt sie, ist der Lauf nicht falsch — aber das
+          # Artefakt taugt nicht zum Deployen, und das muss man sehen.
+          if [ -s dist/fonts/readex-pro-variable.woff2 ]; then
+            echo "Schriftdatei im Artefakt: $(du -h dist/fonts/readex-pro-variable.woff2 | cut -f1)"
+          else
+            echo "::warning title=Artefakt ohne Schriftdatei::\
+            readex-pro-variable.woff2 fehlt — dieses dist/ nicht direkt \
+            deployen, sonst laeuft die Site auf system-ui. Ursache: der \
+            Schritt 'Schriften für das Artefakt' ist fehlgeschlagen."
+          fi
           echo "Erzeugte Seiten:"
           find dist -name '*.html' | sort
 
