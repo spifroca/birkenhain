@@ -75,9 +75,6 @@ jobs:
   fonts:
     name: Schriften abrufbar
     runs-on: ubuntu-latest
-    # Google Fonts ist ein externer Dienst — ein Ausfall dort soll den PR
-    # nicht blockieren, aber sichtbar sein.
-    continue-on-error: true
 
     steps:
       - uses: actions/checkout@v4
@@ -86,10 +83,19 @@ jobs:
         with:
           node-version-file: .nvmrc
 
+      # Nur dieser Schritt darf scheitern, ohne den PR zu blockieren:
+      # Google Fonts ist ein externer Dienst. `continue-on-error` gehoert
+      # deshalb hierhin und nicht an den Job — job-weit wuerde es auch die
+      # Pruefung unten verschlucken und einen echten Fehler gruen melden.
       - name: Readex Pro holen
+        id: fetch
+        continue-on-error: true
         run: node scripts/fetch-fonts.mjs
 
+      # Ein Dedup-Fehler dagegen muss den Lauf roeten — also ohne
+      # continue-on-error, und nur wenn der Download ueberhaupt klappte.
       - name: Schnitte prüfen
+        if: steps.fetch.outcome == 'success'
         run: |
           ls -la public/fonts/
           test -s public/fonts/readex-pro-variable.woff2

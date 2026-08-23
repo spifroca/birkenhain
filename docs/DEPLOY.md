@@ -24,9 +24,15 @@ Schalter für den Launch — nicht vor den echten Inhalten umlegen.
 `.github/workflows/ci.yml` läuft bei jedem Push auf `main` und bei jedem
 Pull Request auf GitHubs Runnern — dort ist npm erreichbar. Geprüft werden
 `astro check`, die Endpoint-Typen, die Projektfakten und der Build; das
-Ergebnis liegt als `dist`-Artefakt am Lauf. Ein zweiter, nicht blockierender
-Job holt die Schriften, damit ein Bruch im Font-Skript sichtbar wird, ohne
-den PR rot zu färben.
+Ergebnis liegt als `dist`-Artefakt am Lauf.
+
+Ein zweiter Job holt die Schriften. Dort trägt nur der Download-Schritt
+`continue-on-error` — Google Fonts ist ein externer Dienst und soll den PR
+nicht blockieren. Die Prüfung danach trägt es bewusst nicht: sie vergleicht
+die Checksummen und macht den Lauf rot, wenn mehrere woff2-Dateien
+byte-identisch sind. Genau das war einmal der Fall (sechs Kopien derselben
+Variable Font), und job-weites `continue-on-error` hätte es wieder
+verschluckt.
 
 Solange kein `package-lock.json` im Repo liegt, läuft `npm install` statt
 `npm ci` und der Lauf setzt eine Warnung. Aus demselben Grund ist das
