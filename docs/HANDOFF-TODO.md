@@ -6,6 +6,21 @@ exakten Werten der Spezifikation abhängt, ist deshalb als
 `TODO(handoff)` markiert und an einer Stelle gebündelt, statt geschätzt zu
 werden. `npm run check:data` listet die Datenlücken jederzeit auf.
 
+## Erwartete Build-Meldungen
+
+Solange die Datenfiles leer sind, schreibt Astro pro betroffener Seite:
+
+```
+The collection "galerie" does not exist or is empty.
+Please check your content config file for errors.
+```
+
+Die Config ist in Ordnung. Astro behandelt eine leere `file()`-Collection wie
+eine fehlende und formuliert es irreführend. Betroffen sind `galerie`,
+`distanzen`, `energie` und `wohnungen`; die Meldungen verschwinden, sobald die
+Dateien Inhalt haben. Der Build ist davon nicht betroffen — er läuft grün
+durch. Nicht nach einem Config-Fehler suchen.
+
 Übernommen sind die Fakten, die im Startprompt selbst stehen: 278
 Mietwohnungen, 17 Baubereiche, 3–8 Vollgeschosse, oberirdisch autofrei, Miete
 statt Verkauf, keine Mietpreise, kein Vermietungsstart. Sie liegen in
