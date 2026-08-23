@@ -15,7 +15,9 @@
     "wohnungen": "Wohnungen",
     "anmeldung": "Anmeldung",
     "menuOpen": "Menü öffnen",
-    "menuClose": "Menü schliessen"
+    "menuClose": "Menü schliessen",
+    "impressum": "Impressum",
+    "datenschutz": "Datenschutz"
   },
   "common": {
     "skipLink": "Direkt zum Inhalt",
@@ -190,5 +192,27 @@
     "privacy": "Datenschutz",
     "rentalNote": "278 Mietwohnungen. Kein Verkauf.",
     "copyright": "© {year} Im Birkenhain"
+  },
+  "impressum": {
+    "metaTitle": "Impressum — Im Birkenhain",
+    "metaDescription": "Impressum der Projektwebsite Im Birkenhain.",
+    "title": "Impressum",
+    "body": "TODO(handoff): Impressum — Bauherrschaft, Vermarktung, Verantwortliche Stelle, Adresse, Kontakt."
+  },
+  "datenschutz": {
+    "metaTitle": "Datenschutz — Im Birkenhain",
+    "metaDescription": "Datenschutzerklärung der Projektwebsite Im Birkenhain.",
+    "title": "Datenschutz",
+    "body": "TODO(handoff): Datenschutzerklärung nach revDSG — Verantwortliche Stelle, bearbeitete Daten, Zweck, Aufbewahrung, Rechte der Betroffenen, Auftragsbearbeiter.",
+    "processingHeading": "Was diese Website bearbeitet",
+    "processingIntro": "Zur Einordnung, technisch geprüft: die folgenden Punkte beschreiben, was die Website tatsächlich tut. Die verbindliche Erklärung muss juristisch geprüft werden.",
+    "facts": {
+      "form": "Anmeldeformular: Vorname, Nachname, E-Mail-Adresse sowie freiwillig Telefon, Zimmerzahl, Bezugstermin und Bemerkungen. Gespeichert wird erst nach Bestätigung des Double-Opt-In-Links; unbestätigte Anmeldungen werden nach sieben Tagen automatisch gelöscht.",
+      "rateLimit": "Missbrauchsschutz: die IP-Adresse wird als Zähler für höchstens eine Stunde gespeichert, nicht mit der Anmeldung verknüpft.",
+      "mail": "Mailversand über einen Auftragsbearbeiter, ausschliesslich für die Bestätigungs-Mail. Keine Weitergabe an weitere Dritte.",
+      "map": "Karte: OpenStreetMap-Kartenausschnitte werden erst nach ausdrücklichem Klick geladen. Vorher geht kein Request an Dritte. Die Einwilligung wird im sessionStorage des Browsers gehalten und endet mit dem Tab.",
+      "cookies": "Keine Cookies, kein Tracking, keine Analyse-Werkzeuge, keine Werbenetzwerke.",
+      "fonts": "Schriften werden von der eigenen Domain ausgeliefert, nicht von einem Fremd-CDN."
+    }
   }
 }

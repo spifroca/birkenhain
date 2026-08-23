@@ -11,6 +11,8 @@ export const PAGES = [
   'nachhaltigkeit',
   'wohnungen',
   'anmeldung',
+  'impressum',
+  'datenschutz',
 ] as const;
 export type PageId = (typeof PAGES)[number];
 
@@ -26,6 +28,8 @@ const SLUGS: Record<PageId, Record<Locale, string>> = {
   nachhaltigkeit: { de: 'nachhaltigkeit', en: 'sustainability' },
   wohnungen: { de: 'wohnungen', en: 'apartments' },
   anmeldung: { de: 'anmeldung', en: 'register' },
+  impressum: { de: 'impressum', en: 'imprint' },
+  datenschutz: { de: 'datenschutz', en: 'privacy' },
 };
 
 /** Reihenfolge in Header und Footer. `home` ist das Logo, nicht ein Menuepunkt. */
@@ -37,6 +41,9 @@ export const NAV: readonly PageId[] = [
   'wohnungen',
   'anmeldung',
 ];
+
+/** Fusszeile, rechtliche Spalte. Bewusst nicht in der Hauptnavigation. */
+export const LEGAL: readonly PageId[] = ['impressum', 'datenschutz'];
 
 /** Absoluter Pfad einer Seite in einer Sprache, immer mit fuehrendem Slash. */
 export function pathFor(page: PageId, locale: Locale): string {

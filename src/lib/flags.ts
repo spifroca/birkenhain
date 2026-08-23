@@ -10,4 +10,12 @@ export const features = {
    * füllen und diesen Wert auf `true` setzen.
    */
   wohnungsspiegel: false,
+
+  /**
+   * Freigabe für Suchmaschinen. Solange Platzhalter-Inhalte ausgeliefert
+   * werden, steuert das robots.txt auf `Disallow: /` und setzt auf jeder
+   * Seite `noindex`. Umschalten erst zum Launch, gemeinsam mit den echten
+   * Inhalten.
+   */
+  indexable: false,
 } as const;

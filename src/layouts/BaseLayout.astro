@@ -6,6 +6,7 @@ import StickyBar from '../components/StickyBar.astro';
 import { type Locale, type PageId } from '../i18n/routes';
 import { useTranslations } from '../i18n/ui';
 import { buildSeo } from '../lib/seo';
+import { features } from '../lib/flags';
 
 interface Props {
   page: PageId;
@@ -17,6 +18,9 @@ interface Props {
 }
 
 const { page, locale, title, description, noindex = false } = Astro.props;
+
+// Vor der Freigabe traegt jede Seite noindex, nicht nur die Statusseiten.
+const blockIndex = noindex || !features.indexable;
 const t = useTranslations(locale);
 const seo = buildSeo({ page, locale, title, description, site: Astro.site ?? Astro.url });
 
@@ -54,7 +58,7 @@ const preloadWeights = [200, 400] as const;
       ))
     }
 
-    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
+    <meta name="robots" content={blockIndex ? 'noindex, follow' : 'index, follow'} />
   </head>
 
   <body>

@@ -15,7 +15,9 @@
     "wohnungen": "Apartments",
     "anmeldung": "Register",
     "menuOpen": "Open menu",
-    "menuClose": "Close menu"
+    "menuClose": "Close menu",
+    "impressum": "Imprint",
+    "datenschutz": "Privacy"
   },
   "common": {
     "skipLink": "Skip to content",
@@ -190,5 +192,27 @@
     "privacy": "Privacy",
     "rentalNote": "278 rental apartments. Not for sale.",
     "copyright": "© {year} Im Birkenhain"
+  },
+  "impressum": {
+    "metaTitle": "Imprint — Im Birkenhain",
+    "metaDescription": "Imprint of the Im Birkenhain project website.",
+    "title": "Imprint",
+    "body": "TODO(handoff): imprint — client, marketing, responsible entity, address, contact."
+  },
+  "datenschutz": {
+    "metaTitle": "Privacy — Im Birkenhain",
+    "metaDescription": "Privacy statement of the Im Birkenhain project website.",
+    "title": "Privacy",
+    "body": "TODO(handoff): privacy statement under the revised Swiss FADP — responsible entity, data processed, purpose, retention, data subject rights, processors.",
+    "processingHeading": "What this website processes",
+    "processingIntro": "For orientation, verified against the code: the points below describe what the site actually does. The binding statement needs legal review.",
+    "facts": {
+      "form": "Registration form: first name, last name, email address, and optionally phone, number of rooms, move-in date and notes. Data is stored only after the double opt-in link is confirmed; unconfirmed registrations are deleted automatically after seven days.",
+      "rateLimit": "Abuse protection: the IP address is stored as a counter for at most one hour and is not linked to the registration.",
+      "mail": "Mail is sent via one processor, solely for the confirmation email. No disclosure to any further third party.",
+      "map": "Map: OpenStreetMap tiles load only after an explicit click. Before that, no request reaches a third party. The consent is kept in the browser sessionStorage and ends with the tab.",
+      "cookies": "No cookies, no tracking, no analytics tools, no ad networks.",
+      "fonts": "Fonts are served from our own domain, not from a third-party CDN."
+    }
   }
 }

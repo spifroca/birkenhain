@@ -1,5 +1,5 @@
 ---
-import { NAV, pathFor, type Locale } from '../i18n/routes';
+import { LEGAL, NAV, pathFor, type Locale } from '../i18n/routes';
 import { useTranslations, type TranslationKey } from '../i18n/ui';
 import { projekt } from '../lib/projekt';
 
@@ -45,8 +45,13 @@ const year = new Date().getFullYear();
     <div class="footer__col">
       <p class="eyebrow">{t('footer.legalHeading')}</p>
       <ul class="footer__list">
-        <li><a href={`${locale === 'de' ? '' : '/en'}/impressum`}>{t('footer.imprint')}</a></li>
-        <li><a href={`${locale === 'de' ? '' : '/en'}/datenschutz`}>{t('footer.privacy')}</a></li>
+        {
+          LEGAL.map((id) => (
+            <li>
+              <a href={pathFor(id, locale)}>{t(`nav.${id}` as TranslationKey)}</a>
+            </li>
+          ))
+        }
       </ul>
     </div>
   </div>

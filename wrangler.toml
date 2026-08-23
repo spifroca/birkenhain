@@ -5,10 +5,9 @@ compatibility_date = "2025-04-01"
 pages_build_output_dir = "dist"
 
 # KV traegt Rate-Limit-Zaehler, offene und bestaetigte Anmeldungen.
-# Namespace-ID nach `wrangler kv namespace create BIRKENHAIN_KV` eintragen.
 [[kv_namespaces]]
 binding = "BIRKENHAIN_KV"
-id = "TODO_KV_NAMESPACE_ID"
+id = "e5848e0d0f3249f982903dc38013f7a2"
 
 [vars]
 MAIL_PROVIDER = "resend"

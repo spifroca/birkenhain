@@ -166,13 +166,19 @@ Zeichen, sonst verweigert der Endpoint den Dienst.
 
 ## Deployment
 
-Cloudflare Pages: Build `npm run build`, Output `dist/`, Functions aus
-`functions/` werden automatisch unter `/api/` montiert. KV-Namespace
-anlegen und die ID in `wrangler.toml` eintragen:
+Runbook und Launch-Checkliste: [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
-```bash
-wrangler kv namespace create BIRKENHAIN_KV
-```
+Cloudflare Pages: Output `dist/`, Functions aus `functions/` werden
+automatisch unter `/api/` montiert, der KV-Namespace ist in
+`wrangler.toml` eingetragen.
+
+Als Build-Command gehört `npm run fonts && npm run build` hinterlegt, nicht
+nur `npm run build` — die woff2-Dateien sind gitignored, sonst deployt die
+Site ohne Schriften.
+
+Bis zur Freigabe ist die Site für Suchmaschinen gesperrt:
+`features.indexable` in `src/lib/flags.ts` ist `false`, `robots.txt`
+liefert `Disallow: /` und jede Seite `noindex`. Das ist der Launch-Schalter.
 
 Anderer Host: `dist/` ist statisch und läuft überall; der Endpoint muss
 dann als Netlify- bzw. Vercel-Function portiert werden. Die Logik in
