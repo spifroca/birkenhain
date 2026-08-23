@@ -1,0 +1,79 @@
+---
+import Icon from './Icon.astro';
+import { pathFor, type Locale, type PageId } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  locale: Locale;
+  page: PageId;
+}
+
+const { locale, page } = Astro.props;
+const t = useTranslations(locale);
+
+// Auf der Anmeldeseite selbst waere die Leiste ein Selbstverweis.
+const visible = page !== 'anmeldung';
+---
+
+{
+  visible && (
+    <div class="sticky" data-stickybar>
+      <div class="sticky__inner container">
+        <p class="sticky__text">{t('sticky.intro')}</p>
+        <a class="sticky__cta" href={pathFor('anmeldung', locale)}>
+          {t('sticky.cta')}
+          <Icon name="arrow-right" />
+        </a>
+      </div>
+    </div>
+  )
+}
+
+<style>
+  .sticky {
+    position: sticky;
+    bottom: 0;
+    z-index: var(--z-stickybar);
+    background: var(--c-bg-inverse);
+    color: var(--c-text-inverse);
+    border-top: var(--hairline-inverse);
+  }
+
+  .sticky__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    min-height: var(--stickybar-h);
+  }
+
+  .sticky__text {
+    max-width: none;
+    margin: 0;
+    font-size: var(--fs-small);
+  }
+
+  .sticky__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    padding: var(--space-2xs) var(--space-s);
+    border: var(--border-width) solid currentcolor;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+    white-space: nowrap;
+    transition:
+      background-color var(--duration) var(--ease),
+      color var(--duration) var(--ease);
+  }
+
+  .sticky__cta:hover {
+    background: var(--c-text-inverse);
+    color: var(--c-bg-inverse);
+  }
+
+  .sticky__cta:focus-visible {
+    outline-color: var(--c-text-inverse);
+  }
+</style>

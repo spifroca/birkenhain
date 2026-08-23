@@ -1,0 +1,173 @@
+---
+import { Picture } from 'astro:assets';
+import Icon from './Icon.astro';
+import type { ImageMetadata } from 'astro';
+import type { Locale } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+
+export interface LightboxImage {
+  id: string;
+  src: ImageMetadata;
+  alt: string;
+  caption: string;
+}
+
+interface Props {
+  images: LightboxImage[];
+  locale: Locale;
+}
+
+const { images, locale } = Astro.props;
+const t = useTranslations(locale);
+
+// Die Grossbilder liegen fertig optimiert im Markup und laden lazy: beim
+// Oeffnen muss nichts erst zusammengesetzt oder nachgeholt werden.
+---
+
+{
+  images.length > 0 && (
+    <dialog class="lb" data-lightbox aria-label={t('lightbox.label')}>
+      <div class="lb__bar">
+        <p class="lb__counter" data-lb-counter aria-live="polite">
+          {t('lightbox.counter', { current: 1, total: images.length })}
+        </p>
+        <button class="lb__btn" type="button" data-lb-close aria-label={t('lightbox.close')}>
+          <Icon name="x" size="1.5rem" />
+        </button>
+      </div>
+
+      <div class="lb__stage">
+        {
+          images.map((image, index) => (
+            <figure class="lb__item" data-lb-item data-index={index} hidden={index !== 0}>
+              <Picture
+                src={image.src}
+                alt={image.alt}
+                widths={[640, 1024, 1600, 2000]}
+                sizes="100vw"
+                formats={['avif', 'webp']}
+                fallbackFormat="jpg"
+                loading="lazy"
+                decoding="async"
+              />
+              {image.caption && <figcaption>{image.caption}</figcaption>}
+            </figure>
+          ))
+        }
+      </div>
+
+      {
+        images.length > 1 && (
+          <div class="lb__nav">
+            <button class="lb__btn" type="button" data-lb-prev aria-label={t('lightbox.previous')}>
+              <Icon name="arrow-left" size="1.5rem" />
+            </button>
+            <button class="lb__btn" type="button" data-lb-next aria-label={t('lightbox.next')}>
+              <Icon name="arrow-right" size="1.5rem" />
+            </button>
+          </div>
+        )
+      }
+
+      <template data-lb-counter-template set:html={t('lightbox.counter', { current: '{current}', total: '{total}' })} />
+    </dialog>
+  )
+}
+
+<style>
+  .lb {
+    width: 100vw;
+    max-width: 100vw;
+    height: 100dvh;
+    max-height: 100dvh;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: var(--c-bg-inverse);
+    color: var(--c-text-inverse);
+  }
+
+  .lb::backdrop {
+    background: var(--c-bg-inverse);
+  }
+
+  .lb:not([open]) {
+    display: none;
+  }
+
+  .lb__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding: var(--space-2xs) var(--gutter);
+    border-bottom: var(--hairline-inverse);
+  }
+
+  .lb__counter {
+    max-width: none;
+    margin: 0;
+    font-size: var(--fs-small);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .lb__btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    border: var(--border-width) solid transparent;
+    color: inherit;
+  }
+
+  .lb__btn:hover {
+    border-color: currentcolor;
+  }
+
+  .lb__btn:focus-visible {
+    outline-color: var(--c-text-inverse);
+  }
+
+  .lb__stage {
+    display: grid;
+    place-items: center;
+    height: calc(100dvh - 3rem - 3.5rem);
+    padding: var(--space-s) var(--gutter);
+  }
+
+  .lb__item {
+    display: grid;
+    gap: var(--space-2xs);
+    margin: 0;
+    max-height: 100%;
+  }
+
+  .lb__item[hidden] {
+    display: none;
+  }
+
+  .lb__item :global(img) {
+    max-height: calc(100dvh - 12rem);
+    width: auto;
+    object-fit: contain;
+  }
+
+  .lb__item figcaption {
+    font-size: var(--fs-small);
+    color: var(--c-text-inverse);
+    opacity: 0.75;
+  }
+
+  .lb__nav {
+    display: flex;
+    justify-content: space-between;
+    padding: var(--space-2xs) var(--gutter);
+    border-top: var(--hairline-inverse);
+  }
+</style>
+
+<script>
+  import { initLightbox } from '../scripts/lightbox';
+  initLightbox();
+</script>

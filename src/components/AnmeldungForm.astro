@@ -1,0 +1,326 @@
+---
+import Icon from './Icon.astro';
+import { useTranslations } from '../i18n/ui';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
+---
+
+<form class="form" action="/api/anmeldung" method="post" data-form novalidate>
+  <input type="hidden" name="locale" value={locale} />
+  {/* Honeypot: fuer Menschen unsichtbar und aus dem Tab-Fluss genommen.
+      Ist das Feld gefuellt, verwirft der Endpoint die Anfrage. */}
+  <div class="form__trap" aria-hidden="true">
+    <label for="website">Website</label>
+    <input id="website" type="text" name="website" tabindex="-1" autocomplete="off" />
+  </div>
+
+  <fieldset class="form__set">
+    <legend class="eyebrow">{t('anmeldung.legendPerson')}</legend>
+
+    <div class="form__grid">
+      <p class="form__field">
+        <label for="firstName">
+          {t('anmeldung.firstName')}
+          <span class="visually-hidden">{t('anmeldung.requiredHint')}</span>
+        </label>
+        <input
+          id="firstName"
+          name="firstName"
+          type="text"
+          autocomplete="given-name"
+          required
+          aria-describedby="firstName-error"
+        />
+        <span class="form__error" id="firstName-error" data-error-for="firstName"></span>
+      </p>
+
+      <p class="form__field">
+        <label for="lastName">
+          {t('anmeldung.lastName')}
+          <span class="visually-hidden">{t('anmeldung.requiredHint')}</span>
+        </label>
+        <input
+          id="lastName"
+          name="lastName"
+          type="text"
+          autocomplete="family-name"
+          required
+          aria-describedby="lastName-error"
+        />
+        <span class="form__error" id="lastName-error" data-error-for="lastName"></span>
+      </p>
+
+      <p class="form__field">
+        <label for="email">
+          {t('anmeldung.email')}
+          <span class="visually-hidden">{t('anmeldung.requiredHint')}</span>
+        </label>
+        <input
+          id="email"
+          name="email"
+          type="email"
+          autocomplete="email"
+          inputmode="email"
+          required
+          aria-describedby="email-error"
+        />
+        <span class="form__error" id="email-error" data-error-for="email"></span>
+      </p>
+
+      <p class="form__field">
+        <label for="phone">
+          {t('anmeldung.phone')}
+          <span class="form__optional">{t('anmeldung.phoneOptional')}</span>
+        </label>
+        <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" />
+      </p>
+    </div>
+  </fieldset>
+
+  <fieldset class="form__set">
+    <legend class="eyebrow">{t('anmeldung.legendWish')}</legend>
+
+    <div class="form__grid">
+      <p class="form__field">
+        <label for="rooms">{t('anmeldung.rooms')}</label>
+        <select id="rooms" name="rooms">
+          <option value="">{t('anmeldung.roomsAny')}</option>
+          {roomOptions.map((option) => <option value={option}>{option}</option>)}
+        </select>
+      </p>
+
+      <p class="form__field">
+        <label for="moveIn">{t('anmeldung.moveIn')}</label>
+        <input id="moveIn" name="moveIn" type="month" />
+      </p>
+    </div>
+
+    <p class="form__field">
+      <label for="message">
+        {t('anmeldung.message')}
+        <span class="form__optional">{t('anmeldung.messageOptional')}</span>
+      </label>
+      <textarea id="message" name="message" rows="4"></textarea>
+    </p>
+  </fieldset>
+
+  <fieldset class="form__set">
+    <legend class="eyebrow">{t('anmeldung.legendConsent')}</legend>
+
+    <p class="form__check">
+      <input id="consent" name="consent" type="checkbox" required aria-describedby="consent-error" />
+      <label for="consent">{t('anmeldung.consent')}</label>
+    </p>
+    <span class="form__error" id="consent-error" data-error-for="consent"></span>
+    <p class="form__note">{t('anmeldung.privacyNote')}</p>
+  </fieldset>
+
+  <div class="form__actions">
+    <button class="form__submit" type="submit" data-submit>
+      <span data-submit-idle>{t('anmeldung.submit')}</span>
+      <span data-submit-busy hidden>{t('anmeldung.submitting')}</span>
+      <Icon name="arrow-right" />
+    </button>
+  </div>
+
+  <div class="form__status" data-status role="status" aria-live="polite" tabindex="-1" hidden>
+    <p class="form__status-title" data-status-title></p>
+    <p class="form__status-body" data-status-body></p>
+  </div>
+
+  {/* Texte fuer das Client-Skript: keine Strings im JS, alles uebersetzt. */}
+  <script
+    type="application/json"
+    data-form-messages
+    set:html={JSON.stringify({
+      errors: {
+        firstName: t('anmeldung.errors.firstName'),
+        lastName: t('anmeldung.errors.lastName'),
+        email: t('anmeldung.errors.email'),
+        consent: t('anmeldung.errors.consent'),
+        rateLimit: t('anmeldung.errors.rateLimit'),
+        generic: t('anmeldung.errors.generic'),
+      },
+      successTitle: t('anmeldung.successTitle'),
+      successBody: t('anmeldung.successBody'),
+      errorTitle: t('anmeldung.errorTitle'),
+      errorBody: t('anmeldung.errorBody'),
+    })}
+  />
+</form>
+
+<style>
+  .form {
+    display: grid;
+    gap: var(--space-l);
+    max-width: var(--container-text);
+    margin-top: var(--space-l);
+  }
+
+  .form__trap {
+    position: absolute;
+    left: -9999px;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+
+  .form__set {
+    margin: 0;
+    padding: var(--space-m) 0 0;
+    border: 0;
+    border-top: var(--hairline);
+  }
+
+  .form__set legend {
+    padding: 0;
+  }
+
+  .form__grid {
+    display: grid;
+    gap: var(--space-m);
+    margin-top: var(--space-m);
+    grid-template-columns: 1fr;
+  }
+
+  .form__field {
+    display: grid;
+    gap: var(--space-3xs);
+    max-width: none;
+    margin: 0;
+  }
+
+  .form__field label {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-3xs);
+    font-size: var(--fs-small);
+  }
+
+  .form__optional {
+    font-size: var(--fs-caption);
+    color: var(--c-text-muted);
+  }
+
+  .form__field input,
+  .form__field select,
+  .form__field textarea {
+    min-height: 2.75rem;
+    padding: var(--space-2xs);
+    background: var(--c-bg);
+    border: var(--hairline);
+  }
+
+  .form__field textarea {
+    min-height: auto;
+    resize: vertical;
+  }
+
+  .form__field input:hover,
+  .form__field select:hover,
+  .form__field textarea:hover {
+    border-color: var(--c-text);
+  }
+
+  .form__field [aria-invalid='true'] {
+    border-color: var(--c-accent);
+    border-width: 2px;
+  }
+
+  .form__error:empty {
+    display: none;
+  }
+
+  .form__error {
+    font-size: var(--fs-caption);
+    color: var(--c-accent);
+  }
+
+  .form__check {
+    display: flex;
+    align-items: start;
+    gap: var(--space-2xs);
+    max-width: none;
+    margin-top: var(--space-m);
+    font-size: var(--fs-small);
+  }
+
+  .form__check input {
+    width: 1.125rem;
+    height: 1.125rem;
+    margin-top: 0.25rem;
+    flex: none;
+    accent-color: var(--c-accent);
+  }
+
+  .form__note {
+    padding-top: var(--space-2xs);
+    font-size: var(--fs-caption);
+    color: var(--c-text-muted);
+  }
+
+  .form__submit {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    min-height: 3rem;
+    padding-inline: var(--space-l);
+    background: var(--c-bg-inverse);
+    color: var(--c-text-inverse);
+    border: var(--border-width) solid var(--c-bg-inverse);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    transition:
+      background-color var(--duration) var(--ease),
+      color var(--duration) var(--ease);
+  }
+
+  .form__submit:hover:not([disabled]) {
+    background: var(--c-bg);
+    color: var(--c-text);
+  }
+
+  .form__submit[disabled] {
+    opacity: 0.6;
+    cursor: progress;
+  }
+
+  .form__status {
+    padding: var(--space-m);
+    border: var(--hairline);
+  }
+
+  .form__status[data-state='error'] {
+    border-color: var(--c-accent);
+  }
+
+  .form__status-title {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-regular);
+  }
+
+  .form__status-body {
+    padding-top: var(--space-2xs);
+    font-size: var(--fs-small);
+    color: var(--c-text-muted);
+  }
+
+  @media (min-width: 45rem) {
+    .form__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+</style>
+
+<script>
+  import { initForm } from '../scripts/form';
+  initForm();
+</script>

@@ -1,0 +1,96 @@
+---
+import { getCollection } from 'astro:content';
+import { pick, useTranslations } from '../i18n/ui';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const areas = (await getCollection('baubereiche')).sort((a, b) =>
+  a.id.localeCompare(b.id),
+);
+
+const showUnits = areas.some((area) => area.data.wohnungen !== null);
+const showText = areas.some((area) => pick(area.data.text, locale) !== '');
+---
+
+<section class="bb" aria-labelledby="bb-heading">
+  <div class="container">
+    <h2 id="bb-heading">{t('architektur.baubereicheHeading')}</h2>
+
+    <div class="bb__scroll">
+      <table class="bb__table">
+        <caption class="visually-hidden">{t('architektur.baubereicheHeading')}</caption>
+        <thead>
+          <tr>
+            <th scope="col">{t('architektur.tableArea')}</th>
+            <th scope="col" class="num">{t('architektur.tableFloors')}</th>
+            {showUnits && <th scope="col" class="num">{t('architektur.tableUnits')}</th>}
+            {showText && <th scope="col">&nbsp;</th>}
+          </tr>
+        </thead>
+        <tbody>
+          {
+            areas.map((area) => (
+              <tr>
+                <th scope="row">{area.data.label}</th>
+                <td class="num">
+                  {area.data.vollgeschosse ?? (
+                    <span class="bb__pending">{t('architektur.pendingData')}</span>
+                  )}
+                </td>
+                {showUnits && <td class="num">{area.data.wohnungen ?? '—'}</td>}
+                {showText && <td>{pick(area.data.text, locale)}</td>}
+              </tr>
+            ))
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<style>
+  .bb {
+    padding-block: var(--space-2xl);
+  }
+
+  .bb__scroll {
+    margin-top: var(--space-l);
+    overflow-x: auto;
+  }
+
+  .bb__table th,
+  .bb__table td {
+    padding: var(--space-2xs) var(--space-m) var(--space-2xs) 0;
+    border-bottom: var(--hairline);
+    text-align: left;
+    font-weight: var(--fw-light);
+    vertical-align: baseline;
+  }
+
+  .bb__table thead th {
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+    white-space: nowrap;
+  }
+
+  .bb__table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .bb__pending {
+    font-size: var(--fs-caption);
+    font-style: italic;
+    color: var(--c-text-muted);
+  }
+</style>

@@ -1,0 +1,218 @@
+---
+import LanguageSwitch from './LanguageSwitch.astro';
+import { NAV, pathFor, type Locale, type PageId } from '../i18n/routes';
+import { useTranslations, type TranslationKey } from '../i18n/ui';
+
+interface Props {
+  page: PageId;
+  locale: Locale;
+}
+
+const { page, locale } = Astro.props;
+const t = useTranslations(locale);
+
+const items = NAV.map((id) => ({
+  id,
+  href: pathFor(id, locale),
+  label: t(`nav.${id}` as TranslationKey),
+  current: id === page,
+}));
+---
+
+<header class="header">
+  <div class="header__inner container">
+    <a class="brand" href={pathFor('home', locale)} aria-current={page === 'home' ? 'page' : undefined}>
+      {t('site.name')}
+    </a>
+
+    <nav class="nav" aria-label={t('nav.label')}>
+      <ul class="nav__list">
+        {
+          items.map((item) => (
+            <li>
+              <a
+                class="nav__link"
+                href={item.href}
+                aria-current={item.current ? 'page' : undefined}
+              >
+                {item.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </nav>
+
+    <div class="header__aside">
+      <LanguageSwitch page={page} locale={locale} />
+      <button
+        class="burger"
+        type="button"
+        aria-expanded="false"
+        aria-controls="mobile-nav"
+        data-burger
+      >
+        <span class="visually-hidden" data-burger-open>{t('nav.menuOpen')}</span>
+        <span class="visually-hidden" data-burger-close hidden>{t('nav.menuClose')}</span>
+        <span class="burger__bars" aria-hidden="true"><span></span><span></span></span>
+      </button>
+    </div>
+  </div>
+
+  <nav class="mobile" id="mobile-nav" aria-label={t('nav.label')} hidden>
+    <ul class="mobile__list container">
+      {
+        items.map((item) => (
+          <li>
+            <a class="mobile__link" href={item.href} aria-current={item.current ? 'page' : undefined}>
+              {item.label}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
+  </nav>
+</header>
+
+<style>
+  .header {
+    position: sticky;
+    top: 0;
+    z-index: var(--z-header);
+    background: var(--c-bg);
+    border-bottom: var(--hairline);
+  }
+
+  .header__inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    min-height: var(--header-h);
+  }
+
+  .brand {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-regular);
+    letter-spacing: var(--ls-heading);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
+  .nav {
+    display: none;
+  }
+
+  .nav__list,
+  .mobile__list {
+    display: flex;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .nav__list {
+    gap: var(--space-m);
+  }
+
+  .nav__link {
+    display: inline-block;
+    padding-block: var(--space-2xs);
+    font-size: var(--fs-small);
+    text-decoration: none;
+    border-bottom: var(--border-width) solid transparent;
+    transition: border-color var(--duration) var(--ease);
+  }
+
+  .nav__link:hover,
+  .nav__link[aria-current='page'] {
+    border-bottom-color: var(--c-text);
+  }
+
+  .header__aside {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2xs);
+  }
+
+  .burger {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.5rem;
+    height: 2.5rem;
+    border: var(--hairline);
+  }
+
+  .burger__bars {
+    display: grid;
+    gap: 5px;
+    width: 1.125rem;
+  }
+
+  .burger__bars > span {
+    display: block;
+    height: var(--border-width);
+    background: var(--c-text);
+  }
+
+  .mobile {
+    border-top: var(--hairline);
+  }
+
+  .mobile__list {
+    flex-direction: column;
+    padding-block: var(--space-2xs);
+  }
+
+  .mobile__link {
+    display: block;
+    padding-block: var(--space-xs);
+    border-bottom: var(--hairline);
+    text-decoration: none;
+  }
+
+  .mobile__list > li:last-child .mobile__link {
+    border-bottom: 0;
+  }
+
+  @media (min-width: 60rem) {
+    .nav {
+      display: block;
+    }
+
+    .burger,
+    .mobile {
+      display: none;
+    }
+  }
+</style>
+
+<script>
+  const burger = document.querySelector<HTMLButtonElement>('[data-burger]');
+  const panel = document.getElementById('mobile-nav');
+
+  if (burger && panel) {
+    const openLabel = burger.querySelector<HTMLElement>('[data-burger-open]');
+    const closeLabel = burger.querySelector<HTMLElement>('[data-burger-close]');
+
+    const setOpen = (open: boolean) => {
+      burger.setAttribute('aria-expanded', String(open));
+      panel.hidden = !open;
+      if (openLabel) openLabel.hidden = open;
+      if (closeLabel) closeLabel.hidden = !open;
+    };
+
+    burger.addEventListener('click', () => {
+      setOpen(burger.getAttribute('aria-expanded') !== 'true');
+    });
+
+    // Escape schliesst das Panel und gibt den Fokus zurueck.
+    document.addEventListener('keydown', (event) => {
+      if (event.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
+        setOpen(false);
+        burger.focus();
+      }
+    });
+  }
+</script>

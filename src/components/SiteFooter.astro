@@ -1,0 +1,121 @@
+---
+import { NAV, pathFor, type Locale } from '../i18n/routes';
+import { useTranslations, type TranslationKey } from '../i18n/ui';
+import { projekt } from '../lib/projekt';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+const year = new Date().getFullYear();
+---
+
+<footer class="footer">
+  <div class="footer__inner container">
+    <div class="footer__col">
+      <p class="eyebrow">{t('footer.projectHeading')}</p>
+      <p class="footer__name">{t('site.name')}</p>
+      <p class="footer__meta">
+        {projekt.gemeinde} ({projekt.kanton})
+      </p>
+      <p class="footer__meta">{t('footer.rentalNote')}</p>
+    </div>
+
+    <div class="footer__col">
+      <p class="eyebrow">{t('nav.label')}</p>
+      <ul class="footer__list">
+        {
+          NAV.map((id) => (
+            <li>
+              <a href={pathFor(id, locale)}>{t(`nav.${id}` as TranslationKey)}</a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div class="footer__col">
+      <p class="eyebrow">{t('footer.contactHeading')}</p>
+      {/* TODO(handoff): Adresse, Telefon und E-Mail aus README uebernehmen. */}
+      <p class="footer__meta">TODO(handoff): Kontaktangaben</p>
+    </div>
+
+    <div class="footer__col">
+      <p class="eyebrow">{t('footer.legalHeading')}</p>
+      <ul class="footer__list">
+        <li><a href={`${locale === 'de' ? '' : '/en'}/impressum`}>{t('footer.imprint')}</a></li>
+        <li><a href={`${locale === 'de' ? '' : '/en'}/datenschutz`}>{t('footer.privacy')}</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <div class="footer__bar container">
+    <p class="footer__meta">{t('footer.copyright', { year })}</p>
+  </div>
+</footer>
+
+<style>
+  .footer {
+    margin-top: var(--space-2xl);
+    border-top: var(--hairline);
+  }
+
+  .footer__inner {
+    display: grid;
+    gap: var(--space-l);
+    padding-block: var(--space-xl);
+    grid-template-columns: 1fr;
+  }
+
+  .footer__col > .eyebrow {
+    display: block;
+    margin-bottom: var(--space-2xs);
+  }
+
+  .footer__name {
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-extralight);
+  }
+
+  .footer__meta {
+    max-width: none;
+    font-size: var(--fs-small);
+    color: var(--c-text-muted);
+  }
+
+  .footer__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-small);
+  }
+
+  .footer__list a {
+    display: inline-block;
+    padding-block: var(--space-3xs);
+    text-decoration: none;
+  }
+
+  .footer__list a:hover {
+    text-decoration: underline;
+  }
+
+  .footer__bar {
+    padding-block: var(--space-s);
+    border-top: var(--hairline);
+  }
+
+  @media (min-width: 45rem) {
+    .footer__inner {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 68rem) {
+    .footer__inner {
+      grid-template-columns: 1.5fr 1fr 1fr 1fr;
+    }
+  }
+</style>

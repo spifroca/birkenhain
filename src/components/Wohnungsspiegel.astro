@@ -1,0 +1,292 @@
+---
+import Icon from './Icon.astro';
+import { getCollection } from 'astro:content';
+import { pathFor, type Locale } from '../i18n/routes';
+import { pick, useTranslations } from '../i18n/ui';
+import { features } from '../lib/flags';
+import { projekt } from '../lib/projekt';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+/**
+ * Die Komponente ist vollstaendig gebaut, aber deaktiviert: die Wohnungsdaten
+ * im Prototyp waren prozedural erzeugt. Freischalten heisst
+ * `src/data/wohnungen.json` fuellen und `features.wohnungsspiegel` auf true
+ * setzen — sonst wird nur der Hinweis ausgeliefert.
+ */
+const entries = features.wohnungsspiegel ? await getCollection('wohnungen') : [];
+const active = features.wohnungsspiegel && entries.length > 0;
+
+// `id` liegt auf der Entry-Ebene, nicht in `data` — der file()-Loader zieht
+// es aus dem Objekt heraus.
+const rows = entries
+  .map((entry) => ({ id: entry.id, ...entry.data }))
+  .sort((a, b) => a.baubereich.localeCompare(b.baubereich) || a.zimmer - b.zimmer);
+
+const areas = [...new Set(rows.map((row) => row.baubereich))].sort();
+const roomCounts = [...new Set(rows.map((row) => row.zimmer))].sort((a, b) => a - b);
+const floors = [...new Set(rows.map((row) => row.geschoss))].sort((a, b) => a - b);
+---
+
+<section class="spiegel" aria-labelledby="spiegel-heading">
+  <div class="container">
+    <h2 id="spiegel-heading">{t('wohnungen.spiegelHeading')}</h2>
+
+    {
+      active ? (
+        <>
+          <div class="spiegel__filters" role="group" aria-labelledby="spiegel-heading">
+            <p class="visually-hidden" id="spiegel-filter-hint">{t('wohnungen.filterReset')}</p>
+
+            <label class="spiegel__field">
+              <span>{t('wohnungen.filterArea')}</span>
+              <select data-filter="baubereich">
+                <option value="">{t('wohnungen.filterArea_all')}</option>
+                {areas.map((area) => <option value={area}>{area}</option>)}
+              </select>
+            </label>
+
+            <label class="spiegel__field">
+              <span>{t('wohnungen.filterRooms')}</span>
+              <select data-filter="zimmer">
+                <option value="">{t('wohnungen.filterArea_all')}</option>
+                {roomCounts.map((count) => <option value={count}>{count}</option>)}
+              </select>
+            </label>
+
+            <label class="spiegel__field">
+              <span>{t('wohnungen.filterFloor')}</span>
+              <select data-filter="geschoss">
+                <option value="">{t('wohnungen.filterArea_all')}</option>
+                {floors.map((floor) => <option value={floor}>{floor}</option>)}
+              </select>
+            </label>
+
+            <button class="spiegel__reset" type="button" data-filter-reset>
+              <Icon name="rotate-ccw" />
+              {t('wohnungen.filterReset')}
+            </button>
+          </div>
+
+          <p
+            class="spiegel__count"
+            data-count
+            data-single={t('wohnungen.resultCount_one')}
+            data-plural={t('wohnungen.resultCount', { count: '{count}' })}
+            aria-live="polite"
+          >
+            {rows.length === 1
+              ? t('wohnungen.resultCount_one')
+              : t('wohnungen.resultCount', { count: rows.length })}
+          </p>
+
+          <div class="spiegel__scroll">
+            <table class="spiegel__table">
+              <caption class="visually-hidden">{t('wohnungen.spiegelHeading')}</caption>
+              <thead>
+                <tr>
+                  <th scope="col">{t('wohnungen.tableId')}</th>
+                  <th scope="col">{t('wohnungen.tableArea')}</th>
+                  <th scope="col" class="num">{t('wohnungen.tableRooms')}</th>
+                  <th scope="col" class="num">{t('wohnungen.tableFloor')}</th>
+                  <th scope="col" class="num">{t('wohnungen.tableSize')}</th>
+                  <th scope="col">{t('wohnungen.tableOrientation')}</th>
+                </tr>
+              </thead>
+              <tbody data-rows>
+                {rows.map((row) => (
+                  <tr
+                    data-baubereich={row.baubereich}
+                    data-zimmer={row.zimmer}
+                    data-geschoss={row.geschoss}
+                  >
+                    <th scope="row">{row.id}</th>
+                    <td>{row.baubereich}</td>
+                    <td class="num">{row.zimmer}</td>
+                    <td class="num">{row.geschoss}</td>
+                    <td class="num">{row.flaecheM2} m²</td>
+                    <td>{pick(row.ausrichtung, locale)}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <p class="spiegel__empty" data-empty hidden>{t('wohnungen.resultEmpty')}</p>
+
+          {/* Preise werden nicht publiziert — der Hinweis steht bewusst hier. */}
+          {!projekt.publikation.mietpreise && (
+            <p class="spiegel__note">{t('wohnungen.noPricing')}</p>
+          )}
+        </>
+      ) : (
+        <div class="spiegel__pending">
+          <p>{t('wohnungen.spiegelPending')}</p>
+          <a class="spiegel__cta" href={pathFor('anmeldung', locale)}>
+            {t('wohnungen.spiegelPendingCta')}
+            <Icon name="arrow-right" />
+          </a>
+        </div>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .spiegel {
+    padding-block: var(--space-2xl);
+  }
+
+  .spiegel__filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: end;
+    gap: var(--space-s);
+    margin-top: var(--space-l);
+    padding-block: var(--space-m);
+    border-block: var(--hairline);
+  }
+
+  .spiegel__field {
+    display: grid;
+    gap: var(--space-3xs);
+    font-size: var(--fs-small);
+  }
+
+  .spiegel__field span {
+    color: var(--c-text-muted);
+  }
+
+  .spiegel__field select {
+    min-height: 2.75rem;
+    padding: 0 var(--space-2xs);
+    background: var(--c-bg);
+    border: var(--hairline);
+  }
+
+  .spiegel__reset {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    min-height: 2.75rem;
+    padding-inline: var(--space-s);
+    border: var(--hairline);
+    font-size: var(--fs-small);
+  }
+
+  .spiegel__reset:hover {
+    border-color: var(--c-text);
+  }
+
+  .spiegel__count {
+    padding-top: var(--space-s);
+    font-size: var(--fs-small);
+    color: var(--c-text-muted);
+  }
+
+  .spiegel__scroll {
+    overflow-x: auto;
+  }
+
+  .spiegel__table th,
+  .spiegel__table td {
+    padding: var(--space-2xs) var(--space-s) var(--space-2xs) 0;
+    border-bottom: var(--hairline);
+    text-align: left;
+    font-weight: var(--fw-light);
+    white-space: nowrap;
+  }
+
+  .spiegel__table thead th {
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+  }
+
+  .spiegel__table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .spiegel__empty,
+  .spiegel__note {
+    padding-top: var(--space-m);
+    font-size: var(--fs-small);
+    color: var(--c-text-muted);
+  }
+
+  .spiegel__pending {
+    margin-top: var(--space-l);
+    padding: var(--space-l);
+    border: var(--hairline);
+  }
+
+  .spiegel__cta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-top: var(--space-s);
+    padding: var(--space-2xs) var(--space-m);
+    border: var(--border-width) solid var(--c-text);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+  }
+
+  .spiegel__cta:hover {
+    background: var(--c-text);
+    color: var(--c-text-inverse);
+  }
+</style>
+
+<script>
+  const body = document.querySelector<HTMLElement>('[data-rows]');
+
+  if (body) {
+    const selects = Array.from(document.querySelectorAll<HTMLSelectElement>('[data-filter]'));
+    const rows = Array.from(body.querySelectorAll<HTMLTableRowElement>('tr'));
+    const count = document.querySelector<HTMLElement>('[data-count]');
+    const empty = document.querySelector<HTMLElement>('[data-empty]');
+    const reset = document.querySelector<HTMLButtonElement>('[data-filter-reset]');
+
+    const single = count?.dataset.single ?? '';
+    const plural = count?.dataset.plural ?? '';
+
+    const apply = () => {
+      let visible = 0;
+
+      for (const row of rows) {
+        const matches = selects.every((select) => {
+          const key = select.dataset.filter;
+          if (!select.value || !key) return true;
+          return row.dataset[key] === select.value;
+        });
+        row.hidden = !matches;
+        if (matches) visible += 1;
+      }
+
+      if (count) {
+        const template = visible === 1 ? single : plural;
+        count.textContent = template
+          ? template.replace('{count}', String(visible))
+          : String(visible);
+      }
+      if (empty) empty.hidden = visible !== 0;
+    };
+
+    selects.forEach((select) => select.addEventListener('change', apply));
+    reset?.addEventListener('click', () => {
+      selects.forEach((select) => {
+        select.value = '';
+      });
+      apply();
+    });
+  }
+</script>

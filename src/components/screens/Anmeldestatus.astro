@@ -1,0 +1,114 @@
+---
+import Icon from '../Icon.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { pathFor, type Locale } from '../../i18n/routes';
+import { useTranslations } from '../../i18n/ui';
+
+/**
+ * Statische Statusseiten. Der Endpoint leitet ohne JS hierher, und der
+ * Double-Opt-In-Link aus der Mail zeigt direkt auf `confirmed` bzw.
+ * `confirm-failed` — deshalb echte Routen und kein Query-Parameter:
+ * im static output steht `Astro.url.searchParams` zur Buildzeit nicht
+ * zur Verfuegung.
+ */
+export type StatusKind = 'sent' | 'confirmed' | 'confirm-failed' | 'error' | 'rate-limit';
+
+interface Props {
+  locale: Locale;
+  kind: StatusKind;
+}
+
+const { locale, kind } = Astro.props;
+const t = useTranslations(locale);
+
+const CONTENT = {
+  sent: { title: 'anmeldung.successTitle', body: 'anmeldung.successBody', ok: true },
+  confirmed: { title: 'anmeldung.confirmedTitle', body: 'anmeldung.confirmedBody', ok: true },
+  'confirm-failed': {
+    title: 'anmeldung.confirmFailedTitle',
+    body: 'anmeldung.confirmFailedBody',
+    ok: false,
+  },
+  error: { title: 'anmeldung.errorTitle', body: 'anmeldung.errorBody', ok: false },
+  'rate-limit': { title: 'anmeldung.errorTitle', body: 'anmeldung.errors.rateLimit', ok: false },
+} as const;
+
+const entry = CONTENT[kind];
+const title = t(entry.title);
+const body = t(entry.body);
+---
+
+<BaseLayout
+  page="anmeldung"
+  locale={locale}
+  title={`${title} — ${t('site.name')}`}
+  description={body}
+  noindex
+>
+  <section class="status container">
+    <div class="status__box" data-state={entry.ok ? 'success' : 'error'}>
+      <Icon name={entry.ok ? 'check' : 'alert-triangle'} size="1.75rem" />
+      <h1>{title}</h1>
+      <p>{body}</p>
+      {
+        !entry.ok && (
+          <a class="status__link" href={pathFor('anmeldung', locale)}>
+            {t('anmeldung.title')}
+            <Icon name="arrow-right" />
+          </a>
+        )
+      }
+      {
+        entry.ok && (
+          <a class="status__link" href={pathFor('home', locale)}>
+            {t('nav.home')}
+            <Icon name="arrow-right" />
+          </a>
+        )
+      }
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  .status {
+    padding-block: var(--space-2xl);
+  }
+
+  .status__box {
+    max-width: var(--container-text);
+    padding: var(--space-l);
+    border: var(--hairline);
+  }
+
+  .status__box[data-state='error'] {
+    border-color: var(--c-accent);
+  }
+
+  .status__box h1 {
+    padding-top: var(--space-s);
+    font-size: var(--fs-h2);
+  }
+
+  .status__box p {
+    padding-top: var(--space-s);
+    color: var(--c-text-muted);
+  }
+
+  .status__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-top: var(--space-l);
+    padding: var(--space-2xs) var(--space-m);
+    border: var(--border-width) solid var(--c-text);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+  }
+
+  .status__link:hover {
+    background: var(--c-text);
+    color: var(--c-text-inverse);
+  }
+</style>

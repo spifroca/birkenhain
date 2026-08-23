@@ -1,0 +1,95 @@
+---
+import { useTranslations, formatNumber } from '../i18n/ui';
+import { projekt } from '../lib/projekt';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+// Alle Werte aus projekt.json — keine Zahl steht im Markup.
+const facts = [
+  { value: formatNumber(projekt.wohnungen, locale), label: t('facts.wohnungen') },
+  { value: formatNumber(projekt.baubereiche, locale), label: t('facts.baubereiche') },
+  {
+    value: t('facts.range', { min: projekt.vollgeschosse.min, max: projekt.vollgeschosse.max }),
+    label: t('facts.vollgeschosse'),
+  },
+  ...(projekt.oberirdischAutofrei
+    ? [{ value: t('facts.autofreiValue'), label: t('facts.autofrei') }]
+    : []),
+];
+---
+
+<section class="fakten" aria-labelledby="fakten-heading">
+  <div class="container">
+    <h2 class="visually-hidden" id="fakten-heading">{t('facts.heading')}</h2>
+    <dl class="fakten__grid">
+      {
+        facts.map((fact) => (
+          <div class="fakten__item">
+            <dt class="fakten__label">{fact.label}</dt>
+            <dd class="fakten__value">{fact.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </div>
+</section>
+
+<style>
+  .fakten {
+    border-block: var(--hairline);
+  }
+
+  .fakten__grid {
+    display: grid;
+    margin: 0;
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .fakten__item {
+    padding: var(--space-m) 0;
+    border-top: var(--hairline);
+  }
+
+  .fakten__item:nth-child(-n + 2) {
+    border-top: 0;
+  }
+
+  .fakten__label {
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+  }
+
+  .fakten__value {
+    margin: var(--space-3xs) 0 0;
+    font-size: var(--fs-h2);
+    font-weight: var(--fw-extralight);
+    line-height: var(--lh-tight);
+    font-variant-numeric: tabular-nums;
+  }
+
+  @media (min-width: 60rem) {
+    .fakten__grid {
+      grid-template-columns: repeat(4, 1fr);
+    }
+
+    .fakten__item {
+      padding-inline: var(--space-m);
+      border-top: 0;
+      border-left: var(--hairline);
+    }
+
+    .fakten__item:first-child {
+      padding-left: 0;
+      border-left: 0;
+    }
+  }
+</style>

@@ -1,0 +1,40 @@
+---
+import AnmeldungForm from '../AnmeldungForm.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { useTranslations } from '../../i18n/ui';
+import type { Locale } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<BaseLayout
+  page="anmeldung"
+  locale={locale}
+  title={t('anmeldung.metaTitle')}
+  description={t('anmeldung.metaDescription')}
+>
+  <section class="anmeldung container">
+    <h1>{t('anmeldung.title')}</h1>
+    <p class="anmeldung__lead">{t('anmeldung.lead')}</p>
+    <AnmeldungForm locale={locale} />
+  </section>
+</BaseLayout>
+
+<style>
+  .anmeldung {
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .anmeldung__lead {
+    padding-top: var(--space-m);
+    max-width: var(--container-text);
+    font-size: var(--fs-lead);
+    font-weight: var(--fw-extralight);
+    line-height: 1.45;
+  }
+</style>

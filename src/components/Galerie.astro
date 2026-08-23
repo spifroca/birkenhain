@@ -1,0 +1,109 @@
+---
+import Lightbox, { type LightboxImage } from './Lightbox.astro';
+import Picture from './Picture.astro';
+import { getCollection } from 'astro:content';
+import { pick, useTranslations } from '../i18n/ui';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+  heading?: string;
+  /** Ohne Angabe werden alle Bilder gezeigt. */
+  limit?: number;
+}
+
+const { locale, heading, limit } = Astro.props;
+const t = useTranslations(locale);
+
+const entries = (await getCollection('galerie')).sort((a, b) => a.data.order - b.data.order);
+const shown = limit ? entries.slice(0, limit) : entries;
+
+const images: LightboxImage[] = shown.map((entry) => ({
+  id: entry.id,
+  src: entry.data.src,
+  alt: pick(entry.data.alt, locale),
+  caption: pick(entry.data.caption, locale),
+}));
+---
+
+{
+  images.length > 0 && (
+    <section class="galerie container" aria-labelledby="galerie-heading">
+      <h2 id="galerie-heading">{heading ?? t('home.galerieHeading')}</h2>
+
+      <ul class="galerie__grid">
+        {
+          images.map((image, index) => (
+            <li class="galerie__cell">
+              <button
+                class="galerie__trigger"
+                type="button"
+                data-lb-open={index}
+                aria-label={t('lightbox.open', { caption: image.caption || image.alt })}
+              >
+                <Picture
+                  src={image.src}
+                  alt={image.alt}
+                  sizes="(min-width: 68rem) 33vw, (min-width: 45rem) 50vw, 100vw"
+                  hero={shown[index]?.data.hero ?? false}
+                  ratio="3 / 2"
+                />
+              </button>
+              {image.caption && <p class="galerie__caption">{image.caption}</p>}
+            </li>
+          ))
+        }
+      </ul>
+
+      <Lightbox images={images} locale={locale} />
+    </section>
+  )
+}
+
+<style>
+  .galerie {
+    padding-block: var(--space-2xl);
+  }
+
+  .galerie h2 {
+    margin-bottom: var(--space-l);
+  }
+
+  .galerie__grid {
+    display: grid;
+    gap: var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    grid-template-columns: 1fr;
+  }
+
+  .galerie__trigger {
+    display: block;
+    width: 100%;
+    border: var(--hairline);
+  }
+
+  .galerie__trigger:hover {
+    border-color: var(--c-text);
+  }
+
+  .galerie__caption {
+    max-width: none;
+    padding-top: var(--space-2xs);
+    font-size: var(--fs-small);
+    color: var(--c-text-muted);
+  }
+
+  @media (min-width: 45rem) {
+    .galerie__grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (min-width: 68rem) {
+    .galerie__grid {
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+</style>

@@ -1,0 +1,104 @@
+---
+import { getCollection } from 'astro:content';
+import { pick, useTranslations, formatNumber } from '../i18n/ui';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const rows = (await getCollection('distanzen')).sort((a, b) => {
+  if (a.data.order !== b.data.order) return a.data.order - b.data.order;
+  return (a.data.meter ?? Infinity) - (b.data.meter ?? Infinity);
+});
+
+/** Unter 1 km in Metern, darueber in Kilometern — Einheit bleibt getrennt. */
+function distance(meter: number | null): string {
+  if (meter === null) return '—';
+  if (meter < 1000) return `${formatNumber(meter, locale)} ${t('lage.unitMeters')}`;
+  return `${formatNumber(Math.round(meter / 100) / 10, locale)} ${t('lage.unitKilometers')}`;
+}
+
+function minutes(value: number | null): string {
+  return value === null ? '—' : `${value} ${t('lage.unitMinutes')}`;
+}
+
+const columns = {
+  fuss: rows.some((row) => row.data.minutenFuss !== null),
+  oev: rows.some((row) => row.data.minutenOev !== null),
+  auto: rows.some((row) => row.data.minutenAuto !== null),
+};
+---
+
+{
+  rows.length > 0 && (
+    <section class="dist" aria-labelledby="dist-heading">
+      <div class="container">
+        <h2 id="dist-heading">{t('lage.distanzenHeading')}</h2>
+
+        <div class="dist__scroll">
+          <table class="dist__table">
+            <caption class="visually-hidden">{t('lage.distanzenHeading')}</caption>
+            <thead>
+              <tr>
+                <th scope="col">{t('lage.tableTarget')}</th>
+                <th scope="col" class="num">{t('lage.tableDistance')}</th>
+                {columns.fuss && <th scope="col" class="num">{t('lage.tableWalk')}</th>}
+                {columns.oev && <th scope="col" class="num">{t('lage.tableTransit')}</th>}
+                {columns.auto && <th scope="col" class="num">{t('lage.tableCar')}</th>}
+              </tr>
+            </thead>
+            <tbody>
+              {rows.map((row) => (
+                <tr>
+                  <th scope="row">{pick(row.data.ziel, locale)}</th>
+                  <td class="num">{distance(row.data.meter)}</td>
+                  {columns.fuss && <td class="num">{minutes(row.data.minutenFuss)}</td>}
+                  {columns.oev && <td class="num">{minutes(row.data.minutenOev)}</td>}
+                  {columns.auto && <td class="num">{minutes(row.data.minutenAuto)}</td>}
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  )
+}
+
+<style>
+  .dist {
+    padding-block: var(--space-2xl);
+  }
+
+  .dist__scroll {
+    margin-top: var(--space-l);
+    overflow-x: auto;
+  }
+
+  .dist__table th,
+  .dist__table td {
+    padding: var(--space-2xs) var(--space-m) var(--space-2xs) 0;
+    border-bottom: var(--hairline);
+    text-align: left;
+    font-weight: var(--fw-light);
+  }
+
+  .dist__table thead th {
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+    color: var(--c-text-muted);
+    white-space: nowrap;
+  }
+
+  .dist__table .num {
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+</style>

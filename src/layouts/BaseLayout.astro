@@ -1,0 +1,71 @@
+---
+import '../styles/base.css';
+import SiteHeader from '../components/SiteHeader.astro';
+import SiteFooter from '../components/SiteFooter.astro';
+import StickyBar from '../components/StickyBar.astro';
+import { type Locale, type PageId } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+import { buildSeo } from '../lib/seo';
+
+interface Props {
+  page: PageId;
+  locale: Locale;
+  title: string;
+  description: string;
+  /** Statusseiten und Zwischenstationen gehoeren nicht in den Index. */
+  noindex?: boolean;
+}
+
+const { page, locale, title, description, noindex = false } = Astro.props;
+const t = useTranslations(locale);
+const seo = buildSeo({ page, locale, title, description, site: Astro.site ?? Astro.url });
+
+// Nur die tatsaechlich benutzten Schnitte vorladen; der Rest kommt ueber
+// font-display: swap nach.
+const preloadWeights = [200, 400] as const;
+---
+
+<!doctype html>
+<html lang={locale === 'de' ? 'de-CH' : 'en'}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title}</title>
+    <meta name="description" content={description} />
+    <link rel="canonical" href={seo.canonical} />
+    {seo.hreflang.map((alt) => <link rel="alternate" hreflang={alt.hreflang} href={alt.href} />)}
+
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content={t('site.name')} />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={seo.canonical} />
+    <meta property="og:locale" content={seo.ogLocale} />
+
+    {
+      preloadWeights.map((weight) => (
+        <link
+          rel="preload"
+          href={`/fonts/readex-pro-${weight}.woff2`}
+          as="font"
+          type="font/woff2"
+          crossorigin="anonymous"
+        />
+      ))
+    }
+
+    <meta name="robots" content={noindex ? 'noindex, follow' : 'index, follow'} />
+  </head>
+
+  <body>
+    <a class="skip-link" href="#main">{t('common.skipLink')}</a>
+    <SiteHeader page={page} locale={locale} />
+
+    <main id="main">
+      <slot />
+    </main>
+
+    <StickyBar page={page} locale={locale} />
+    <SiteFooter locale={locale} />
+  </body>
+</html>

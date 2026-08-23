@@ -1,0 +1,275 @@
+---
+import Icon from './Icon.astro';
+import Picture from './Picture.astro';
+import type { ImageMetadata } from 'astro';
+import { getCollection } from 'astro:content';
+import { pick, useTranslations } from '../i18n/ui';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+  /** Planbild. Fehlt es, bleibt die Liste der Baubereiche als Zugang. */
+  plan?: ImageMetadata;
+  planAlt?: string;
+  heading?: string;
+}
+
+const { locale, plan, planAlt, heading } = Astro.props;
+const t = useTranslations(locale);
+
+const areas = (await getCollection('baubereiche')).sort((a, b) =>
+  a.id.localeCompare(b.id),
+);
+
+// Marker nur setzen, wo Koordinaten im Datenfile stehen; alle Baubereiche
+// bleiben ueber die Liste erreichbar, auch ohne Plan.
+const markers = areas.filter(
+  (area) => area.data.plan.x !== null && area.data.plan.y !== null,
+);
+
+function markerLabel(area: (typeof areas)[number]): string {
+  return area.data.vollgeschosse === null
+    ? t('situationsplan.markerPending', { label: area.data.label })
+    : t('situationsplan.marker', {
+        label: area.data.label,
+        floors: area.data.vollgeschosse,
+      });
+}
+---
+
+<section class="plan" aria-labelledby="plan-heading">
+  <div class="container">
+    <h2 id="plan-heading">{heading ?? t('home.situationsplanHeading')}</h2>
+    <p class="plan__hint">{t('home.situationsplanHint')}</p>
+
+    <div class="plan__layout">
+      <div class="plan__stage">
+        {
+          plan ? (
+            <Picture
+              src={plan}
+              alt={planAlt ?? t('situationsplan.label')}
+              sizes="(min-width: 68rem) 60vw, 100vw"
+            />
+          ) : (
+            /* TODO(handoff): Situationsplan aus assets/ einsetzen und
+               plan.x / plan.y je Baubereich in baubereiche.json ergaenzen. */
+            <p class="plan__placeholder">TODO(handoff): Situationsplan-Bild fehlt.</p>
+          )
+        }
+
+        {
+          markers.map((area) => (
+            <button
+              class="plan__marker"
+              type="button"
+              style={`--x: ${area.data.plan.x}%; --y: ${area.data.plan.y}%`}
+              data-area={area.id}
+              aria-label={markerLabel(area)}
+              aria-pressed="false"
+              aria-controls="plan-detail"
+            >
+              <span aria-hidden="true">{area.data.label}</span>
+            </button>
+          ))
+        }
+      </div>
+
+      <div class="plan__side">
+        <div class="plan__detail" id="plan-detail" aria-live="polite">
+          {
+            areas.map((area, index) => (
+              <article class="plan__card" data-detail={area.id} hidden={index !== 0}>
+                <h3>{t('situationsplan.detailHeading', { label: area.data.label })}</h3>
+                <dl class="plan__dl">
+                  <dt>{t('architektur.tableFloors')}</dt>
+                  <dd>
+                    {area.data.vollgeschosse ?? (
+                      <span class="plan__pending">{t('architektur.pendingData')}</span>
+                    )}
+                  </dd>
+                  {area.data.wohnungen !== null && (
+                    <>
+                      <dt>{t('architektur.tableUnits')}</dt>
+                      <dd>{area.data.wohnungen}</dd>
+                    </>
+                  )}
+                </dl>
+                {pick(area.data.text, locale) && <p>{pick(area.data.text, locale)}</p>}
+              </article>
+            ))
+          }
+        </div>
+
+        <ul class="plan__list">
+          {
+            areas.map((area) => (
+              <li>
+                <button
+                  class="plan__listitem"
+                  type="button"
+                  data-area={area.id}
+                  aria-label={markerLabel(area)}
+                  aria-pressed="false"
+                  aria-controls="plan-detail"
+                >
+                  <span aria-hidden="true">{area.data.label}</span>
+                  <Icon name="chevron-right" />
+                </button>
+              </li>
+            ))
+          }
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .plan {
+    padding-block: var(--space-2xl);
+  }
+
+  .plan__hint {
+    margin-top: var(--space-2xs);
+    color: var(--c-text-muted);
+    font-size: var(--fs-small);
+  }
+
+  .plan__layout {
+    display: grid;
+    gap: var(--space-l);
+    margin-top: var(--space-l);
+    grid-template-columns: 1fr;
+  }
+
+  .plan__stage {
+    position: relative;
+    border: var(--hairline);
+    background: var(--c-bg-alt);
+  }
+
+  .plan__placeholder {
+    max-width: none;
+    padding: var(--space-xl) var(--space-m);
+    text-align: center;
+    color: var(--c-text-muted);
+    font-size: var(--fs-small);
+  }
+
+  .plan__marker {
+    position: absolute;
+    top: var(--y);
+    left: var(--x);
+    display: grid;
+    place-items: center;
+    width: 2rem;
+    height: 2rem;
+    transform: translate(-50%, -50%);
+    background: var(--c-bg);
+    border: var(--border-width) solid var(--c-text);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .plan__marker:hover,
+  .plan__marker[aria-pressed='true'] {
+    background: var(--c-accent);
+    border-color: var(--c-accent);
+    color: var(--c-text-inverse);
+  }
+
+  .plan__detail {
+    border: var(--hairline);
+    padding: var(--space-m);
+  }
+
+  .plan__card[hidden] {
+    display: none;
+  }
+
+  .plan__dl {
+    display: grid;
+    gap: var(--space-3xs) var(--space-s);
+    margin: var(--space-s) 0 0;
+    grid-template-columns: auto 1fr;
+    font-size: var(--fs-small);
+  }
+
+  .plan__dl dt {
+    color: var(--c-text-muted);
+  }
+
+  .plan__dl dd {
+    margin: 0;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .plan__pending {
+    color: var(--c-text-muted);
+    font-style: italic;
+  }
+
+  .plan__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3xs);
+    margin: var(--space-m) 0 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .plan__listitem {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    min-width: 2.75rem;
+    min-height: 2.75rem;
+    padding-inline: var(--space-2xs);
+    border: var(--hairline);
+    font-size: var(--fs-small);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .plan__listitem:hover,
+  .plan__listitem[aria-pressed='true'] {
+    border-color: var(--c-text);
+    background: var(--c-bg-alt);
+  }
+
+  @media (min-width: 68rem) {
+    .plan__layout {
+      grid-template-columns: 1.6fr 1fr;
+      align-items: start;
+    }
+  }
+</style>
+
+<script>
+  const detail = document.getElementById('plan-detail');
+
+  if (detail) {
+    const triggers = Array.from(document.querySelectorAll<HTMLButtonElement>('[data-area]'));
+    const cards = Array.from(detail.querySelectorAll<HTMLElement>('[data-detail]'));
+
+    const select = (id: string) => {
+      cards.forEach((card) => {
+        card.hidden = card.dataset.detail !== id;
+      });
+      triggers.forEach((trigger) => {
+        trigger.setAttribute('aria-pressed', String(trigger.dataset.area === id));
+      });
+    };
+
+    triggers.forEach((trigger) => {
+      trigger.addEventListener('click', () => {
+        const id = trigger.dataset.area;
+        if (id) select(id);
+      });
+    });
+
+    const first = cards.find((card) => !card.hidden)?.dataset.detail;
+    if (first) select(first);
+  }
+</script>

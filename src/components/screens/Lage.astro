@@ -1,0 +1,26 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import DistanzTabelle from '../DistanzTabelle.astro';
+import Hero from '../Hero.astro';
+import Karte from '../Karte.astro';
+import { useTranslations } from '../../i18n/ui';
+import type { Locale } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<BaseLayout
+  page="lage"
+  locale={locale}
+  title={t('lage.metaTitle')}
+  description={t('lage.metaDescription')}
+>
+  <Hero title={t('lage.title')} lead={t('lage.lead')} />
+  <DistanzTabelle locale={locale} />
+  <Karte locale={locale} />
+</BaseLayout>

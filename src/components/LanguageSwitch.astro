@@ -1,0 +1,38 @@
+---
+import { alternatePath, type Locale, type PageId } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  page: PageId;
+  locale: Locale;
+}
+
+const { page, locale } = Astro.props;
+const t = useTranslations(locale);
+const other = alternatePath(page, locale);
+const otherName = other.locale === 'de' ? 'Deutsch' : 'English';
+---
+
+<a class="lang" href={other.path} hreflang={other.locale} lang={other.locale} rel="alternate">
+  <span class="visually-hidden">{t('common.languageSwitch')}</span>
+  <span aria-hidden="true">{other.locale.toUpperCase()}</span>
+  <span class="visually-hidden">{otherName}</span>
+</a>
+
+<style>
+  .lang {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--space-3xs) var(--space-2xs);
+    border: var(--hairline);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-caps);
+    text-decoration: none;
+    transition: border-color var(--duration) var(--ease);
+  }
+
+  .lang:hover {
+    border-color: var(--c-text);
+  }
+</style>

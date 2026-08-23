@@ -1,0 +1,160 @@
+---
+import Icon from './Icon.astro';
+import { useTranslations } from '../i18n/ui';
+import { hasCoordinates, projekt } from '../lib/projekt';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+  heading?: string;
+}
+
+const { locale, heading } = Astro.props;
+const t = useTranslations(locale);
+
+// Ohne Koordinaten im Datenfile gibt es keine Karte — statt einer leeren
+// Flaeche wird der Abschnitt weggelassen.
+const ready = hasCoordinates(projekt);
+---
+
+<section class="karte" aria-labelledby="karte-heading">
+  <div class="container">
+    <h2 id="karte-heading">{heading ?? t('lage.mapHeading')}</h2>
+
+    {
+      ready ? (
+        <div
+          class="karte__frame"
+          data-karte
+          data-lat={projekt.koordinaten.lat}
+          data-lng={projekt.koordinaten.lng}
+          data-zoom={projekt.koordinaten.zoom}
+          data-label={t('map.label')}
+          data-attribution={t('map.attribution')}
+          data-fallback={t('map.fallback')}
+        >
+          {/* Vor der Einwilligung geht kein einziger Request an OpenStreetMap.
+              Kein Cookie, kein Third-Party-Script, kein iframe. */}
+          <div class="karte__consent" data-karte-consent>
+            <Icon name="map-pin" size="1.75rem" />
+            <h3>{t('map.consentHeading')}</h3>
+            <p>{t('map.consentBody')}</p>
+            <button class="karte__btn" type="button" data-karte-accept>
+              {t('map.consentButton')}
+            </button>
+            <label class="karte__remember">
+              <input type="checkbox" data-karte-remember checked />
+              {t('map.consentRemember')}
+            </label>
+          </div>
+
+          <div class="karte__canvas" data-karte-canvas hidden></div>
+        </div>
+      ) : (
+        /* TODO(handoff): lat/lng in src/data/projekt.json setzen. */
+        <p class="karte__pending">TODO(handoff): Koordinaten fehlen in projekt.json.</p>
+      )
+    }
+  </div>
+</section>
+
+<style>
+  .karte {
+    padding-block: var(--space-2xl);
+  }
+
+  .karte__frame {
+    position: relative;
+    margin-top: var(--space-l);
+    border: var(--hairline);
+    background: var(--c-bg-alt);
+    aspect-ratio: 16 / 9;
+  }
+
+  .karte__consent {
+    display: grid;
+    justify-items: center;
+    align-content: center;
+    gap: var(--space-2xs);
+    height: 100%;
+    padding: var(--space-m);
+    text-align: center;
+  }
+
+  .karte__consent p {
+    max-width: 34rem;
+    font-size: var(--fs-small);
+    color: var(--c-text-muted);
+  }
+
+  .karte__btn {
+    margin-top: var(--space-2xs);
+    padding: var(--space-2xs) var(--space-m);
+    border: var(--border-width) solid var(--c-text);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    transition:
+      background-color var(--duration) var(--ease),
+      color var(--duration) var(--ease);
+  }
+
+  .karte__btn:hover {
+    background: var(--c-text);
+    color: var(--c-text-inverse);
+  }
+
+  .karte__remember {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3xs);
+    font-size: var(--fs-caption);
+    color: var(--c-text-muted);
+  }
+
+  .karte__canvas {
+    height: 100%;
+  }
+
+  .karte__canvas[hidden] {
+    display: none;
+  }
+
+  .karte__pending {
+    margin-top: var(--space-l);
+    color: var(--c-text-muted);
+    font-size: var(--fs-small);
+  }
+
+  /* Leaflet-Chrome an die Designsprache angleichen: rechtwinklig, Hairlines. */
+  .karte__canvas :global(.leaflet-container) {
+    height: 100%;
+    background: var(--c-bg-alt);
+    font-family: var(--font-sans);
+    font-size: var(--fs-caption);
+  }
+
+  .karte__canvas :global(.leaflet-bar),
+  .karte__canvas :global(.leaflet-bar a) {
+    border-radius: 0;
+    border-color: var(--c-hairline);
+    box-shadow: none;
+  }
+
+  .karte__canvas :global(.leaflet-control-attribution) {
+    background: var(--c-bg);
+    border-top: var(--hairline);
+    border-left: var(--hairline);
+  }
+
+  .karte__marker {
+    width: 1rem;
+    height: 1rem;
+    background: var(--c-accent);
+    border: var(--border-width) solid var(--c-bg);
+  }
+</style>
+
+<script>
+  import { initKarte } from '../scripts/karte';
+  initKarte();
+</script>

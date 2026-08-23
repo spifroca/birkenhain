@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import EnergieListe from '../EnergieListe.astro';
+import Hero from '../Hero.astro';
+import { useTranslations } from '../../i18n/ui';
+import type { Locale } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<BaseLayout
+  page="nachhaltigkeit"
+  locale={locale}
+  title={t('nachhaltigkeit.metaTitle')}
+  description={t('nachhaltigkeit.metaDescription')}
+>
+  <Hero title={t('nachhaltigkeit.title')} lead={t('nachhaltigkeit.lead')} />
+  <EnergieListe locale={locale} />
+</BaseLayout>

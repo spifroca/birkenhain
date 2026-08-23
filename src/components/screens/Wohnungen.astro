@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Hero from '../Hero.astro';
+import Wohnungsspiegel from '../Wohnungsspiegel.astro';
+import { useTranslations } from '../../i18n/ui';
+import type { Locale } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<BaseLayout
+  page="wohnungen"
+  locale={locale}
+  title={t('wohnungen.metaTitle')}
+  description={t('wohnungen.metaDescription')}
+>
+  <Hero title={t('wohnungen.title')} lead={t('wohnungen.lead')} />
+  <Wohnungsspiegel locale={locale} />
+</BaseLayout>

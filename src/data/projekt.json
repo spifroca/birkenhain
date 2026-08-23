@@ -1,0 +1,19 @@
+{
+  "name": "Im Birkenhain",
+  "gemeinde": "Rudolfstetten-Friedlisberg",
+  "kanton": "AG",
+  "angebot": "miete",
+  "wohnungen": 278,
+  "baubereiche": 17,
+  "vollgeschosse": { "min": 3, "max": 8 },
+  "oberirdischAutofrei": true,
+  "publikation": {
+    "mietpreise": false,
+    "vermietungsstart": false
+  },
+  "koordinaten": {
+    "lat": null,
+    "lng": null,
+    "zoom": 16
+  }
+}

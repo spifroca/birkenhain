@@ -1,0 +1,32 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Fakten from '../Fakten.astro';
+import Galerie from '../Galerie.astro';
+import Hero from '../Hero.astro';
+import Situationsplan from '../Situationsplan.astro';
+import { useTranslations } from '../../i18n/ui';
+import type { Locale } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<BaseLayout
+  page="home"
+  locale={locale}
+  title={t('home.metaTitle')}
+  description={t('home.metaDescription')}
+>
+  <Hero
+    eyebrow={t('home.heroEyebrow')}
+    title={t('home.heroTitle')}
+    lead={t('home.heroLead')}
+  />
+  <Fakten locale={locale} />
+  <Situationsplan locale={locale} />
+  <Galerie locale={locale} limit={6} />
+</BaseLayout>

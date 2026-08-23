@@ -1,0 +1,25 @@
+---
+import { lucide, type IconOptions } from '../lib/icons';
+
+interface Props extends IconOptions {
+  /** Lucide-Name in kebab-case, z. B. `arrow-right`, `map-pin`. */
+  name: string;
+  size?: string;
+}
+
+const { name, size, strokeWidth, decorative, label, class: className } = Astro.props;
+const svg = lucide(name, { strokeWidth, decorative, label, class: className });
+---
+
+<span class="icon-wrap" style={size ? `--icon-size: ${size}` : undefined} set:html={svg} />
+
+<style>
+  .icon-wrap {
+    display: inline-flex;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    font-size: var(--icon-size);
+    line-height: 0;
+  }
+</style>

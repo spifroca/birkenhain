@@ -1,0 +1,24 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Galerie from '../Galerie.astro';
+import Hero from '../Hero.astro';
+import { useTranslations } from '../../i18n/ui';
+import type { Locale } from '../../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<BaseLayout
+  page="freiraum"
+  locale={locale}
+  title={t('freiraum.metaTitle')}
+  description={t('freiraum.metaDescription')}
+>
+  <Hero title={t('freiraum.title')} lead={t('freiraum.lead')} />
+  <Galerie locale={locale} />
+</BaseLayout>
