@@ -56,6 +56,10 @@ location ^~ /_assets/ {
 location ^~ /fonts/ {
     expires 30d;
     add_header Cache-Control "public" always;
+    # Nicht erforderlich bei gleicher Origin — CORS greift nur cross-origin,
+    # und Preload wie CSS-Abruf sind beide anonym. Live nachgemessen: die
+    # Schrift laedt ohne diesen Header korrekt. Steht hier fuer den Fall
+    # eines separaten Asset-Hosts.
     add_header Access-Control-Allow-Origin "*" always;
 }
 

@@ -60,8 +60,11 @@ AddDefaultCharset UTF-8
   # und die erst nach ausdrücklicher Einwilligung.
   Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
 
-  # Schriften werden von der eigenen Domain geladen, aber crossorigin
-  # angefragt (so verlangt es <link rel="preload" as="font">).
+  # Nicht erforderlich, solange die Schrift von derselben Origin kommt: CORS
+  # greift nur cross-origin, und Preload wie CSS-Abruf sind beide anonym, der
+  # Cache-Eintrag passt also. Live nachgemessen — ohne diesen Header laedt die
+  # Schrift korrekt und einmal. Steht hier fuer den Fall, dass die Dateien je
+  # von einem anderen Host ausgeliefert werden.
   <FilesMatch "\.woff2$">
     Header set Access-Control-Allow-Origin "*"
   </FilesMatch>
