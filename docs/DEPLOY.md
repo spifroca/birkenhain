@@ -124,9 +124,12 @@ gedacht, nicht als Deployment.
 
 Das lässt sich nicht automatisieren. Eine Pages-Site anzulegen ist eine
 Admin-Operation, und der `GITHUB_TOKEN` eines Workflows hat sie nicht — der
-`permissions`-Block kann Rechte nur einschränken, nie hinzufügen. Der
-Workflow bricht bis dahin mit genau diesem Hinweis ab. Danach läuft er bei
-jedem Push von selbst.
+`permissions`-Block kann Rechte nur einschränken, nie hinzufügen.
+
+Solange Pages aus ist, überspringt der Workflow alles und endet **grün mit
+einer Warnung**. Eine offene Voraussetzung ist kein Build-Fehler und soll am
+Pull Request kein rotes X erzeugen, das keinen Defekt bezeichnet. Nach dem
+Einschalten läuft er bei jedem Push von selbst.
 
 Eigenschaften der Vorschau:
 
