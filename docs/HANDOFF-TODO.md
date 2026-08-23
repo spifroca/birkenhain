@@ -101,11 +101,11 @@ ausgeblendet.
 
 ## 8. Schriften — `public/fonts/`
 
-`npm run fonts` holt Readex Pro 200/300/400/500/600/700 als woff2 von
-Google Fonts und legt sie lokal ab; ausgeliefert wird nur von der eigenen
-Domain. Liefert Google einen variablen Schnitt statt statischer Instanzen,
-warnt das Skript — dann `src/styles/fonts.css` auf eine
-Variable-Font-Regel mit `font-weight: 200 700` umstellen.
+`npm run fonts` holt Readex Pro von Google Fonts und legt es lokal ab;
+ausgeliefert wird nur von der eigenen Domain. Es kommt eine Variable Font,
+die die Achse 200–700 abdeckt — `src/styles/fonts.css` hat entsprechend
+eine einzige `@font-face`-Regel mit `font-weight: 200 700`. Nichts zu tun,
+solange das Skript nicht abbricht.
 
 ## 9. Wohnungsspiegel
 

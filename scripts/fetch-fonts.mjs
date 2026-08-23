@@ -1,12 +1,17 @@
 /**
- * Holt Readex Pro als woff2 nach public/fonts/ — nur die Schnitte
- * 200/300/400/500/600/700, nur der Latin-Subset.
+ * Holt Readex Pro als woff2 nach public/fonts/ — nur der Latin-Subset.
+ *
+ * Readex Pro ist auf Google Fonts eine Variable Font. Die css2-API liefert
+ * auf `wght@200;300;...` sechs @font-face-Bloecke mit diskreten
+ * font-weight-Werten, die aber alle auf dieselbe Datei zeigen. Wer nach
+ * Weight benennt, laedt sechsmal dasselbe herunter — deshalb wird hier nach
+ * URL dedupliziert, nicht nach Dateiname.
  *
  * Einmalig ausfuehren (`npm run fonts`); die Dateien sind per .gitignore aus
- * dem Repo ausgenommen, damit keine Binaries mitwandern. Fuer Deployments,
- * die keinen Netzzugriff im Build haben, die Dateien einmal committen und
- * die .gitignore-Zeile entfernen.
+ * dem Repo ausgenommen. Fuer Deployments ohne Netzzugriff im Build die
+ * Datei einmal committen und die .gitignore-Zeile entfernen.
  */
+import { createHash } from 'node:crypto';
 import { mkdir, writeFile } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -18,56 +23,80 @@ const CSS_URL = `https://fonts.googleapis.com/css2?family=Readex+Pro:wght@${WEIG
 const UA =
   'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36';
 
+/** Nur der Latin-Subset; die uebrigen braucht das Projekt nicht. */
+const LATIN = 'U+0000-00FF';
+
 async function main() {
   await mkdir(OUT_DIR, { recursive: true });
 
   const response = await fetch(CSS_URL, { headers: { 'user-agent': UA } });
-  if (!response.ok) {
-    throw new Error(`Google Fonts antwortete mit ${response.status}`);
-  }
-  const css = await response.text();
+  if (!response.ok) throw new Error(`Google Fonts antwortete mit ${response.status}`);
 
+  const css = await response.text();
   const blocks = css.match(/@font-face\s*\{[^}]*\}/g) ?? [];
   if (blocks.length === 0) throw new Error('Keine @font-face-Regeln in der Antwort gefunden.');
 
-  const seen = new Set();
-  let written = 0;
+  // URL -> welche Weights darauf zeigen.
+  const byUrl = new Map();
 
   for (const block of blocks) {
-    // Nur der Latin-Subset; die uebrigen Subsets braucht das Projekt nicht.
     const range = block.match(/unicode-range:\s*([^;]+);/)?.[1] ?? '';
-    if (range && !range.includes('U+0000-00FF')) continue;
+    if (range && !range.includes(LATIN)) continue;
 
-    const weight = block.match(/font-weight:\s*([^;]+);/)?.[1]?.trim() ?? '';
+    const weight = block.match(/font-weight:\s*([^;]+);/)?.[1]?.trim();
     const url = block.match(/url\((https:[^)]+\.woff2)\)/)?.[1];
-    if (!url) continue;
+    if (!weight || !url) continue;
 
-    if (weight.includes(' ')) {
-      console.warn(
-        `Variabler Schnitt gefunden (font-weight: ${weight}). ` +
-          'In src/styles/fonts.css auf eine Variable-Font-Regel umstellen.',
-      );
-    }
-
-    const name = weight.includes(' ') ? 'variable' : weight;
-    const file = `readex-pro-${name}.woff2`;
-    if (seen.has(file)) continue;
-    seen.add(file);
-
-    const font = await fetch(url, { headers: { 'user-agent': UA } });
-    if (!font.ok) throw new Error(`${file}: HTTP ${font.status}`);
-
-    await writeFile(join(OUT_DIR, file), Buffer.from(await font.arrayBuffer()));
-    console.log(`${file} (${weight})`);
-    written += 1;
+    byUrl.set(url, [...(byUrl.get(url) ?? []), weight]);
   }
 
-  if (written === 0) throw new Error('Keine Schnitte geschrieben.');
+  if (byUrl.size === 0) throw new Error('Keine woff2-URL fuer den Latin-Subset gefunden.');
 
-  const missing = WEIGHTS.filter((weight) => !seen.has(`readex-pro-${weight}.woff2`));
-  if (missing.length > 0 && !seen.has('readex-pro-variable.woff2')) {
-    console.warn(`Fehlende Schnitte: ${missing.join(', ')}`);
+  const variable = byUrl.size === 1;
+
+  if (variable) {
+    const [url, weights] = [...byUrl.entries()][0];
+    const bytes = await download(url);
+    await writeFile(join(OUT_DIR, 'readex-pro-variable.woff2'), bytes);
+
+    console.log(
+      `readex-pro-variable.woff2 — ${format(bytes.length)}, deckt ${weights.join('/')} ab`,
+    );
+    console.log(`sha256 ${createHash('sha256').update(bytes).digest('hex').slice(0, 16)}`);
+    console.log(
+      '\nEine Variable Font fuer alle Schnitte. src/styles/fonts.css erwartet\n' +
+        'genau das: eine @font-face-Regel mit font-weight: 200 700.',
+    );
+    return;
   }
+
+  // Getrennte statische Instanzen: dann passt fonts.css nicht mehr.
+  console.log(`${byUrl.size} unterschiedliche Dateien — statische Instanzen:\n`);
+
+  for (const [url, weights] of byUrl) {
+    const weight = weights[0];
+    const bytes = await download(url);
+    await writeFile(join(OUT_DIR, `readex-pro-${weight}.woff2`), bytes);
+    console.log(`  readex-pro-${weight}.woff2 — ${format(bytes.length)}`);
+  }
+
+  console.error(
+    '\nFEHLER: src/styles/fonts.css ist auf eine Variable Font ausgelegt\n' +
+      '(readex-pro-variable.woff2, font-weight: 200 700). Google liefert jetzt\n' +
+      'statische Instanzen. fonts.css und den Preload in BaseLayout.astro auf\n' +
+      'die oben geschriebenen Dateien umstellen.',
+  );
+  process.exit(1);
+}
+
+async function download(url) {
+  const response = await fetch(url, { headers: { 'user-agent': UA } });
+  if (!response.ok) throw new Error(`${url}: HTTP ${response.status}`);
+  return Buffer.from(await response.arrayBuffer());
+}
+
+function format(bytes) {
+  return `${(bytes / 1024).toFixed(1)} KB`;
 }
 
 main().catch((error) => {

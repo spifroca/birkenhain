@@ -92,7 +92,12 @@ jobs:
       - name: Schnitte prüfen
         run: |
           ls -la public/fonts/
-          for weight in 200 300 400 500 600 700; do
-            test -s "public/fonts/readex-pro-${weight}.woff2" \
-              || echo "::warning::Schnitt ${weight} fehlt"
-          done
+          test -s public/fonts/readex-pro-variable.woff2
+          # Identische Checksummen heissen: dieselbe Datei mehrfach geladen.
+          # Genau das war der Fehler, den diese Prüfung fernhalten soll.
+          dupes=$(sha256sum public/fonts/*.woff2 | awk '{print $1}' | sort | uniq -d)
+          if [ -n "$dupes" ]; then
+            echo "::error::Mehrere woff2-Dateien sind byte-identisch — Deduplizierung im Font-Skript kaputt."
+            sha256sum public/fonts/*.woff2
+            exit 1
+          fi
