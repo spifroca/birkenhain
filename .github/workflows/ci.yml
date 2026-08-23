@@ -69,7 +69,9 @@ jobs:
           test -f dist/index.html
           test -f dist/en/index.html
           test -f dist/robots.txt
+          # Genau die Pfade, auf die ErrorDocument in der .htaccess zeigt.
           test -f dist/404.html
+          test -f dist/en/404/index.html
           test -f dist/.htaccess
           test -f dist/api/anmeldung.php
           test -f dist/api/bestaetigen.php

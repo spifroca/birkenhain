@@ -8,9 +8,12 @@ DirectoryIndex index.html
 ErrorDocument 404 /404.html
 
 # Unter /en/ die englische Variante (Apache 2.4).
+# Astro behandelt nur das oberste 404.astro besonders und legt es als
+# /404.html ab. Das verschachtelte en/404.astro wird eine normale
+# Verzeichnisroute — daher der ausgeschriebene Pfad.
 <IfModule mod_rewrite.c>
   <If "%{REQUEST_URI} =~ m#^/en/#">
-    ErrorDocument 404 /en/404.html
+    ErrorDocument 404 /en/404/index.html
   </If>
 </IfModule>
 
