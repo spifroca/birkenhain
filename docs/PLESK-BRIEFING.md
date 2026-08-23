@@ -233,6 +233,36 @@ echten Adresse wiederholen. Kommt keine Mail, prüfe *Mail* → Logs.
   freigegeben». Das ist gewollt, solange die Inhalte Platzhalter sind. Sie
   verschwindet, wenn die echten Inhalte kommen.
 
+## Aktualisieren, wenn der Code sich geändert hat
+
+Das ist der Normalfall nach der Ersteinrichtung — Datenverzeichnis, Mail und
+SSL bleiben unberührt, nur die Dateien im Webroot werden ersetzt.
+
+1. Neues **dist**-Artefakt vom letzten grünen CI-Lauf holen (siehe oben).
+   Prüfen, dass `fonts/readex-pro-variable.woff2` drin ist.
+2. File Manager, `httpdocs`. **`.htaccess` sichtbar machen** (versteckte
+   Dateien anzeigen).
+3. Die alten Dateien und Ordner in `httpdocs` löschen — **aber nicht**
+   `birkenhain-data/`, das liegt eine Ebene höher und ist nicht betroffen.
+   Falls in `httpdocs` etwas liegt, das nicht aus dem Artefakt kommt (eine
+   `.htpasswd`, eine Plesk-Datei), vorher fragen statt löschen.
+4. ZIP hochladen, extrahieren, ZIP löschen.
+5. Nachprüfen — diese drei Werte zeigen, ob der neue Stand angekommen ist:
+
+```bash
+# muss www enthalten
+curl -s https://www.birkenhain.ch/ | grep -o 'rel="canonical" href="[^"]*"'
+
+# muss 200 sein, nicht 301
+curl -so /dev/null -w '%{http_code}\n' https://www.birkenhain.ch/architektur/
+
+# muss 404 sein, nicht 200
+curl -so /dev/null -w '%{http_code}\n' https://www.birkenhain.ch/api/lib/birkenhain.php
+```
+
+Zeigt der Canonical noch `https://birkenhain.ch/` ohne `www`, liegt noch der
+alte Stand im Webroot.
+
 ## Was du **nicht** tun sollst
 
 - **Keine Inhalte erfinden.** Wo `TODO(handoff)` steht, fehlen echte
