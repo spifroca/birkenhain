@@ -1,17 +1,17 @@
 # Deployment
 
-Cloudflare Pages. Der Astro-Build liefert `dist/`, die Pages Functions aus
-`functions/` werden automatisch unter `/api/` montiert.
+Klassisches PHP-Hosting (Hostpoint, Infomaniak, cyon o. ä.). Der Astro-Build
+liefert statisches HTML, das Anmeldeformular läuft über zwei PHP-Dateien.
+Kein Cloudflare, kein Node auf dem Server, kein Composer.
 
 ## Stand
 
 | Schritt | Status |
 | --- | --- |
-| KV-Namespace `BIRKENHAIN_KV` | angelegt, ID in `wrangler.toml` |
-| Pages-Projekt | offen |
-| Secrets | offen |
-| Custom Domain | offen |
-| Mail-Provider verifiziert | offen |
+| Endpoint auf PHP portiert, 19 Tests grün | erledigt |
+| Hosting-Paket mit PHP 8.1+ und PDO/SQLite | offen |
+| `birkenhain-data/` mit `config.php` anlegen | offen |
+| Domain aufschalten | offen |
 | Inhalte | offen, siehe `HANDOFF-TODO.md` |
 
 Die Site ist bis zur Freigabe für Suchmaschinen gesperrt:
@@ -22,113 +22,135 @@ Schalter für den Launch — nicht vor den echten Inhalten umlegen.
 ## 0. CI
 
 `.github/workflows/ci.yml` läuft bei jedem Push auf `main` und bei jedem
-Pull Request auf GitHubs Runnern — dort ist npm erreichbar. Geprüft werden
-`astro check`, die Endpoint-Typen, die Projektfakten und der Build; das
-Ergebnis liegt als `dist`-Artefakt am Lauf.
+Pull Request: `astro check`, PHP-Syntax, die Endpoint-Tests, die
+Projektfakten und der Build. Das Ergebnis liegt als `dist`-Artefakt am Lauf.
 
 Ein zweiter Job holt die Schriften. Dort trägt nur der Download-Schritt
 `continue-on-error` — Google Fonts ist ein externer Dienst und soll den PR
 nicht blockieren. Die Prüfung danach trägt es bewusst nicht: sie vergleicht
 die Checksummen und macht den Lauf rot, wenn mehrere woff2-Dateien
-byte-identisch sind. Genau das war einmal der Fall (sechs Kopien derselben
-Variable Font), und job-weites `continue-on-error` hätte es wieder
-verschluckt.
+byte-identisch sind.
 
 Solange kein `package-lock.json` im Repo liegt, läuft `npm install` statt
-`npm ci` und der Lauf setzt eine Warnung. Aus demselben Grund ist das
-npm-Caching in `setup-node` deaktiviert: es bricht ohne Lockfile ab.
+`npm ci` und das npm-Caching in `setup-node` ist deaktiviert. Nach dem ersten
+lokalen `npm install` das Lockfile committen; beide Stellen sind im `ci.yml`
+kommentiert.
 
-Nach dem ersten lokalen `npm install` das Lockfile committen. Dann greift
-`npm ci` von selbst, und `cache: npm` kann im Workflow wieder ergänzt
-werden — beides ist im `ci.yml` an der Stelle kommentiert.
+## 1. Anforderungen ans Hosting
 
-## 1. Lokal prüfen
+- PHP 8.1 oder neuer
+- `pdo_sqlite` (auf Schweizer Shared Hosting Standard)
+- Mailversand über den Hoster (`mail()`)
+- Apache mit `.htaccess`, oder nginx — dann die Regeln aus
+  `public/.htaccess` von Hand übertragen
+- Schreibrechte auf ein Verzeichnis **über** dem Webroot
 
-Auf dem eigenen Rechner, in einem Clone des Repos, mit Node aus `.nvmrc`:
+Kein Node, kein Composer, keine Datenbank-Instanz.
 
-Bevor irgendetwas deployed wird:
+## 2. Lokal bauen
 
 ```bash
 npm install
 npm run fonts        # Readex Pro nach public/fonts/
 npm run check        # Astro: Typen und Templates
-npm run check:functions
+npm run check:php    # PHP-Syntax
+npm run test:endpoint # 19 Fälle gegen PHPs eingebauten Server
 npm run check:data   # listet die offenen Werte
-npm run build
-npm run preview
+npm run build        # nach dist/
 ```
 
-## 2. Pages-Projekt anlegen
+`dist/` enthält danach alles: HTML, Assets, `.htaccess`, `404.html`,
+`robots.txt`, `sitemap.xml` und `api/`.
+
+## 3. Datenverzeichnis anlegen
+
+**Eine Ebene über dem Webroot** — dort kommt kein Browser hin:
+
+```
+/home/<user>/
+├── birkenhain-data/          <- hierhin
+│   ├── config.php
+│   ├── anmeldungen.sqlite    (wird beim ersten Request angelegt)
+│   └── mail.log              (nur bei mail_transport = log)
+└── www/                      <- Webroot, hier landet dist/
+```
+
+`docs/config.sample.php` nach `birkenhain-data/config.php` kopieren und
+ausfüllen. Das Secret erzeugen mit:
 
 ```bash
-npx wrangler login
-npx wrangler pages project create birkenhain --production-branch main
+openssl rand -base64 48
 ```
 
-## 3. Secrets setzen
+Der Endpoint verweigert den Dienst, wenn `opt_in_secret` fehlt oder kürzer
+als 32 Zeichen ist — bewusst, damit eine fehlende Konfiguration nicht als
+stiller Fehler durchläuft.
+
+Liegt das Verzeichnis woanders, den Pfad per `BIRKENHAIN_DATA_DIR` setzen
+(in der `.htaccess` mit `SetEnv BIRKENHAIN_DATA_DIR /pfad/dazu`). Ohne
+Angabe sucht der Endpoint `birkenhain-data/` neben dem Webroot.
+
+## 4. Hochladen
+
+Den **Inhalt** von `dist/` ins Webroot, nicht den Ordner selbst. Per SFTP,
+rsync oder Deploy-Tool des Hosters:
 
 ```bash
-openssl rand -base64 48   # Wert für OPT_IN_SECRET, mindestens 32 Zeichen
-
-npx wrangler pages secret put OPT_IN_SECRET  --project-name birkenhain
-npx wrangler pages secret put MAIL_API_KEY   --project-name birkenhain
-npx wrangler pages secret put MAIL_FROM      --project-name birkenhain
-npx wrangler pages secret put MAIL_NOTIFY_TO --project-name birkenhain
+rsync -avz --delete dist/ user@host:~/www/
 ```
 
-Ohne `OPT_IN_SECRET` mit mindestens 32 Zeichen verweigert der Endpoint den
-Dienst — bewusst, damit eine fehlende Konfiguration nicht als stiller
-Fehler durchläuft.
+`--delete` räumt alte Dateien weg. Das Datenverzeichnis liegt aussserhalb
+und bleibt unberührt.
 
-## 4. Erster Deploy
+## 5. Absenderadresse
 
-```bash
-npm run build
-npx wrangler pages deploy dist --project-name birkenhain
-```
+`mail_from` in der `config.php` muss eine Adresse der eigenen Domain sein.
+Dann greifen SPF und DKIM des Hosters und die Bestätigungsmail landet nicht
+im Spam. Eine fremde Absenderdomain funktioniert nicht — ohne bestätigten
+Link wird nichts gespeichert, das Formular wäre also faktisch kaputt.
 
-## 5. Git-Anbindung
+Vor dem Livegang mit `mail_transport => 'log'` testen: dann schreibt der
+Endpoint nach `birkenhain-data/mail.log`, statt zu senden.
 
-Im Dashboard das Repo `spifroca/birkenhain` verbinden, damit Pushes auf
-`main` automatisch deployen.
+## 6. Vor der Freigabe
 
-**Build-Command muss `npm run fonts && npm run build` sein.** Die
-woff2-Dateien sind per `.gitignore` ausgenommen; mit nur `npm run build`
-deployst du eine Site ohne Schriften. Alternative: die Dateien einmal
-committen und die Zeile `public/fonts/*.woff2` aus der `.gitignore`
-entfernen — dann genügt `npm run build`.
-
-- Build-Command: `npm run fonts && npm run build`
-- Output-Verzeichnis: `dist`
-- Node-Version: siehe `.nvmrc`
-
-`nodejs_compat` ist nicht nötig: der Endpoint nutzt nur Fetch, Web Crypto
-und FormData.
-
-## 6. Domain
-
-Custom Domain im Pages-Projekt hinterlegen, DNS bei Cloudflare. Weicht die
-Domain von `im-birkenhain.ch` ab, `site` in `astro.config.mjs` anpassen —
-Canonical, `hreflang` und Sitemap hängen daran.
-
-## 7. Vor der Freigabe
-
-Solange Platzhalter ausgeliefert werden, zusätzlich zum `noindex` die
-Vorschau schützen: Cloudflare Access mit Passwort vor das Projekt legen.
+Solange Platzhalter ausgeliefert werden, die Vorschau zusätzlich zum
+`noindex` mit einem Passwort schützen (`.htpasswd` beim Hoster).
 `robots.txt` hält Suchmaschinen fern, aber nicht Menschen mit dem Link.
 
 ## Launch-Checkliste
 
 - [ ] `HANDOFF-TODO.md` abgearbeitet, `npm run check:data` ohne offene Punkte
 - [ ] Impressum und Datenschutzerklärung juristisch geprüft und eingesetzt
-- [ ] Absenderdomain beim Mail-Provider verifiziert (SPF/DKIM)
+- [ ] `config.php` liegt über dem Webroot und ist nicht per URL erreichbar
+- [ ] `mail_transport` auf `mail`, Absenderadresse der eigenen Domain
 - [ ] Anmeldung einmal echt durchgespielt: Formular, Mail, Bestätigungslink,
       interne Benachrichtigung
 - [ ] Formular ohne JavaScript getestet (Redirect auf die Statusseite)
-- [ ] Rate-Limit greift (mehr als 5 Versuche pro Stunde)
+- [ ] Rate-Limit greift (mehr als 10 Versuche pro Stunde)
+- [ ] `anmeldungen.sqlite` nicht per URL erreichbar
 - [ ] Karte lädt erst nach Klick, im Netzwerk-Tab vorher kein OSM-Request
 - [ ] Tastatur-Durchgang: Skip-Link, Navigation, Situationsplan, Lightbox
 - [ ] Lighthouse und axe auf `/` und `/anmeldung`
 - [ ] `features.indexable` auf `true`, Deploy, `robots.txt` und
       `sitemap.xml` im Browser prüfen
-- [ ] Cloudflare Access entfernen
+- [ ] Passwortschutz entfernen
+
+## Anmeldungen auslesen
+
+SQLite, eine Datei. Als CSV exportieren:
+
+```bash
+sqlite3 -header -csv birkenhain-data/anmeldungen.sqlite \
+  "SELECT json_extract(payload,'\$.firstName') AS vorname,
+          json_extract(payload,'\$.lastName')  AS nachname,
+          json_extract(payload,'\$.email')     AS email,
+          json_extract(payload,'\$.phone')     AS telefon,
+          json_extract(payload,'\$.rooms')     AS zimmer,
+          json_extract(payload,'\$.moveIn')    AS bezug,
+          datetime(confirmed_at,'unixepoch')   AS bestaetigt_am
+     FROM signups ORDER BY confirmed_at;" > anmeldungen.csv
+```
+
+In `signups` stehen nur bestätigte Anmeldungen. `pending` enthält
+unbestätigte, die nach sieben Tagen von selbst verschwinden.

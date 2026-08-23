@@ -1,0 +1,72 @@
+---
+import Icon from '../Icon.astro';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import { pathFor, type Locale } from '../../i18n/routes';
+import { useTranslations } from '../../i18n/ui';
+
+/**
+ * 404. Auf klassischem Hosting liefert Apache diese Datei über
+ * `ErrorDocument 404` aus (siehe public/.htaccess) — sie muss deshalb als
+ * `/404.html` im Webroot landen, nicht als `/404/index.html`.
+ */
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+<BaseLayout
+  page="home"
+  locale={locale}
+  title={`${t('notFound.title')} — ${t('site.name')}`}
+  description={t('notFound.body')}
+  noindex
+>
+  <section class="nf container">
+    <p class="eyebrow">404</p>
+    <h1>{t('notFound.title')}</h1>
+    <p class="nf__body">{t('notFound.body')}</p>
+    <a class="nf__link" href={pathFor('home', locale)}>
+      {t('nav.home')}
+      <Icon name="arrow-right" />
+    </a>
+  </section>
+</BaseLayout>
+
+<style>
+  .nf {
+    padding-block: var(--space-2xl) var(--space-3xl);
+  }
+
+  .nf .eyebrow {
+    display: block;
+    margin-bottom: var(--space-s);
+  }
+
+  .nf__body {
+    padding-top: var(--space-m);
+    max-width: var(--container-text);
+    font-size: var(--fs-lead);
+    font-weight: var(--fw-extralight);
+    line-height: 1.45;
+  }
+
+  .nf__link {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2xs);
+    margin-top: var(--space-l);
+    padding: var(--space-2xs) var(--space-m);
+    border: var(--border-width) solid var(--c-text);
+    font-size: var(--fs-small);
+    font-weight: var(--fw-medium);
+    text-decoration: none;
+  }
+
+  .nf__link:hover {
+    background: var(--c-text);
+    color: var(--c-text-inverse);
+  }
+</style>

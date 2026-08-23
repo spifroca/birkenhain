@@ -13,7 +13,7 @@ const t = useTranslations(locale);
 const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
 ---
 
-<form class="form" action="/api/anmeldung" method="post" data-form novalidate>
+<form class="form" action="/api/anmeldung.php" method="post" data-form novalidate>
   <input type="hidden" name="locale" value={locale} />
   {/* Honeypot: fuer Menschen unsichtbar und aus dem Tab-Fluss genommen.
       Ist das Feld gefuellt, verwirft der Endpoint die Anfrage. */}

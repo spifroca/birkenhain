@@ -214,5 +214,9 @@
       "cookies": "No cookies, no tracking, no analytics tools, no ad networks.",
       "fonts": "Fonts are served from our own domain, not from a third-party CDN."
     }
+  },
+  "notFound": {
+    "title": "Page not found",
+    "body": "This page does not exist — it may have moved, or the link is incomplete."
   }
 }

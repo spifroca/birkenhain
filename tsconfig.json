@@ -1,11 +1,7 @@
 {
   "extends": "astro/tsconfigs/strict",
   "include": [".astro/types.d.ts", "**/*.ts", "**/*.astro", "**/*.mjs"],
-  // functions/ laeuft in der Workers-Runtime und bringt eigene Globals
-  // (PagesFunction, KVNamespace) ueber functions/tsconfig.json mit. Unter
-  // dieser Config waeren die nicht geladen — geprueft wird es von
-  // `npm run check:functions`.
-  "exclude": ["dist", "functions"],
+  "exclude": ["dist"],
   "compilerOptions": {
     "strictNullChecks": true,
     "noUncheckedIndexedAccess": true,

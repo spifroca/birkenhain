@@ -214,5 +214,9 @@
       "cookies": "Keine Cookies, kein Tracking, keine Analyse-Werkzeuge, keine Werbenetzwerke.",
       "fonts": "Schriften werden von der eigenen Domain ausgeliefert, nicht von einem Fremd-CDN."
     }
+  },
+  "notFound": {
+    "title": "Seite nicht gefunden",
+    "body": "Diese Seite gibt es nicht — vielleicht wurde sie verschoben oder der Link ist unvollständig."
   }
 }

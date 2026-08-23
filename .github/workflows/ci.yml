@@ -46,8 +46,14 @@ jobs:
       - name: Astro check
         run: npm run check
 
-      - name: Endpoint-Typen
-        run: npm run check:functions
+      - name: Endpoint-Syntax
+        run: npm run check:php
+
+      # Der Endpoint ist der einzige Teil mit echter Logik. 19 Fälle gegen
+      # PHPs eingebauten Server: Validierung, Honeypot, Double-Opt-In,
+      # Replay-Schutz, gefälschte Signatur, Rate-Limit, Locale-Zuordnung.
+      - name: Endpoint-Verhalten
+        run: npm run test:endpoint
 
       # Prüft die zugesagten Projektfakten: 278 Mietwohnungen, 17 Baubereiche,
       # 3–8 Vollgeschosse, autofrei, keine Mietpreise, kein Vermietungsstart.
@@ -63,6 +69,10 @@ jobs:
           test -f dist/index.html
           test -f dist/en/index.html
           test -f dist/robots.txt
+          test -f dist/404.html
+          test -f dist/.htaccess
+          test -f dist/api/anmeldung.php
+          test -f dist/api/bestaetigen.php
           echo "Erzeugte Seiten:"
           find dist -name '*.html' | sort
 
