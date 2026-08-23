@@ -118,7 +118,10 @@ Endpoint nach `birkenhain-data/mail.log`, statt zu senden.
 Vorschau auf `https://<owner>.github.io/birkenhain/`. Sie ist zum Anschauen
 gedacht, nicht als Deployment.
 
-**Einmalig einzuschalten, und zwar von Hand:**
+Adresse: **https://spifroca.github.io/birkenhain/**
+
+**Einmalig einzuschalten, und zwar von Hand** (für dieses Repo bereits
+erledigt; für einen Fork oder ein neues Repo erneut nötig):
 
 > Settings → Pages → Build and deployment → Source: **GitHub Actions**
 
