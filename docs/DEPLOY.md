@@ -116,7 +116,19 @@ Endpoint nach `birkenhain-data/mail.log`, statt zu senden.
 
 `.github/workflows/pages.yml` veröffentlicht bei jedem Push eine statische
 Vorschau auf `https://<owner>.github.io/birkenhain/`. Sie ist zum Anschauen
-gedacht, nicht als Deployment:
+gedacht, nicht als Deployment.
+
+**Einmalig einzuschalten, und zwar von Hand:**
+
+> Settings → Pages → Build and deployment → Source: **GitHub Actions**
+
+Das lässt sich nicht automatisieren. Eine Pages-Site anzulegen ist eine
+Admin-Operation, und der `GITHUB_TOKEN` eines Workflows hat sie nicht — der
+`permissions`-Block kann Rechte nur einschränken, nie hinzufügen. Der
+Workflow bricht bis dahin mit genau diesem Hinweis ab. Danach läuft er bei
+jedem Push von selbst.
+
+Eigenschaften der Vorschau:
 
 - Kein PHP, das Anmeldeformular kann dort nicht absenden. Der Knopf ist
   gesperrt und die Vorschau-Leiste sagt es.

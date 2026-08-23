@@ -35,14 +35,31 @@ jobs:
         with:
           node-version-file: .nvmrc
 
-      # enablement: true schaltet Pages beim ersten Lauf selbst ein und
-      # liefert Origin und Basispfad als Outputs — beides wird unten in den
-      # Build gegeben, statt es hier zu verdrahten.
+      # Kein enablement: true. Pages per API anzulegen ist eine
+      # Admin-Operation, die der GITHUB_TOKEN eines Workflows nicht darf —
+      # der permissions-Block kann Rechte nur einschraenken, nie hinzufuegen.
+      # Pages muss einmal von Hand eingeschaltet werden:
+      #   Settings -> Pages -> Build and deployment -> Source: GitHub Actions
+      # Danach laeuft dieser Workflow ohne weiteres Zutun.
+      #
+      # Die Action liefert Origin und Basispfad als Outputs; beides geht unten
+      # in den Build, statt hier verdrahtet zu werden.
       - name: Pages einrichten
         id: pages
+        continue-on-error: true
         uses: actions/configure-pages@v5
-        with:
-          enablement: true
+
+      # Ohne diesen Schritt scheitert der Lauf mit "Get Pages site failed:
+      # Not Found" — richtig, aber nicht handlungsleitend.
+      - name: Voraussetzung prüfen
+        if: steps.pages.outcome != 'success'
+        run: |
+          echo "::error title=GitHub Pages ist nicht eingeschaltet::\
+          Einmalig setzen: Settings -> Pages -> Build and deployment -> \
+          Source: GitHub Actions. Danach diesen Workflow erneut starten \
+          (Actions -> Vorschau -> Run workflow). Ein Workflow-Token darf \
+          Pages nicht selbst anlegen."
+          exit 1
 
       - name: Abhängigkeiten
         run: npm install --no-audit --no-fund
