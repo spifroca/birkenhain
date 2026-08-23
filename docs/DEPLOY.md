@@ -19,7 +19,22 @@ Die Site ist bis zur Freigabe für Suchmaschinen gesperrt:
 `robots.txt` ein `Disallow: /` und jede Seite ein `noindex`. Das ist der
 Schalter für den Launch — nicht vor den echten Inhalten umlegen.
 
+## 0. CI
+
+`.github/workflows/ci.yml` läuft bei jedem Push auf `main` und bei jedem
+Pull Request auf GitHubs Runnern — dort ist npm erreichbar. Geprüft werden
+`astro check`, die Endpoint-Typen, die Projektfakten und der Build; das
+Ergebnis liegt als `dist`-Artefakt am Lauf. Ein zweiter, nicht blockierender
+Job holt die Schriften, damit ein Bruch im Font-Skript sichtbar wird, ohne
+den PR rot zu färben.
+
+Solange kein `package-lock.json` im Repo liegt, läuft `npm install` statt
+`npm ci` und der Lauf setzt eine Warnung. Nach dem ersten lokalen
+`npm install` das Lockfile committen — dann ist der Build reproduzierbar.
+
 ## 1. Lokal prüfen
+
+Auf dem eigenen Rechner, in einem Clone des Repos, mit Node aus `.nvmrc`:
 
 Bevor irgendetwas deployed wird:
 

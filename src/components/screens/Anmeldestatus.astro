@@ -11,7 +11,7 @@ import { useTranslations } from '../../i18n/ui';
  * im static output steht `Astro.url.searchParams` zur Buildzeit nicht
  * zur Verfuegung.
  */
-export type StatusKind = 'sent' | 'confirmed' | 'confirm-failed' | 'error' | 'rate-limit';
+type StatusKind = 'sent' | 'confirmed' | 'confirm-failed' | 'error' | 'rate-limit';
 
 interface Props {
   locale: Locale;

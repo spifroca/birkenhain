@@ -1,0 +1,96 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# Ein überholter Lauf auf demselben Branch wird abgebrochen.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Typen, Daten, Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+          cache: npm
+
+      # `npm ci` braucht ein Lockfile. Solange keines committet ist, greift
+      # `npm install` — sonst wäre der erste Lauf rot, ohne dass etwas kaputt
+      # ist. Sobald package-lock.json im Repo liegt, gilt automatisch der
+      # reproduzierbare Pfad.
+      - name: Abhängigkeiten
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            echo "::warning::Kein package-lock.json im Repo — es läuft 'npm install' statt 'npm ci'. Lockfile committen für reproduzierbare Builds."
+            npm install --no-audit --no-fund
+          fi
+
+      # Erzeugt .astro/types.d.ts für die Content-Collections; ohne das
+      # kennt astro check die Typen der Datenfiles nicht.
+      - name: Astro sync
+        run: npx astro sync
+
+      - name: Astro check
+        run: npm run check
+
+      - name: Endpoint-Typen
+        run: npm run check:functions
+
+      # Prüft die zugesagten Projektfakten: 278 Mietwohnungen, 17 Baubereiche,
+      # 3–8 Vollgeschosse, autofrei, keine Mietpreise, kein Vermietungsstart.
+      # Bricht ab, wenn eine davon verletzt wird.
+      - name: Projektfakten
+        run: npm run check:data
+
+      - name: Build
+        run: npm run build
+
+      - name: Ausgabe prüfen
+        run: |
+          test -f dist/index.html
+          test -f dist/en/index.html
+          test -f dist/robots.txt
+          echo "Erzeugte Seiten:"
+          find dist -name '*.html' | sort
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+
+  fonts:
+    name: Schriften abrufbar
+    runs-on: ubuntu-latest
+    # Google Fonts ist ein externer Dienst — ein Ausfall dort soll den PR
+    # nicht blockieren, aber sichtbar sein.
+    continue-on-error: true
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Readex Pro holen
+        run: node scripts/fetch-fonts.mjs
+
+      - name: Schnitte prüfen
+        run: |
+          ls -la public/fonts/
+          for weight in 200 300 400 500 600 700; do
+            test -s "public/fonts/readex-pro-${weight}.woff2" \
+              || echo "::warning::Schnitt ${weight} fehlt"
+          done

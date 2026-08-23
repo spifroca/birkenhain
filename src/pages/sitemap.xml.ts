@@ -11,14 +11,30 @@ import { features } from '../lib/flags';
  * Zwischenstationen und tragen `noindex`.
  */
 export const GET: APIRoute = ({ site }) => {
-  // Ohne Freigabe keine Sitemap-Einträge: die Site ist per robots.txt gesperrt.
-  if (!features.indexable || !site) {
-    return new Response('', { status: 404 });
-  }
+  // Ohne Freigabe eine gültige, aber leere Sitemap. Ein Statuscode liesse
+  // sich im static output nicht ausdrücken — eine 404-Antwort würde hier zu
+  // einer leeren Datei, die als 200 ausgeliefert wird und kein valides XML
+  // ist. Verlinkt wird sie in diesem Zustand ohnehin nicht: robots.txt
+  // sperrt die Site.
+  const entries = !features.indexable || !site ? [] : buildEntries(site);
 
+  const xml = [
+    '<?xml version="1.0" encoding="UTF-8"?>',
+    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
+    '        xmlns:xhtml="http://www.w3.org/1999/xhtml">',
+    ...entries,
+    '</urlset>',
+  ].join('\n');
+
+  return new Response(xml + '\n', {
+    headers: { 'content-type': 'application/xml; charset=utf-8' },
+  });
+};
+
+function buildEntries(site: URL): string[] {
   const url = (path: string) => new URL(path, site).href;
 
-  const entries = PAGES.flatMap((page) =>
+  return PAGES.flatMap((page) =>
     LOCALES.map((locale) => {
       const alternates = LOCALES.map(
         (other) =>
@@ -34,16 +50,4 @@ export const GET: APIRoute = ({ site }) => {
       ].join('\n');
     }),
   );
-
-  const xml = [
-    '<?xml version="1.0" encoding="UTF-8"?>',
-    '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"',
-    '        xmlns:xhtml="http://www.w3.org/1999/xhtml">',
-    ...entries,
-    '</urlset>',
-  ].join('\n');
-
-  return new Response(xml + '\n', {
-    headers: { 'content-type': 'application/xml; charset=utf-8' },
-  });
-};
+}
