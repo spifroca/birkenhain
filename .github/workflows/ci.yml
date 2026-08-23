@@ -18,14 +18,16 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      # Kein `cache: npm`: setup-node bricht ohne Lockfile ab, und zwar
+      # bevor der Fallback unten greift. Sobald package-lock.json im Repo
+      # liegt, `cache: npm` hier wieder ergaenzen — dann spart es Zeit.
       - uses: actions/setup-node@v4
         with:
           node-version-file: .nvmrc
-          cache: npm
 
-      # `npm ci` braucht ein Lockfile. Solange keines committet ist, greift
-      # `npm install` — sonst wäre der erste Lauf rot, ohne dass etwas kaputt
-      # ist. Sobald package-lock.json im Repo liegt, gilt automatisch der
+      # `npm ci` braucht ebenfalls ein Lockfile. Solange keines committet
+      # ist, greift `npm install` — sonst wäre der erste Lauf rot, ohne dass
+      # etwas kaputt ist. Sobald das Lockfile da ist, gilt automatisch der
       # reproduzierbare Pfad.
       - name: Abhängigkeiten
         run: |

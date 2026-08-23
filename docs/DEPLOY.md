@@ -29,8 +29,12 @@ Job holt die Schriften, damit ein Bruch im Font-Skript sichtbar wird, ohne
 den PR rot zu färben.
 
 Solange kein `package-lock.json` im Repo liegt, läuft `npm install` statt
-`npm ci` und der Lauf setzt eine Warnung. Nach dem ersten lokalen
-`npm install` das Lockfile committen — dann ist der Build reproduzierbar.
+`npm ci` und der Lauf setzt eine Warnung. Aus demselben Grund ist das
+npm-Caching in `setup-node` deaktiviert: es bricht ohne Lockfile ab.
+
+Nach dem ersten lokalen `npm install` das Lockfile committen. Dann greift
+`npm ci` von selbst, und `cache: npm` kann im Workflow wieder ergänzt
+werden — beides ist im `ci.yml` an der Stelle kommentiert.
 
 ## 1. Lokal prüfen
 
