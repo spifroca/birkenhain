@@ -68,7 +68,10 @@ export function pathFor(page: PageId, locale: Locale): string {
   const slug = SLUGS[page][locale];
   const prefix = locale === DEFAULT_LOCALE ? '' : `/${locale}`;
   if (slug === '') return withBase(prefix === '' ? '/' : `${prefix}/`);
-  return withBase(`${prefix}/${slug}`);
+  // Mit Slash: der Build legt Verzeichnisse an, und der Server leitet eine
+  // Adresse ohne Slash per 301 dorthin um. Ohne den Slash kostete jeder
+  // interne Klick einen zusaetzlichen Roundtrip.
+  return withBase(`${prefix}/${slug}/`);
 }
 
 /** Locale aus einem URL-Pfad lesen, Basispfad wird uebersprungen. */

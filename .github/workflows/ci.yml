@@ -175,16 +175,16 @@ jobs:
           # Navigation, Schrift-Stylesheet, Preload und Formular müssen den
           # Basispfad tragen — das sind die vier Stellen, die vorher absolut
           # verdrahtet waren.
-          grep -q 'href="/unterpfad/architektur"' dist/index.html \
-            || fail "Navigation ohne Basispfad"
+          grep -q 'href="/unterpfad/architektur/"' dist/index.html \
+            || fail "Navigation ohne Basispfad oder ohne Slash"
           grep -q 'href="/unterpfad/fonts/readex-pro.css"' dist/index.html \
             || fail "Schrift-Stylesheet ohne Basispfad"
           grep -q 'href="/unterpfad/fonts/readex-pro-variable.woff2"' dist/index.html \
             || fail "Font-Preload ohne Basispfad"
           grep -q 'action="/unterpfad/api/anmeldung.php"' dist/anmeldung/index.html \
             || fail "Formular-Action ohne Basispfad"
-          grep -q 'href="/unterpfad/en/architecture"' dist/en/index.html \
-            || fail "Sprachumschalter ohne Basispfad"
+          grep -q 'href="/unterpfad/en/architecture/"' dist/en/index.html \
+            || fail "Sprachumschalter ohne Basispfad oder ohne Slash"
 
           # Die @font-face-URL muss geschwister-relativ bleiben, sonst zeigt
           # sie unter einem Unterpfad ins Leere.
@@ -194,7 +194,7 @@ jobs:
           # Kein absoluter Rest-Pfad in der Navigation. Als if geschrieben,
           # weil `grep -q X && fail` von der set-e-Semantik fuer AND-Listen
           # abhaengt — sie greift hier, aber lesbar ist das nicht.
-          if grep -q 'href="/architektur"' dist/index.html; then
+          if grep -qE 'href="/architektur/?"' dist/index.html; then
             fail "absoluter Pfad ohne Basispfad übrig geblieben"
           fi
 

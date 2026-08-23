@@ -13,6 +13,10 @@
 
 declare(strict_types=1);
 
+// Markiert diese Datei als legitimen Einstiegspunkt; lib/ verweigert
+// den Dienst ohne diese Konstante.
+define('BIRKENHAIN_ENTRY', true);
+
 require __DIR__ . '/lib/birkenhain.php';
 
 if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {

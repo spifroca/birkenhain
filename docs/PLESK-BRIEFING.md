@@ -92,10 +92,18 @@ Security-Header und die Fehlerseiten nicht.
 
 *Apache & nginx Einstellungen* der Domain:
 
-- Ist **«Smart statische Dateien bearbeiten»** (nginx serviert statisch)
-  aktiv, schalte es **aus**, damit Apache und damit `.htaccess` greift.
-- Alternativ, wenn nginx bleiben soll: melde es zurück. Die Regeln müssen
-  dann als nginx-Direktiven übertragen werden, das ist kein Ein-Klick-Schritt.
+**Auf birkenhain.ch ist das nachgemessen der Fall:** die Antwort trägt
+`server: nginx` und keinen einzigen Security-Header. `.htaccess` wird also
+ignoriert.
+
+Zwei Wege:
+
+- **Empfohlen:** die fertigen nginx-Direktiven aus
+  [`PLESK-NGINX.md`](PLESK-NGINX.md) in *Apache & nginx Einstellungen* →
+  *Zusätzliche nginx-Direktiven* einfügen. Deckt Security-Header, HSTS,
+  Caching, Fehlerseite und die Sperren ab.
+- Alternativ **«Smart statische Dateien bearbeiten»** ausschalten, dann
+  bedient Apache und `.htaccess` greift. Kostet etwas Performance.
 
 Ohne diesen Punkt läuft die Seite, aber ohne Header, Caching und mit
 Apaches Standard-Fehlerseiten statt der Projekt-404.

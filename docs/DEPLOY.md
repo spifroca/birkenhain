@@ -41,8 +41,9 @@ kommentiert.
 - PHP 8.1 oder neuer
 - `pdo_sqlite` (auf Schweizer Shared Hosting Standard)
 - Mailversand über den Hoster (`mail()`)
-- Apache mit `.htaccess`, oder nginx — dann die Regeln aus
-  `public/.htaccess` von Hand übertragen
+- Apache mit `.htaccess`, oder nginx — dann die fertigen Direktiven aus
+  [`PLESK-NGINX.md`](PLESK-NGINX.md) einsetzen. Auf birkenhain.ch ist
+  nginx davor, `.htaccess` wird dort ignoriert (nachgemessen)
 - Schreibrechte auf ein Verzeichnis **über** dem Webroot
 
 Kein Node, kein Composer, keine Datenbank-Instanz.

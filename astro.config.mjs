@@ -10,19 +10,23 @@ import { defineConfig } from 'astro/config';
  * Produktionsstand heraus — ein `npm run build` ohne Umgebung ist also
  * immer das Richtige.
  *
- * TODO(domain): birkenhain.ch ist aus der Repo-Beschreibung und der
- * DNS-Auflösung erschlossen, nicht bestaetigt. im-birkenhain.ch loest
- * nicht auf. Bitte pruefen — davon haengen Canonical, hreflang, Sitemap
- * und der Double-Opt-In-Link ab.
+ * Die Domain ist www.birkenhain.ch — live nachgemessen: birkenhain.ch
+ * antwortet 301 auf https://www.birkenhain.ch/. Der Canonical muss auf die
+ * Adresse zeigen, die tatsaechlich 200 liefert, sonst verweist er auf eine
+ * Weiterleitung.
  */
-const SITE = process.env.SITE_ORIGIN || 'https://birkenhain.ch';
+const SITE = process.env.SITE_ORIGIN || 'https://www.birkenhain.ch';
 const BASE = process.env.SITE_BASE || '/';
 
 export default defineConfig({
   site: SITE,
   base: BASE,
   output: 'static',
-  trailingSlash: 'ignore',
+  // Der Build erzeugt Verzeichnisse (architektur/index.html), und Apache wie
+  // nginx leiten /architektur per 301 auf /architektur/ um. Ohne 'always'
+  // erzeugte pathFor() Links ohne Slash — jeder Klick kostete dann einen
+  // Redirect-Umweg. Live nachgemessen, nicht vermutet.
+  trailingSlash: 'always',
 
   i18n: {
     locales: ['de', 'en'],

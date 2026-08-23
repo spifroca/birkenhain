@@ -13,6 +13,16 @@
 
 declare(strict_types=1);
 
+/**
+ * Nur per include erreichbar. Die .htaccess daneben hilft nur unter Apache —
+ * sitzt nginx davor, wird sie ignoriert und die Datei ist direkt aufrufbar
+ * (live nachgemessen: 200). Diese Sperre gilt unabhaengig vom Server.
+ */
+if (!defined('BIRKENHAIN_ENTRY')) {
+    http_response_code(404);
+    exit;
+}
+
 const PENDING_TTL = 60 * 60 * 24 * 7;   // Sieben Tage bis der Link verfällt.
 const RATE_WINDOW = 3600;
 // Pro IP grosszuegiger: mehrere Interessenten koennen hinter demselben NAT
