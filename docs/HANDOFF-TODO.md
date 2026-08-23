@@ -109,6 +109,21 @@ gerendert.
 Je Position: `thema` (DE/EN), `kennwert`, `einheit`, `erlaeuterung`
 (DE/EN), `icon` (Lucide-Name, kebab-case), `order`.
 
+## 6a. Domain bestätigen
+
+`astro.config.mjs` (`site`) und `docs/config.sample.php` (`site_origin`,
+`mail_from`) stehen auf **`birkenhain.ch`**. Das ist erschlossen, nicht
+bestätigt:
+
+- die Repo-Beschreibung lautet `birkenhain.ch`
+- `birkenhain.ch` löst auf DNS auf, `im-birkenhain.ch` gar nicht
+
+Warum es zählt: aus `site_origin` baut der Endpoint den
+Double-Opt-In-Link. Steht dort die falsche Domain, zeigen die
+Bestätigungsmails ins Leere — und weil ohne Bestätigung nichts gespeichert
+wird, ist die Anmeldung dann faktisch kaputt, ohne dass es auffällt.
+`site` bestimmt zusätzlich Canonical, `hreflang` und die Sitemap.
+
 ## 7. Standort — `src/data/projekt.json`
 
 `koordinaten.lat` und `koordinaten.lng` setzen, sonst bleibt die Karte

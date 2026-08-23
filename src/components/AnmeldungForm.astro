@@ -1,7 +1,8 @@
 ---
 import Icon from './Icon.astro';
 import { useTranslations } from '../i18n/ui';
-import type { Locale } from '../i18n/routes';
+import { withBase, type Locale } from '../i18n/routes';
+import { features } from '../lib/flags';
 
 interface Props {
   locale: Locale;
@@ -13,7 +14,7 @@ const t = useTranslations(locale);
 const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
 ---
 
-<form class="form" action="/api/anmeldung.php" method="post" data-form novalidate>
+<form class="form" action={withBase("/api/anmeldung.php")} method="post" data-form novalidate>
   <input type="hidden" name="locale" value={locale} />
   {/* Honeypot: fuer Menschen unsichtbar und aus dem Tab-Fluss genommen.
       Ist das Feld gefuellt, verwirft der Endpoint die Anfrage. */}
@@ -124,7 +125,9 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
   </fieldset>
 
   <div class="form__actions">
-    <button class="form__submit" type="submit" data-submit>
+    {/* In einer statischen Vorschau gibt es keinen PHP-Endpoint. Absenden
+        wuerde auf eine 404 laufen, also ist der Knopf dort gesperrt. */}
+    <button class="form__submit" type="submit" data-submit disabled={features.staticPreview}>
       <span data-submit-idle>{t('anmeldung.submit')}</span>
       <span data-submit-busy hidden>{t('anmeldung.submitting')}</span>
       <Icon name="arrow-right" />
@@ -291,6 +294,12 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
 
   .form__submit[disabled] {
     opacity: 0.6;
+    cursor: not-allowed;
+  }
+
+  /* Waehrend des Sendens ist der Knopf ebenfalls disabled — dort passt
+     der Warte-Cursor. */
+  .form__submit[disabled]:has([data-submit-busy]:not([hidden])) {
     cursor: progress;
   }
 

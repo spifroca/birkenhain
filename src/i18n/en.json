@@ -218,5 +218,10 @@
   "notFound": {
     "title": "Page not found",
     "body": "This page does not exist — it may have moved, or the link is incomplete."
+  },
+  "preview": {
+    "label": "Preview",
+    "body": "This site is not released yet. Text, figures and images are provisional.",
+    "noForm": "The registration form is inactive in this preview."
   }
 }

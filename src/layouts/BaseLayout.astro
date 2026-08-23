@@ -3,7 +3,8 @@ import '../styles/base.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import StickyBar from '../components/StickyBar.astro';
-import { type Locale, type PageId } from '../i18n/routes';
+import VorschauHinweis from '../components/VorschauHinweis.astro';
+import { withBase, type Locale, type PageId } from '../i18n/routes';
 import { useTranslations } from '../i18n/ui';
 import { buildSeo } from '../lib/seo';
 import { features } from '../lib/flags';
@@ -25,6 +26,10 @@ const t = useTranslations(locale);
 const seo = buildSeo({ page, locale, title, description, site: Astro.site ?? Astro.url });
 
 // Eine Variable Font deckt alle Schnitte ab — ein Preload genuegt.
+// Die @font-face-Regel liegt in public/, damit ihre URL geschwister-relativ
+// sein kann und unter jedem Basispfad stimmt.
+const fontFile = withBase('/fonts/readex-pro-variable.woff2');
+const fontCss = withBase('/fonts/readex-pro.css');
 ---
 
 <!doctype html>
@@ -44,19 +49,15 @@ const seo = buildSeo({ page, locale, title, description, site: Astro.site ?? Ast
     <meta property="og:url" content={seo.canonical} />
     <meta property="og:locale" content={seo.ogLocale} />
 
-    <link
-      rel="preload"
-      href="/fonts/readex-pro-variable.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin="anonymous"
-    />
+    <link rel="preload" href={fontFile} as="font" type="font/woff2" crossorigin="anonymous" />
+    <link rel="stylesheet" href={fontCss} />
 
     <meta name="robots" content={blockIndex ? 'noindex, follow' : 'index, follow'} />
   </head>
 
   <body>
     <a class="skip-link" href="#main">{t('common.skipLink')}</a>
+    <VorschauHinweis locale={locale} />
     <SiteHeader page={page} locale={locale} />
 
     <main id="main">

@@ -1,0 +1,26 @@
+/* Readex Pro, selbst gehostet.
+ *
+ * Liegt in public/ und nicht in src/styles/, damit die URL unten
+ * geschwister-relativ bleiben kann: diese Datei und die woff2 liegen im
+ * selben Verzeichnis, also stimmt der Verweis unabhaengig davon, ob die
+ * Site im Webroot oder unter einem Unterpfad laeuft. Eine absolute URL
+ * wuerde unter einem Unterpfad ins Leere zeigen, und CSS kann den
+ * Basispfad nicht selbst kennen.
+ *
+ * Google Fonts liefert die Familie als Variable Font: eine Datei deckt die
+ * Achse 200–700 ab. Sechs Regeln nach Weight wuerden sechsmal dieselbe
+ * Datei laden — deshalb eine Regel mit einer Weight-Range.
+ *
+ * Die woff2 liegt nicht im Repo, `npm run fonts` holt sie hierher.
+ */
+
+@font-face {
+  font-family: 'Readex Pro';
+  font-style: normal;
+  font-weight: 200 700;
+  font-display: swap;
+  src: url('readex-pro-variable.woff2') format('woff2-variations');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+    U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193,
+    U+2212, U+2215, U+FEFF, U+FFFD;
+}

@@ -112,6 +112,25 @@ Link wird nichts gespeichert, das Formular wäre also faktisch kaputt.
 Vor dem Livegang mit `mail_transport => 'log'` testen: dann schreibt der
 Endpoint nach `birkenhain-data/mail.log`, statt zu senden.
 
+## 5a. Vorschau auf GitHub Pages
+
+`.github/workflows/pages.yml` veröffentlicht bei jedem Push eine statische
+Vorschau auf `https://<owner>.github.io/birkenhain/`. Sie ist zum Anschauen
+gedacht, nicht als Deployment:
+
+- Kein PHP, das Anmeldeformular kann dort nicht absenden. Der Knopf ist
+  gesperrt und die Vorschau-Leiste sagt es.
+- Läuft unter einem Unterpfad. `astro.config.mjs` nimmt `SITE_BASE` und
+  `SITE_ORIGIN` aus der Umgebung; ohne gesetzte Variablen kommt der
+  Produktionsstand heraus.
+- `robots.txt` und `noindex` gelten dort genauso, solange
+  `features.indexable` false ist. Das Repo ist öffentlich — wer die URL
+  kennt, kommt hin.
+
+Der Workflow prüft nach dem Build, dass Navigation, Schrift-Stylesheet und
+Formular-Action den Basispfad tragen. Ohne diese Prüfung fiele eine kaputte
+Vorschau erst beim Klicken auf.
+
 ## 6. Vor der Freigabe
 
 Solange Platzhalter ausgeliefert werden, die Vorschau zusätzlich zum
@@ -122,6 +141,11 @@ Solange Platzhalter ausgeliefert werden, die Vorschau zusätzlich zum
 
 - [ ] `HANDOFF-TODO.md` abgearbeitet, `npm run check:data` ohne offene Punkte
 - [ ] Impressum und Datenschutzerklärung juristisch geprüft und eingesetzt
+- [ ] Domain bestätigt: `site` in `astro.config.mjs` und `site_origin` in
+      der `config.php` zeigen auf die echte Domain. Beides steht auf
+      `birkenhain.ch` — erschlossen, nicht bestätigt. Ist es falsch, zeigen
+      die Double-Opt-In-Links ins Leere und es wird nie eine Anmeldung
+      gespeichert
 - [ ] `config.php` liegt über dem Webroot und ist nicht per URL erreichbar
 - [ ] `mail_transport` auf `mail`, Absenderadresse der eigenen Domain
 - [ ] Anmeldung einmal echt durchgespielt: Formular, Mail, Bestätigungslink,

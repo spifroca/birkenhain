@@ -75,6 +75,8 @@ jobs:
           test -f dist/.htaccess
           test -f dist/api/anmeldung.php
           test -f dist/api/bestaetigen.php
+          # Die @font-face-Regel liegt in public/ und muss mitkommen.
+          test -f dist/fonts/readex-pro.css
           echo "Erzeugte Seiten:"
           find dist -name '*.html' | sort
 

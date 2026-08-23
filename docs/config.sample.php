@@ -17,7 +17,7 @@ return [
 
     // Absender der Bestätigungsmail. Muss eine Adresse der eigenen Domain
     // sein, damit SPF und DKIM des Hosters greifen.
-    'mail_from' => 'Im Birkenhain <noreply@im-birkenhain.ch>',
+    'mail_from' => 'Im Birkenhain <noreply@birkenhain.ch>',
 
     // Interne Benachrichtigung nach bestätigter Anmeldung. Leer lassen,
     // wenn keine gewünscht ist.
@@ -29,5 +29,9 @@ return [
 
     // Absolute Basis-URL. Leer lassen, dann wird sie aus dem Request
     // abgeleitet — gesetzt ist sie verlässlicher, besonders hinter Proxies.
-    'site_origin' => 'https://im-birkenhain.ch',
+    //
+    // ACHTUNG: Hieraus wird der Double-Opt-In-Link gebaut. Steht hier die
+    // falsche Domain, zeigen die Bestätigungslinks ins Leere und es wird
+    // nie eine Anmeldung gespeichert. Vor dem Livegang einmal prüfen.
+    'site_origin' => 'https://birkenhain.ch',
 ];

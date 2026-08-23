@@ -218,5 +218,10 @@
   "notFound": {
     "title": "Seite nicht gefunden",
     "body": "Diese Seite gibt es nicht — vielleicht wurde sie verschoben oder der Link ist unvollständig."
+  },
+  "preview": {
+    "label": "Vorschau",
+    "body": "Diese Seite ist noch nicht freigegeben. Texte, Zahlen und Bilder sind provisorisch.",
+    "noForm": "Das Anmeldeformular ist in dieser Vorschau ohne Funktion."
   }
 }
