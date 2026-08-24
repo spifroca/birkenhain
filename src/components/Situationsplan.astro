@@ -1,10 +1,11 @@
 ---
-import Icon from './Icon.astro';
 import Picture from './Picture.astro';
+import PlanFigur from './PlanFigur.astro';
+import detail from '../data/baubereiche-detail.json';
 import type { ImageMetadata } from 'astro';
 import { getCollection } from 'astro:content';
+import { pathFor, type Locale } from '../i18n/routes';
 import { pick, useTranslations } from '../i18n/ui';
-import type { Locale } from '../i18n/routes';
 
 interface Props {
   locale: Locale;
@@ -12,59 +13,78 @@ interface Props {
   plan?: ImageMetadata;
   planAlt?: string;
   heading?: string;
+  /** Die Ortslabels auf dem Plan nur dort zeigen, wo der Plan gross ist. */
+  plates?: boolean;
 }
 
-const { locale, plan, planAlt, heading } = Astro.props;
+const { locale, plan, planAlt, heading, plates = true } = Astro.props;
 const t = useTranslations(locale);
 
-const areas = (await getCollection('baubereiche')).sort((a, b) =>
-  a.id.localeCompare(b.id),
-);
+type Detail = { ausrichtung: Record<Locale, string>; nutzung: Record<Locale, string>; lage: Record<Locale, string> };
+const details = detail as Record<string, Detail>;
 
-// Marker nur setzen, wo Koordinaten im Datenfile stehen; alle Baubereiche
-// bleiben ueber die Liste erreichbar, auch ohne Plan.
-const markers = areas.filter(
-  (area) => area.data.plan.x !== null && area.data.plan.y !== null,
-);
+const areas = (await getCollection('baubereiche')).sort((a, b) => a.id.localeCompare(b.id));
+
+// Der Buchstabe im Hauscode traegt die Zielgruppe: D, F, B — Haus 17 ohne
+// Buchstaben zaehlt zu den Familienhaeusern.
+function typ(label: string): 'd' | 'f' | 'b' {
+  if (label.endsWith('D')) return 'd';
+  if (label.endsWith('B')) return 'b';
+  return 'f';
+}
+
+const zielgruppe = { d: t('architektur.zgD'), f: t('architektur.zgF'), b: t('architektur.zgB') };
+
+const markers = areas.filter((area) => area.data.plan.x !== null && area.data.plan.y !== null);
 
 function markerLabel(area: (typeof areas)[number]): string {
   return area.data.vollgeschosse === null
     ? t('situationsplan.markerPending', { label: area.data.label })
-    : t('situationsplan.marker', {
-        label: area.data.label,
-        floors: area.data.vollgeschosse,
-      });
+    : t('situationsplan.marker', { label: area.data.label, floors: area.data.vollgeschosse });
 }
 ---
 
-<section class="plan" aria-labelledby="plan-heading">
+<section class="plan section--alt section--m" aria-labelledby="plan-heading">
   <div class="container">
-    <h2 id="plan-heading">{heading ?? t('home.situationsplanHeading')}</h2>
-    <p class="plan__hint">{t('home.situationsplanHint')}</p>
+    <div class="titlerow">
+      <h2 id="plan-heading">{heading ?? t('home.situationsplanHeading')}</h2>
+      <p class="credit">{t('home.situationsplanHint')}</p>
+    </div>
 
     <div class="plan__layout">
-      <div class="plan__stage">
+      <PlanFigur ratio="1464 / 1069" class="plan__figure">
         {
           plan ? (
-            <Picture
-              src={plan}
-              alt={planAlt ?? t('situationsplan.label')}
-              sizes="(min-width: 68rem) 60vw, 100vw"
-            />
+            <Picture src={plan} alt={planAlt ?? t('situationsplan.label')} sizes="(min-width: 68rem) 60vw, 100vw" />
           ) : (
-            /* TODO(handoff): Situationsplan aus assets/ einsetzen und
-               plan.x / plan.y je Baubereich in baubereiche.json ergaenzen. */
-            <p class="plan__placeholder">TODO(handoff): Situationsplan-Bild fehlt.</p>
+            <p class="plan__placeholder">{t('architektur.pendingData')}</p>
+          )
+        }
+
+        {
+          plates && (
+            <>
+              <span class="plate plate--water" style="left: 57%; top: 8.5%">
+                {t('architektur.plateNaturpool')}
+              </span>
+              <span class="plate plate--accent" style="left: 45%; top: 49.5%; max-width: 11%">
+                {t('architektur.platePlatz')}
+              </span>
+              <span class="plate plate--forest" style="left: 2.5%; top: 2%">
+                {t('architektur.plateWald')}
+              </span>
+            </>
           )
         }
 
         {
           markers.map((area) => (
             <button
-              class="plan__marker"
+              class="marker"
               type="button"
-              style={`--x: ${area.data.plan.x}%; --y: ${area.data.plan.y}%`}
               data-area={area.id}
+              data-typ={typ(area.data.label)}
+              style={`--x: ${area.data.plan.x}%; --y: ${area.data.plan.y}%; --vg: ${area.data.vollgeschosse ?? 3}`}
               aria-label={markerLabel(area)}
               aria-pressed="false"
               aria-controls="plan-detail"
@@ -73,33 +93,67 @@ function markerLabel(area: (typeof areas)[number]): string {
             </button>
           ))
         }
-      </div>
+      </PlanFigur>
 
       <div class="plan__side">
-        <div class="plan__detail" id="plan-detail" aria-live="polite">
+        <div class="panel" id="plan-detail" aria-live="polite">
           {
-            areas.map((area, index) => (
-              <article class="plan__card" data-detail={area.id} hidden={index !== 0}>
-                <h3>{t('situationsplan.detailHeading', { label: area.data.label })}</h3>
-                <dl class="plan__dl">
-                  <dt>{t('architektur.tableFloors')}</dt>
-                  <dd>
-                    {area.data.vollgeschosse ?? (
-                      <span class="plan__pending">{t('architektur.pendingData')}</span>
+            areas.map((area, index) => {
+              const d = details[area.data.label];
+              return (
+                <article class="panel__card" data-detail={area.id} hidden={index !== 0}>
+                  <p class="panel__eyebrow">{t('architektur.tableArea')}</p>
+                  <p class="panel__id">{area.data.label}</p>
+
+                  <dl class="rows rows--panel">
+                    <div class="row">
+                      <dt class="row__label">{t('architektur.tableFloors')}</dt>
+                      <dd class="row__strong">
+                        {area.data.vollgeschosse ?? <span class="panel__pending">—</span>}
+                      </dd>
+                    </div>
+                    <div class="row">
+                      <dt class="row__label">{t('architektur.panelUnits')}</dt>
+                      <dd class="row__strong">
+                        {area.data.wohnungen ?? <span class="panel__pending">—</span>}
+                      </dd>
+                    </div>
+                    {d && (
+                      <>
+                        <div class="row">
+                          <dt class="row__label">{t('architektur.panelOrientation')}</dt>
+                          <dd class="row__strong">{d.ausrichtung[locale]}</dd>
+                        </div>
+                        <div class="row">
+                          <dt class="row__label">{t('architektur.panelUse')}</dt>
+                          <dd class="row__strong">{d.nutzung[locale]}</dd>
+                        </div>
+                      </>
                     )}
-                  </dd>
-                  {area.data.wohnungen !== null && (
-                    <>
-                      <dt>{t('architektur.tableUnits')}</dt>
-                      <dd>{area.data.wohnungen}</dd>
-                    </>
-                  )}
-                </dl>
-                {pick(area.data.text, locale) && <p>{pick(area.data.text, locale)}</p>}
-              </article>
-            ))
+                    <div class="row">
+                      <dt class="row__label">{t('architektur.panelTarget')}</dt>
+                      <dd class="row__strong">{zielgruppe[typ(area.data.label)]}</dd>
+                    </div>
+                  </dl>
+
+                  {pick(area.data.text, locale) && <p class="panel__text">{pick(area.data.text, locale)}</p>}
+
+                  <a class="btn btn--primary btn--block panel__cta" href={pathFor('wohnungen', locale)}>
+                    {t('architektur.panelCta')}
+                  </a>
+                </article>
+              );
+            })
           }
         </div>
+
+        <ul class="legend">
+          <li><span class="legend__swatch" data-typ="d"></span>{t('architektur.legendD')}</li>
+          <li><span class="legend__swatch" data-typ="f"></span>{t('architektur.legendF')}</li>
+          <li><span class="legend__swatch" data-typ="b"></span>{t('architektur.legendB')}</li>
+        </ul>
+
+        <p class="plan__note">{t('architektur.planNote')}</p>
 
         <ul class="plan__list">
           {
@@ -114,7 +168,6 @@ function markerLabel(area: (typeof areas)[number]): string {
                   aria-controls="plan-detail"
                 >
                   <span aria-hidden="true">{area.data.label}</span>
-                  <Icon name="chevron-right" />
                 </button>
               </li>
             ))
@@ -126,27 +179,10 @@ function markerLabel(area: (typeof areas)[number]): string {
 </section>
 
 <style>
-  .plan {
-    padding-block: var(--space-2xl);
-  }
-
-  .plan__hint {
-    margin-top: var(--space-2xs);
-    color: var(--c-text-muted);
-    font-size: var(--fs-small);
-  }
-
   .plan__layout {
     display: grid;
-    gap: var(--space-l);
-    margin-top: var(--space-l);
+    gap: var(--grid-gap-tight);
     grid-template-columns: 1fr;
-  }
-
-  .plan__stage {
-    position: relative;
-    border: var(--hairline);
-    background: var(--c-bg-alt);
   }
 
   .plan__placeholder {
@@ -157,58 +193,157 @@ function markerLabel(area: (typeof areas)[number]): string {
     font-size: var(--fs-small);
   }
 
-  .plan__marker {
+  /* --- Marker: Groesse nach Vollgeschossen, Farbe nach Zielgruppe -------- */
+
+  .marker {
     position: absolute;
     top: var(--y);
     left: var(--x);
     display: grid;
     place-items: center;
-    width: 2rem;
-    height: 2rem;
+    width: calc(1.5625rem + (var(--vg) - 3) * 0.1625rem);
+    height: calc(1.5625rem + (var(--vg) - 3) * 0.1625rem);
     transform: translate(-50%, -50%);
-    background: var(--c-bg);
-    border: var(--border-width) solid var(--c-text);
-    font-size: var(--fs-caption);
+    border: var(--border-width) solid rgb(51 49 47 / 0.55);
+    border-radius: 50%;
+    font-size: 0.59375rem;
     font-weight: var(--fw-medium);
     font-variant-numeric: tabular-nums;
+    color: var(--c-text);
+    transition:
+      background-color var(--duration) var(--ease),
+      box-shadow var(--duration) var(--ease);
   }
 
-  .plan__marker:hover,
-  .plan__marker[aria-pressed='true'] {
+  .marker[data-typ='d'] { background: var(--c-typ-d); }
+  .marker[data-typ='f'] { background: var(--c-typ-f); }
+  .marker[data-typ='b'] { background: var(--c-typ-b); }
+
+  .marker:hover {
+    box-shadow: 0 0 0 3px rgb(169 114 47 / 0.18);
+  }
+
+  .marker[aria-pressed='true'] {
+    z-index: 3;
     background: var(--c-accent);
     border-color: var(--c-accent);
-    color: var(--c-text-inverse);
+    color: #fff;
+    box-shadow: 0 0 0 5px rgb(169 114 47 / 0.22);
   }
 
-  .plan__detail {
+  .plate--water { color: var(--c-plate-water); }
+  .plate--forest { color: var(--c-plate-forest); }
+  .plate--accent { color: var(--c-accent); }
+
+  /* --- Seitenfeld -------------------------------------------------------- */
+
+  .panel {
     border: var(--hairline);
-    padding: var(--space-m);
+    background: var(--c-bg);
+    padding: 1.375rem 1.25rem 1.5rem;
   }
 
-  .plan__card[hidden] {
+  .panel__card[hidden] {
     display: none;
   }
 
-  .plan__dl {
-    display: grid;
-    gap: var(--space-3xs) var(--space-s);
-    margin: var(--space-s) 0 0;
-    grid-template-columns: auto 1fr;
-    font-size: var(--fs-small);
+  .panel__eyebrow {
+    margin: 0 0 var(--space-3xs);
+    font-size: 0.6875rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-caps-tight);
+    text-transform: uppercase;
+    color: var(--c-text-faint);
   }
 
-  .plan__dl dt {
-    color: var(--c-text-muted);
-  }
-
-  .plan__dl dd {
+  .panel__id {
     margin: 0;
+    font-size: 2.5rem
+    ;
+    font-weight: var(--fw-extralight);
+    line-height: 1;
+    letter-spacing: var(--ls-heading);
     font-variant-numeric: tabular-nums;
   }
 
-  .plan__pending {
+  .rows--panel {
+    margin-top: var(--space-m);
+    border-block: 0;
+  }
+
+  .rows--panel .row {
+    padding-block: 0.625rem;
+  }
+
+  .rows--panel dt,
+  .rows--panel dd {
+    margin: 0;
+  }
+
+  .row__strong {
+    font-size: 0.875rem;
+    font-weight: var(--fw-medium);
+    text-align: right;
+  }
+
+  .rows--panel .row__label {
+    font-size: 0.875rem;
     color: var(--c-text-muted);
-    font-style: italic;
+  }
+
+  .panel__pending {
+    color: var(--c-text-faint);
+  }
+
+  .panel__text {
+    max-width: none;
+    margin: var(--space-s) 0 0;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-light);
+    line-height: var(--lh-body-tight);
+    color: var(--c-text-muted);
+  }
+
+  .panel__cta {
+    margin-top: var(--space-m);
+  }
+
+  /* --- Legende und Liste ------------------------------------------------- */
+
+  .legend {
+    display: grid;
+    gap: 0.625rem;
+    margin: var(--space-s) 0 0;
+    padding: 0;
+    list-style: none;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-light);
+    color: #54514d;
+  }
+
+  .legend li {
+    display: flex;
+    align-items: center;
+    gap: var(--space-xs);
+  }
+
+  .legend__swatch {
+    flex: 0 0 1rem;
+    height: 1rem;
+    border: var(--border-width) solid rgb(51 49 47 / 0.45);
+  }
+
+  .legend__swatch[data-typ='d'] { background: var(--c-typ-d); }
+  .legend__swatch[data-typ='f'] { background: var(--c-typ-f); }
+  .legend__swatch[data-typ='b'] { background: var(--c-typ-b); }
+
+  .plan__note {
+    max-width: none;
+    margin: var(--space-xs) 0 0;
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-light);
+    line-height: 1.5;
+    color: var(--c-text-faint);
   }
 
   .plan__list {
@@ -223,7 +358,7 @@ function markerLabel(area: (typeof areas)[number]): string {
   .plan__listitem {
     display: inline-flex;
     align-items: center;
-    gap: var(--space-3xs);
+    justify-content: center;
     min-width: 2.75rem;
     min-height: 2.75rem;
     padding-inline: var(--space-2xs);
@@ -232,16 +367,22 @@ function markerLabel(area: (typeof areas)[number]): string {
     font-variant-numeric: tabular-nums;
   }
 
-  .plan__listitem:hover,
-  .plan__listitem[aria-pressed='true'] {
+  .plan__listitem:hover {
     border-color: var(--c-text);
-    background: var(--c-bg-alt);
+    background: var(--c-bg);
+  }
+
+  .plan__listitem[aria-pressed='true'] {
+    background: var(--c-accent);
+    border-color: var(--c-accent);
+    color: #fff;
   }
 
   @media (min-width: 68rem) {
     .plan__layout {
-      grid-template-columns: 1.6fr 1fr;
+      grid-template-columns: minmax(0, 1.65fr) minmax(15rem, 1fr);
       align-items: start;
+      gap: clamp(1.5rem, 3vw, 3rem);
     }
   }
 </style>

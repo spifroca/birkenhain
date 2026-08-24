@@ -1,9 +1,17 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Bewohnertypen from '../Bewohnertypen.astro';
+import Bildband from '../Bildband.astro';
 import Hero from '../Hero.astro';
+import Picture from '../Picture.astro';
+import PlanFigur from '../PlanFigur.astro';
 import Wohnungsspiegel from '../Wohnungsspiegel.astro';
+import Wohnungstypen from '../Wohnungstypen.astro';
+import { features } from '../../lib/flags';
+import { pathFor, type Locale } from '../../i18n/routes';
 import { useTranslations } from '../../i18n/ui';
-import type { Locale } from '../../i18n/routes';
+import living from '../../assets/interior-living.png';
+import kitchen from '../../assets/interior-kitchen.png';
 
 interface Props {
   locale: Locale;
@@ -11,6 +19,13 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
+
+const innen = [
+  t('wohnungen.innen1'),
+  t('wohnungen.innen2'),
+  t('wohnungen.innen3'),
+  t('wohnungen.innen4'),
+];
 ---
 
 <BaseLayout
@@ -19,10 +34,73 @@ const t = useTranslations(locale);
   title={t('wohnungen.metaTitle')}
   description={t('wohnungen.metaDescription')}
 >
-  <Hero
-    eyebrow={t('wohnungen.kicker')}
-    title={t('wohnungen.title')}
-    lead={t('wohnungen.lead')}
+  <Hero kicker={t('wohnungen.kicker')} title={t('wohnungen.title')} lead={t('wohnungen.lead')} />
+
+  <Bildband
+    src={living}
+    alt={t('wohnungen.bandAlt')}
+    size="xl"
+    caption={t('wohnungen.bandCaption')}
   />
-  <Wohnungsspiegel locale={locale} />
+
+  <Wohnungstypen locale={locale} />
+  <Bewohnertypen locale={locale} />
+
+  <section class="innen section--alt section--m">
+    <div class="container cols">
+      <PlanFigur>
+        <Picture src={kitchen} alt={t('wohnungen.innenAlt')} sizes="(min-width: 68rem) 44vw, 100vw" />
+      </PlanFigur>
+
+      <div>
+        <h2 class="innen__title">{t('wohnungen.innenTitle')}</h2>
+
+        <ul class="rows innen__list">
+          {
+            innen.map((item) => (
+              <li class="row">
+                <p>{item}</p>
+              </li>
+            ))
+          }
+        </ul>
+
+        <a class="btn btn--primary innen__cta" href={pathFor('anmeldung', locale)}>
+          {t('wohnungen.innenCta')}
+        </a>
+      </div>
+    </div>
+  </section>
+
+  {features.wohnungsspiegel && <Wohnungsspiegel locale={locale} />}
 </BaseLayout>
+
+<style>
+  .innen .cols {
+    align-items: center;
+  }
+
+  .innen__title {
+    margin: 0 0 var(--space-m);
+    font-size: clamp(1.625rem, 3.2vw, 2.625rem);
+    line-height: 1.05;
+  }
+
+  .innen__list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .innen__list .row {
+    padding-block: 0.9375rem;
+  }
+
+  .innen__list p {
+    font-size: 0.96875rem;
+  }
+
+  .innen__cta {
+    margin-top: var(--space-l);
+  }
+</style>

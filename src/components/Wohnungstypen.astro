@@ -1,0 +1,102 @@
+---
+import { useTranslations } from '../i18n/ui';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const types = [
+  { rooms: '2.5', area: t('wohnungen.t25Area'), balcony: t('wohnungen.t25Balcony'), text: t('wohnungen.t25Text') },
+  { rooms: '3.5', area: t('wohnungen.t35Area'), balcony: t('wohnungen.t35Balcony'), text: t('wohnungen.t35Text') },
+  { rooms: '4.5', area: t('wohnungen.t45Area'), balcony: t('wohnungen.t45Balcony'), text: t('wohnungen.t45Text') },
+  { rooms: '5.5', area: t('wohnungen.t55Area'), balcony: t('wohnungen.t55Balcony'), text: t('wohnungen.t55Text') },
+];
+---
+
+<section class="typen section" aria-labelledby="typen-heading">
+  <div class="container">
+    <div class="titlerow">
+      <h2 id="typen-heading">{t('wohnungen.typenTitle')}</h2>
+      <p class="credit">{t('wohnungen.typenCredit')}</p>
+    </div>
+
+    <div class="cards typen__grid" data-reveal>
+      {
+        types.map((type) => (
+          <article class="card typen__card">
+            <p class="typen__rooms">
+              {type.rooms}
+              <span class="typen__unit">{t('wohnungen.roomsUnit')}</span>
+            </p>
+
+            <dl class="rows rows--compact">
+              <div class="row">
+                <dt class="row__label">{t('wohnungen.labelArea')}</dt>
+                <dd class="row__strong">{type.area}</dd>
+              </div>
+              <div class="row">
+                <dt class="row__label">{t('wohnungen.labelBalcony')}</dt>
+                <dd class="row__strong">{type.balcony}</dd>
+              </div>
+            </dl>
+
+            <p>{type.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .typen__card {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-s);
+  }
+
+  .typen__rooms {
+    margin: 0;
+    font-size: 2.625rem;
+    font-weight: var(--fw-extralight);
+    line-height: 1;
+    letter-spacing: var(--ls-heading);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .typen__unit {
+    margin-left: var(--space-2xs);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-caps-tight);
+    text-transform: uppercase;
+    color: var(--c-text-subtle);
+  }
+
+  .rows--compact {
+    border-block: 0;
+  }
+
+  .rows--compact .row {
+    padding-block: 0.5625rem;
+  }
+
+  .rows--compact dt,
+  .rows--compact dd {
+    margin: 0;
+    font-size: 0.875rem;
+  }
+
+  .rows--compact .row__label {
+    color: var(--c-text-muted);
+  }
+
+  .row__strong {
+    font-weight: var(--fw-medium);
+    text-align: right;
+  }
+</style>

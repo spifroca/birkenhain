@@ -3,11 +3,16 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Fakten from '../Fakten.astro';
 import Galerie from '../Galerie.astro';
 import Hero from '../Hero.astro';
-import Situationsplan from '../Situationsplan.astro';
+import Planung from '../Planung.astro';
+import Services from '../Services.astro';
+import Teaser from '../Teaser.astro';
 import { getCollection } from 'astro:content';
+import { pathFor, type Locale } from '../../i18n/routes';
 import { pick, useTranslations } from '../../i18n/ui';
-import type { Locale } from '../../i18n/routes';
-import situationsplan from '../../assets/situationsplan.png';
+import aerial from '../../assets/aerial.jpg';
+import passage from '../../assets/passage.jpg';
+import forestedge from '../../assets/forestedge.jpg';
+import rooftop from '../../assets/rooftop.jpg';
 
 interface Props {
   locale: Locale;
@@ -18,22 +23,107 @@ const t = useTranslations(locale);
 
 // Genau ein Galerie-Eintrag traegt `hero: true`; der laedt eager.
 const heroBild = (await getCollection('galerie')).find((entry) => entry.data.hero);
+
+const rows = [
+  { label: t('home.lageRow1'), value: t('home.lageRow1Value') },
+  { label: t('home.lageRow2'), value: t('home.lageRow2Value') },
+  { label: t('home.lageRow3'), value: t('home.lageRow3Value') },
+  { label: t('home.lageRow4'), value: t('home.lageRow4Value') },
+];
+
+const teasers = [
+  { href: pathFor('lage', locale), title: t('home.teaserLage'), text: t('home.teaserLageText'), image: aerial, alt: t('home.teaserLage') },
+  { href: pathFor('architektur', locale), title: t('home.teaserArch'), text: t('home.teaserArchText'), image: passage, alt: t('home.teaserArch') },
+  { href: pathFor('freiraum', locale), title: t('home.teaserFrei'), text: t('home.teaserFreiText'), image: forestedge, alt: t('home.teaserFrei') },
+  { href: pathFor('nachhaltigkeit', locale), title: t('home.teaserNach'), text: t('home.teaserNachText'), image: rooftop, alt: t('home.teaserNach') },
+];
 ---
 
-<BaseLayout
-  page="home"
-  locale={locale}
-  title={t('home.metaTitle')}
-  description={t('home.metaDescription')}
->
+<BaseLayout page="home" locale={locale} title={t('home.metaTitle')} description={t('home.metaDescription')}>
   <Hero
-    eyebrow={t('home.kicker')}
+    variant="band"
+    kicker={t('home.kicker')}
     title={t('home.heroTitle')}
-    lead={t('home.heroLead')}
     image={heroBild?.data.src}
     imageAlt={heroBild && pick(heroBild.data.alt, locale)}
+    ctaHref={pathFor('anmeldung', locale)}
+    ctaLabel={t('home.heroCta')}
+    cta2Href={pathFor('architektur', locale)}
+    cta2Label={t('home.heroCta2')}
   />
+
   <Fakten locale={locale} />
-  <Situationsplan locale={locale} plan={situationsplan} />
-  <Galerie locale={locale} limit={6} />
+
+  <section class="intro section" aria-labelledby="intro-heading">
+    <div class="container cols" data-reveal>
+      <div>
+        <p class="kicker">{t('home.introKicker')}</p>
+        <h2 class="intro__title" id="intro-heading">{t('home.introTitle')}</h2>
+      </div>
+      <div>
+        <p class="lead">{t('home.introP1')}</p>
+        <p class="lead intro__second">{t('home.introP2')}</p>
+      </div>
+    </div>
+  </section>
+
+  <section class="lage section--alt section--m" aria-labelledby="lage-heading">
+    <div class="container cols cols--tight">
+      <div>
+        <p class="kicker">{t('home.lageKicker')}</p>
+        <h2 class="lage__title" id="lage-heading">{t('home.lageTitle')}</h2>
+        <p class="lage__body">{t('home.lageBody')}</p>
+        <a class="link-rule" href={pathFor('lage', locale)}>{t('home.lageLink')}</a>
+      </div>
+
+      <dl class="rows">
+        {
+          rows.map((row) => (
+            <div class="row">
+              <dt class="row__label">{row.label}</dt>
+              <dd class="row__value">{row.value}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <Teaser items={teasers} />
+  <Services locale={locale} />
+  <Planung locale={locale} />
+  <Galerie locale={locale} />
 </BaseLayout>
+
+<style>
+  .intro__title {
+    margin: 0;
+    font-size: clamp(2rem, 4.2vw, 3.625rem);
+    line-height: 1.06;
+  }
+
+  .intro__second {
+    margin-top: var(--space-m);
+  }
+
+  .lage__title {
+    max-width: 22ch;
+    margin: 0 0 var(--space-s);
+    font-size: clamp(1.5rem, 2.8vw, 2.375rem);
+    line-height: 1.1;
+  }
+
+  .lage__body {
+    max-width: 44ch;
+    margin: 0 0 var(--space-m);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-light);
+    line-height: var(--lh-body);
+    color: #54514d;
+  }
+
+  .lage .rows dt,
+  .lage .rows dd {
+    margin: 0;
+  }
+</style>

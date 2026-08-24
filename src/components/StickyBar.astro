@@ -1,5 +1,4 @@
 ---
-import Icon from './Icon.astro';
 import { pathFor, type Locale, type PageId } from '../i18n/routes';
 import { useTranslations } from '../i18n/ui';
 
@@ -13,17 +12,55 @@ const t = useTranslations(locale);
 
 // Auf der Anmeldeseite selbst waere die Leiste ein Selbstverweis.
 const visible = page !== 'anmeldung';
+const target = pathFor('anmeldung', locale);
+// Aus dem Entwurf uebernommen und nicht aus Projektdaten belegt: der
+// Wohnungsspiegel ist leer, ein Zimmermix liegt nicht vor. Die Liste ist
+// eine Vorauswahl fuer das Anmeldeformular, keine Zusage ueber das Angebot.
+// Sobald wohnungen.json Werte traegt, von dort ableiten.
+const rooms = ['2.5', '3.5', '4.5', '5.5'];
 ---
 
 {
   visible && (
-    <div class="sticky" data-stickybar>
+    <div class="sticky" data-stickybar hidden>
       <div class="sticky__inner container">
         <p class="sticky__text">{t('sticky.intro')}</p>
-        <a class="sticky__cta" href={pathFor('anmeldung', locale)}>
-          {t('sticky.cta')}
-          <Icon name="arrow-right" />
-        </a>
+
+        {/* Die Leiste sammelt nur Zimmerzahl und Adresse und uebergibt sie
+            der Anmeldeseite — der Versand laeuft dort ueber ein Feld. */}
+        <form class="sticky__form" method="get" action={target}>
+          <label class="visually-hidden" for="sticky-email">
+            {t('sticky.emailLabel')}
+          </label>
+          <input
+            class="sticky__input"
+            id="sticky-email"
+            type="email"
+            name="email"
+            placeholder={t('sticky.emailLabel')}
+            autocomplete="email"
+          />
+
+          <label class="visually-hidden" for="sticky-rooms">
+            {t('sticky.roomsLabel')}
+          </label>
+          <select class="sticky__input" id="sticky-rooms" name="zimmer">
+            <option value="">{t('sticky.roomsLabel')}</option>
+            {rooms.map((value) => (
+              <option value={value} selected={value === '4.5'}>
+                {value}
+              </option>
+            ))}
+          </select>
+
+          <button class="btn btn--primary btn--compact" type="submit">
+            {t('sticky.cta')}
+          </button>
+        </form>
+
+        <button class="sticky__close" type="button" data-sticky-close aria-label={t('sticky.close')}>
+          <span aria-hidden="true">×</span>
+        </button>
       </div>
     </div>
   )
@@ -34,46 +71,84 @@ const visible = page !== 'anmeldung';
     position: sticky;
     bottom: 0;
     z-index: var(--z-stickybar);
-    background: var(--c-bg-inverse);
-    color: var(--c-text-inverse);
+    background: rgb(51 49 47 / 0.96);
+    backdrop-filter: blur(12px);
+    color: var(--c-text-inverse-muted);
     border-top: var(--hairline-inverse);
+  }
+
+  .sticky[hidden] {
+    display: none;
   }
 
   .sticky__inner {
     display: flex;
+    flex-wrap: wrap;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-m);
-    min-height: var(--stickybar-h);
+    gap: var(--space-s);
+    padding-block: var(--space-xs);
   }
 
   .sticky__text {
+    flex: 1 1 15rem;
     max-width: none;
     margin: 0;
-    font-size: var(--fs-small);
+    font-size: 0.875rem;
+    font-weight: var(--fw-light);
+    color: #e4dfd4;
   }
 
-  .sticky__cta {
-    display: inline-flex;
-    align-items: center;
+  .sticky__form {
+    display: flex;
+    flex-wrap: wrap;
     gap: var(--space-2xs);
-    padding: var(--space-2xs) var(--space-s);
-    border: var(--border-width) solid currentcolor;
-    font-size: var(--fs-small);
-    font-weight: var(--fw-medium);
-    text-decoration: none;
-    white-space: nowrap;
-    transition:
-      background-color var(--duration) var(--ease),
-      color var(--duration) var(--ease);
   }
 
-  .sticky__cta:hover {
-    background: var(--c-text-inverse);
-    color: var(--c-bg-inverse);
+  .sticky__input {
+    border: var(--border-width) solid rgb(239 235 227 / 0.34);
+    background: rgb(239 235 227 / 0.06);
+    color: #fff;
+    padding: 0.6875rem 0.875rem;
+    font-size: 0.875rem;
+    font-weight: var(--fw-light);
   }
 
-  .sticky__cta:focus-visible {
-    outline-color: var(--c-text-inverse);
+  input.sticky__input {
+    width: min(15rem, 52vw);
+  }
+
+  .sticky__input::placeholder {
+    color: var(--c-text-inverse-subtle);
+  }
+
+  .sticky__input option {
+    color: var(--c-text);
+  }
+
+  .sticky__close {
+    padding: var(--space-3xs) 2px;
+    font-size: 1.25rem;
+    line-height: 1;
+    color: var(--c-text-inverse-subtle);
+  }
+
+  .sticky__close:hover {
+    color: var(--c-text-inverse);
   }
 </style>
+
+<script>
+  // Erst nach dem Schliessen-Test einblenden: wer die Leiste in dieser
+  // Sitzung weggeklickt hat, bekommt sie nicht erneut.
+  const bar = document.querySelector<HTMLElement>('[data-stickybar]');
+  const KEY = 'birkenhain:sticky-closed';
+
+  if (bar) {
+    if (sessionStorage.getItem(KEY) !== '1') bar.hidden = false;
+
+    bar.querySelector('[data-sticky-close]')?.addEventListener('click', () => {
+      bar.hidden = true;
+      sessionStorage.setItem(KEY, '1');
+    });
+  }
+</script>

@@ -1,9 +1,16 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import Galerie from '../Galerie.astro';
+import Bildband from '../Bildband.astro';
 import Hero from '../Hero.astro';
+import Picture from '../Picture.astro';
+import PlanFigur from '../PlanFigur.astro';
 import { useTranslations } from '../../i18n/ui';
 import type { Locale } from '../../i18n/routes';
+import forestedge from '../../assets/forestedge.jpg';
+import wegnetz from '../../assets/wegnetz.png';
+import signaturbaum from '../../assets/signaturbaum.png';
+import dorfplatz from '../../assets/dorfplatz.png';
+import snow from '../../assets/snow.jpg';
 
 interface Props {
   locale: Locale;
@@ -11,6 +18,28 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
+
+const stats = [
+  { value: t('freiraum.stat1'), label: t('freiraum.stat1Label') },
+  { value: t('freiraum.stat2'), label: t('freiraum.stat2Label') },
+  { value: t('freiraum.stat3'), label: t('freiraum.stat3Label') },
+];
+
+const features = [
+  { title: t('freiraum.f1'), text: t('freiraum.f1Text') },
+  { title: t('freiraum.f2'), text: t('freiraum.f2Text') },
+  { title: t('freiraum.f3'), text: t('freiraum.f3Text') },
+];
+
+// Ortslabels auf dem Detailplan: Position in Prozent der Planflaeche.
+const plates = [
+  { text: t('freiraum.plate1'), x: '33%', y: '15%', tone: 'forest' },
+  { text: t('freiraum.plate2'), x: '50.5%', y: '11%', tone: 'accent' },
+  { text: t('freiraum.plate3'), x: '62%', y: '52%', tone: 'ink', wide: true },
+  { text: t('freiraum.plate4'), x: '35%', y: '57%', tone: 'water' },
+  { text: t('freiraum.plate5'), x: '22.5%', y: '31%', tone: 'forest' },
+  { text: t('freiraum.plate6'), x: '2.5%', y: '26%', tone: 'forest' },
+];
 ---
 
 <BaseLayout
@@ -19,10 +48,171 @@ const t = useTranslations(locale);
   title={t('freiraum.metaTitle')}
   description={t('freiraum.metaDescription')}
 >
-  <Hero
-    eyebrow={t('freiraum.kicker')}
-    title={t('freiraum.title')}
-    lead={t('freiraum.lead')}
-  />
-  <Galerie locale={locale} />
+  <Hero kicker={t('freiraum.kicker')} title={t('freiraum.title')} />
+
+  <Bildband src={forestedge} alt={t('freiraum.f2')} size="md" />
+
+  <section class="frei section--m">
+    <div class="container cols">
+      <div data-reveal>
+        <p class="lead">{t('freiraum.p1')}</p>
+        <p class="lead frei__second">{t('freiraum.p2')}</p>
+      </div>
+
+      <dl class="rows" data-reveal>
+        {
+          stats.map((stat) => (
+            <div class="row frei__stat">
+              <dt class="frei__value">{stat.value}</dt>
+              <dd class="frei__label">{stat.label}</dd>
+            </div>
+          ))
+        }
+      </dl>
+    </div>
+  </section>
+
+  <section class="frei__split container">
+    <PlanFigur>
+      <Picture src={wegnetz} alt={t('freiraum.wegAlt')} sizes="(min-width: 68rem) 44vw, 100vw" />
+    </PlanFigur>
+
+    <div data-reveal>
+      <p class="kicker">{t('freiraum.wegKicker')}</p>
+      <h2 class="frei__title">{t('freiraum.wegTitle')}</h2>
+      <p class="frei__body">{t('freiraum.wegP1')}</p>
+      <p class="frei__body">{t('freiraum.wegP2')}</p>
+    </div>
+  </section>
+
+  <section class="frei__split container">
+    <div data-reveal>
+      <p class="kicker">{t('freiraum.baumKicker')}</p>
+      <h2 class="frei__title">{t('freiraum.baumTitle')}</h2>
+      <p class="frei__body">{t('freiraum.baumBody')}</p>
+    </div>
+
+    <PlanFigur note={t('freiraum.baumCaption')}>
+      <Picture src={signaturbaum} alt={t('freiraum.baumAlt')} sizes="(min-width: 68rem) 44vw, 100vw" />
+    </PlanFigur>
+  </section>
+
+  <section class="section--alt section--m">
+    <div class="container cols cols--tight">
+      {
+        features.map((feature) => (
+          <div>
+            <h3 class="frei__feature">{feature.title}</h3>
+            <p class="frei__featuretext">{feature.text}</p>
+          </div>
+        ))
+      }
+    </div>
+  </section>
+
+  <section class="frei__platz section--m">
+    <div class="container">
+      <div class="titlerow">
+        <h2>{t('freiraum.platzTitle')}</h2>
+        <p class="credit">{t('freiraum.platzCredit')}</p>
+      </div>
+
+      <PlanFigur ratio="1679 / 1032">
+        <Picture src={dorfplatz} alt={t('freiraum.platzAlt')} sizes="(min-width: 90rem) 84rem, 100vw" />
+        {
+          plates.map((plate) => (
+            <span
+              class:list={['plate', `plate--${plate.tone}`, plate.wide && 'plate--wide']}
+              style={`left: ${plate.x}; top: ${plate.y}`}
+            >
+              {plate.text}
+            </span>
+          ))
+        }
+      </PlanFigur>
+
+      <p class="frei__platzbody">{t('freiraum.platzBody')}</p>
+    </div>
+  </section>
+
+  <Bildband src={snow} alt={t('freiraum.f1')} size="md" caption={t('freiraum.winterCaption')} />
 </BaseLayout>
+
+<style>
+  .frei__second,
+  .frei__body + .frei__body {
+    margin-top: var(--space-m);
+  }
+
+  .frei__stat {
+    display: block;
+    padding-block: 1.125rem;
+  }
+
+  .frei__value {
+    font-size: 2rem;
+    font-weight: var(--fw-extralight);
+    line-height: 1;
+  }
+
+  .frei__label {
+    margin: var(--space-3xs) 0 0;
+    font-size: 0.84375rem;
+    font-weight: var(--fw-light);
+    color: var(--c-text-muted);
+  }
+
+  .frei__split {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--col-min-wide), 1fr));
+    gap: var(--grid-gap);
+    align-items: center;
+    padding-bottom: clamp(3rem, 6vw, 5.5rem);
+  }
+
+  .frei__title {
+    margin: 0 0 var(--space-m);
+    font-size: clamp(1.625rem, 3.2vw, 2.625rem);
+    line-height: 1.06;
+  }
+
+  .frei__body {
+    max-width: 46ch;
+    margin: 0;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-light);
+    line-height: var(--lh-body);
+    color: #54514d;
+  }
+
+  .frei__feature {
+    margin: 0 0 var(--space-2xs);
+    font-size: 1.1875rem;
+    font-weight: var(--fw-regular);
+  }
+
+  .frei__featuretext {
+    max-width: none;
+    margin: 0;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-light);
+    line-height: 1.58;
+    color: var(--c-text-muted);
+  }
+
+  .frei__platzbody {
+    max-width: 58ch;
+    margin: var(--space-m) 0 0;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-light);
+    line-height: var(--lh-body);
+    color: var(--c-text-muted);
+  }
+
+  .plate--forest { color: var(--c-plate-forest); }
+  .plate--water { color: var(--c-plate-water); }
+  .plate--accent { color: var(--c-accent); }
+  .plate--ink { color: var(--c-text); }
+
+  .plate--wide { max-width: 16%; }
+</style>

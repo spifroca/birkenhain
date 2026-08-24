@@ -1,0 +1,67 @@
+---
+import Icon from './Icon.astro';
+import { useTranslations } from '../i18n/ui';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const items = [
+  { icon: 'coffee', title: t('home.service1'), text: t('home.service1Text') },
+  { icon: 'dumbbell', title: t('home.service2'), text: t('home.service2Text') },
+  { icon: 'waves', title: t('home.service3'), text: t('home.service3Text') },
+  { icon: 'blocks', title: t('home.service4'), text: t('home.service4Text') },
+  { icon: 'trees', title: t('home.service5'), text: t('home.service5Text') },
+];
+---
+
+<section class="services section--dark" aria-labelledby="services-heading">
+  <div class="container">
+    <div class="services__head" data-reveal>
+      <p class="kicker kicker--inverse">{t('home.servicesKicker')}</p>
+      <h2 id="services-heading">{t('home.servicesTitle')}</h2>
+    </div>
+
+    <div class="cards services__cards" data-reveal>
+      {
+        items.map((item) => (
+          <article class="card">
+            <span class="services__icon"><Icon name={item.icon} /></span>
+            <h3>{item.title}</h3>
+            <p>{item.text}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .services {
+    padding-block: var(--pad-section);
+  }
+
+  .services__head {
+    max-width: 47.5rem;
+  }
+
+  .services__head h2 {
+    margin: 0;
+    line-height: 1.08;
+  }
+
+  .services__cards {
+    --card-min: 13.125rem;
+    margin-top: clamp(2.25rem, 5vw, 4rem);
+  }
+
+  .services__icon {
+    display: block;
+    font-size: 1.375rem;
+    color: var(--c-accent-light);
+  }
+</style>
