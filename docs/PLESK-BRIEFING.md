@@ -53,9 +53,18 @@ Das ZIP enthält den **Inhalt** des Webroots, nicht einen Ordner `dist`. Beim
 Entpacken landen `index.html`, `.htaccess`, `api/`, `fonts/` und die
 Sprachordner direkt auf der obersten Ebene. Das ist so gewollt.
 
-**Prüfe im ZIP, dass `fonts/readex-pro-variable.woff2` enthalten ist.**
-Fehlt sie, hat der Lauf eine Warnung gesetzt und die Site würde ohne ihre
-Schrift laufen — dann nimm einen anderen Lauf oder sag es der Person.
+**Prüfe im ZIP drei Dinge:**
+
+1. `fonts/readex-pro-variable.woff2` — fehlt sie, läuft die Site ohne ihre
+   Schrift. Der Lauf hat dann eine Warnung gesetzt.
+2. `.htaccess` auf der obersten Ebene — ohne sie fehlen Security-Header,
+   Asset-Caching und die Projekt-Fehlerseite.
+3. `api/lib/.htaccess` — die Apache-Sperre der gemeinsamen Logik.
+
+Die beiden Punkt-Dateien sind im Archiv-Viewer oft ausgeblendet; im
+Dateimanager musst du «versteckte Dateien anzeigen» einschalten, um sie zu
+sehen. Fehlt eine davon, nimm einen neueren Lauf — ältere Artefakte wurden
+ohne Punkt-Dateien gepackt.
 
 Artefakte werden nach 7 Tagen gelöscht. Ist keines mehr da, lass den
 Workflow neu starten (*Actions → CI → Run workflow*) oder frag nach einem

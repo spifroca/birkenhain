@@ -98,6 +98,12 @@ jobs:
             deployen, sonst laeuft die Site auf system-ui. Ursache: der \
             Schritt 'Schriften für das Artefakt' ist fehlgeschlagen."
           fi
+          # Punkt-Dateien sichtbar machen. test -f oben prueft das
+          # Build-Verzeichnis; verworfen werden sie erst beim Verpacken
+          # (upload-artifact laesst sie ohne include-hidden-files weg). Wer
+          # den Upload-Schritt aendert, sieht hier, was ueberleben muss.
+          echo "Punkt-Dateien, die ins Artefakt muessen:"
+          find dist -name '.*' -type f | sort
           echo "Erzeugte Seiten:"
           find dist -name '*.html' | sort
 
