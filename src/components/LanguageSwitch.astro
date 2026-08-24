@@ -61,6 +61,7 @@ const items = LOCALES.map((code) => ({
     font-size: var(--fs-caption);
     font-weight: var(--fw-medium);
     letter-spacing: var(--ls-caps-plate);
+    text-transform: uppercase;
     text-decoration: none;
     /* Die inaktive Sprache ist der eigentliche Schalter, also ein Link.
        Der Entwurf setzt sie auf #9A9691 — das sind 2.65:1 auf dem
@@ -73,7 +74,13 @@ const items = LOCALES.map((code) => ({
     color: var(--c-text);
   }
 
+  /* Der aktive Zustand haengt nicht an der Farbe allein: der Entwurf
+     trennt die beiden ueber einen sehr hellen Grauwert, der als Linktext
+     unter AA faellt. Mit dem zulaessigen Grau ist der Farbsprung kleiner,
+     darum traegt die Schriftstaerke mit. Nebeneffekt: die Unterscheidung
+     bleibt auch bei Farbfehlsichtigkeit lesbar. */
   .lang__item--current {
     color: var(--c-text);
+    font-weight: var(--fw-semibold);
   }
 </style>
