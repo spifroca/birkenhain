@@ -20,15 +20,22 @@ Quellbranch  ──CI──▶  Branch deploy  ──Plesk Git──▶  httpdoc
 
 Kein Node auf dem Server, kein Composer, kein Build beim Hoster.
 
-Der Branch trägt bewusst keine Historie (`--orphan`, force-push): ein
-Build-Ergebnis ist kein Quellcode, und ohne das würde das Repo mit jedem
-Deploy um die vollen Assets wachsen.
+Jeder Build committet **auf den bestehenden Branch**, sodass jede
+Aktualisierung ein Fast-Forward ist. Das ist die Voraussetzung dafür, dass
+Plesk ziehen kann: Plesk zieht mit einem Merge, und ein force-gepushter
+`--orphan`-Branch hätte bei jedem Build eine neue Wurzel — `git pull` bricht
+dann mit *refusing to merge unrelated histories* ab, während der CI-Lauf grün
+bleibt und der Branch geschrieben aussieht. Genau daran stand die Website nach
+dem ersten Klon still.
 
-Gebaut wird **nur beim Push auf den Default-Branch** des Repos. Das ist an
-den Default gekoppelt und nicht an einen festen Namen: heute ist es
-`claude/new-session-1fphb2`, nach dem Umstellen auf `main` folgt es dorthin,
-ohne dass am Workflow etwas geändert werden muss. Zwei Quellen für denselben
-Branch wären ein Wettlauf mit force-push.
+Das Repo wächst dadurch nur um das, was sich wirklich ändert: Astro hängt den
+Inhalts-Hash an die Asset-Namen, ein unverändertes Bild bleibt also derselbe
+Blob.
+
+Gebaut wird **nur beim Push auf `main`** — feste Quelle, nicht an den
+Default-Branch gekoppelt. Zwei Quellen für denselben Branch wären ein
+Wettlauf; laufen zwei Builds gleichzeitig, setzt der Verlierer auf dem neuen
+Stand neu auf, statt den anderen zu überschreiben.
 
 ## Einrichten in Plesk
 
@@ -102,3 +109,17 @@ unabhaengig.
 Manche Plesk-Pakete haben sie nicht installiert. Dann bleibt der Weg über das
 Artefakt aus [`PLESK-BRIEFING.md`](PLESK-BRIEFING.md) — Abschnitt
 *Aktualisieren, wenn der Code sich geändert hat*.
+
+## Wenn der Pull scheitert: einmal neu klonen
+
+Ein Plesk-Repo, das noch von einem der alten `--orphan`-Builds stammt, hat
+eine Historie, die mit der jetzigen nichts gemeinsam hat. Weitere Pulls
+scheitern weiter, auch nach dem Fix — die gemeinsame Basis fehlt eben.
+
+Einmalig: das Repository im Git-Modul **entfernen und neu hinzufügen**
+(gleiche Werte, Branch `deploy`). Das ist ein frischer Klon, danach sind alle
+Aktualisierungen Fast-Forwards.
+
+Erkennbar ist der Fall daran, dass Plesk denselben Commit weiter anzeigt,
+obwohl auf GitHub ein neuerer steht — oder an einer Meldung mit
+*unrelated histories* respektive *Not possible to fast-forward*.
