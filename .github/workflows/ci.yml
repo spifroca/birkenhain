@@ -104,6 +104,24 @@ jobs:
           # den Upload-Schritt aendert, sieht hier, was ueberleben muss.
           echo "Punkt-Dateien, die ins Artefakt muessen:"
           find dist -name '.*' -type f | sort
+          # Der Canonical muss auf die Adresse zeigen, die 200 liefert.
+          # Am 24.08.2026 wurde die bevorzugte Domain serverseitig auf
+          # birkenhain.ch ohne www umgestellt; der Build setzte weiter www,
+          # also zeigten canonical, hreflang und og:url auf eine 301 — und
+          # kein Check hat es gemerkt. Dieser hier merkt es.
+          ORIGIN="${SITE_ORIGIN:-https://birkenhain.ch}"
+          CANON=$(grep -o 'rel="canonical" href="[^"]*"' dist/index.html \
+                  | head -1 | sed 's/.*href="//;s/"$//')
+          echo "Canonical der Startseite: $CANON"
+          if [ "$CANON" != "$ORIGIN/" ]; then
+            echo "::error title=Canonical zeigt woandershin::erwartet $ORIGIN/, gefunden $CANON"
+            exit 1
+          fi
+          if grep -rq --include='*.html' 'https://www\.birkenhain\.ch' dist; then
+            echo "::error title=www im Build::www.birkenhain.ch leitet per 301 um — canonical, hreflang und og:url duerfen nicht darauf zeigen."
+            grep -rl --include='*.html' 'https://www\.birkenhain\.ch' dist
+            exit 1
+          fi
           echo "Erzeugte Seiten:"
           find dist -name '*.html' | sort
 
