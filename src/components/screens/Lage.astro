@@ -3,7 +3,8 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import DistanzTabelle from '../DistanzTabelle.astro';
 import Hero from '../Hero.astro';
 import Karte from '../Karte.astro';
-import { useTranslations } from '../../i18n/ui';
+import { getEntry } from 'astro:content';
+import { pick, useTranslations } from '../../i18n/ui';
 import type { Locale } from '../../i18n/routes';
 
 interface Props {
@@ -12,6 +13,10 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
+
+// Alt-Text und optimiertes Bild kommen aus dem Galerie-Datensatz,
+// damit die Legende nicht doppelt gepflegt wird.
+const aerial = await getEntry('galerie', 'aerial.jpg');
 ---
 
 <BaseLayout
@@ -24,6 +29,8 @@ const t = useTranslations(locale);
     eyebrow={t('lage.kicker')}
     title={t('lage.title')}
     lead={t('lage.lead')}
+    image={aerial?.data.src}
+    imageAlt={aerial && pick(aerial.data.alt, locale)}
   />
   <DistanzTabelle locale={locale} />
   <Karte locale={locale} />

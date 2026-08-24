@@ -4,8 +4,10 @@ import Fakten from '../Fakten.astro';
 import Galerie from '../Galerie.astro';
 import Hero from '../Hero.astro';
 import Situationsplan from '../Situationsplan.astro';
-import { useTranslations } from '../../i18n/ui';
+import { getCollection } from 'astro:content';
+import { pick, useTranslations } from '../../i18n/ui';
 import type { Locale } from '../../i18n/routes';
+import situationsplan from '../../assets/situationsplan.png';
 
 interface Props {
   locale: Locale;
@@ -13,6 +15,9 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
+
+// Genau ein Galerie-Eintrag traegt `hero: true`; der laedt eager.
+const heroBild = (await getCollection('galerie')).find((entry) => entry.data.hero);
 ---
 
 <BaseLayout
@@ -25,8 +30,10 @@ const t = useTranslations(locale);
     eyebrow={t('home.kicker')}
     title={t('home.heroTitle')}
     lead={t('home.heroLead')}
+    image={heroBild?.data.src}
+    imageAlt={heroBild && pick(heroBild.data.alt, locale)}
   />
   <Fakten locale={locale} />
-  <Situationsplan locale={locale} />
+  <Situationsplan locale={locale} plan={situationsplan} />
   <Galerie locale={locale} limit={6} />
 </BaseLayout>
