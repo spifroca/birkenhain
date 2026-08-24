@@ -1,1 +1,114 @@
-[]
+[
+  {
+    "id": "arrival.jpg",
+    "src": "../assets/arrival.jpg",
+    "alt": {
+      "de": "Ankunft am Alpenweg mit Birken als Eingangstor ins Quartier",
+      "en": "Arrival at Alpenweg with birches as the gateway into the quarter"
+    },
+    "caption": {
+      "de": "Ankunft am Alpenweg: Birken als Eingangstor ins Quartier.",
+      "en": "Arrival at Alpenweg: birches as the gateway into the quarter."
+    },
+    "order": 10,
+    "hero": true
+  },
+  {
+    "id": "aerial.jpg",
+    "src": "../assets/aerial.jpg",
+    "alt": {
+      "de": "Vogelperspektive ueber das Areal Isleren mit Photovoltaik- und Gruendaechern",
+      "en": "Aerial view over the Isleren site with photovoltaic and green roofs"
+    },
+    "caption": {
+      "de": "Vogelperspektive ueber das Areal Isleren, Waldrand im Norden und Westen.",
+      "en": "Aerial view over the Isleren site, forest to the north and west."
+    },
+    "order": 20,
+    "hero": false
+  },
+  {
+    "id": "passage.jpg",
+    "src": "../assets/passage.jpg",
+    "alt": {
+      "de": "Passage im Erdgeschoss mit bepflanzten Hoefen",
+      "en": "Ground-floor passage with planted courtyards"
+    },
+    "caption": {
+      "de": "Passage im Erdgeschoss, Bronze-Metall und bepflanzte Hoefe.",
+      "en": "Ground-floor passage, bronze metal and planted courtyards."
+    },
+    "order": 30,
+    "hero": false
+  },
+  {
+    "id": "forestedge.jpg",
+    "src": "../assets/forestedge.jpg",
+    "alt": {
+      "de": "Naturpool mit Liegewiese und Gym im Natursteinsockel",
+      "en": "Natural pool with lawn and the gym in the stone plinth"
+    },
+    "caption": {
+      "de": "Naturpool mit Liegewiese, Gym im Natursteinsockel.",
+      "en": "Natural pool with lawn, gym in the stone plinth."
+    },
+    "order": 40,
+    "hero": false
+  },
+  {
+    "id": "rooftop.jpg",
+    "src": "../assets/rooftop.jpg",
+    "alt": {
+      "de": "Dachgarten mit Feuerstelle",
+      "en": "Roof garden with fire pit"
+    },
+    "caption": {
+      "de": "Dachgarten mit Feuerstelle und Blick in die Landschaft.",
+      "en": "Roof garden with fire pit and views across the landscape."
+    },
+    "order": 50,
+    "hero": false
+  },
+  {
+    "id": "facade.jpg",
+    "src": "../assets/facade.jpg",
+    "alt": {
+      "de": "Lochfassade mit Durchgang",
+      "en": "Punched facade with passage"
+    },
+    "caption": {
+      "de": "Lochfassade mit Durchgang: beige Eternit, dunkle Bronze und Steinsockel.",
+      "en": "Punched facade with passage: beige Eternit, dark bronze and a stone plinth."
+    },
+    "order": 60,
+    "hero": false
+  },
+  {
+    "id": "salon.jpg",
+    "src": "../assets/salon.jpg",
+    "alt": {
+      "de": "Salon im Sockelgeschoss mit Terrasse",
+      "en": "Salon in the plinth with a terrace"
+    },
+    "caption": {
+      "de": "Der Salon im Sockelgeschoss, mit Terrasse zum Weg.",
+      "en": "The salon in the plinth, with a terrace on the path."
+    },
+    "order": 70,
+    "hero": false
+  },
+  {
+    "id": "snow.jpg",
+    "src": "../assets/snow.jpg",
+    "alt": {
+      "de": "Quartierplatz im Winter mit dem Birkenhain unter Schnee",
+      "en": "The neighbourhood square in winter with the birch grove under snow"
+    },
+    "caption": {
+      "de": "Der Quartierplatz im Winter, der Birkenhain unter Schnee.",
+      "en": "The neighbourhood square in winter, the birch grove under snow."
+    },
+    "order": 80,
+    "hero": false
+  }
+]

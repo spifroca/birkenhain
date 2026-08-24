@@ -21,40 +21,35 @@ Neu dazugekommen ist der **Kicker** je Screen — die Zeile über dem Titel,
 `.hero__kicker`, nicht `.eyebrow`: die trägt auch Footer-Spalten,
 Formular-Legenden und das 404-Label und soll leise bleiben.
 
-## 1. Bilder — der letzte grosse Block
+## 1. Bilder — geliefert und eingebunden, wo es einen Platz gibt
 
-Die acht Galeriebilder fehlen. Die Daten dazu liegen fertig in
-**`src/data/galerie.pending.json`** und warten nur darauf:
+Alle 16 Dateien aus dem Design liegen in Originalauflösung in `src/assets/`.
+`galerie.json` trägt die acht Galerieeinträge — `galerie.pending.json` ist
+damit weg, der Zwischenschritt hat seinen Zweck erfüllt. Eingebunden ist,
+wofür der Code einen Platz vorsieht:
 
-```
-arrival.jpg   ← Hero der Startseite
-aerial.jpg   passage.jpg   forestedge.jpg
-rooftop.jpg  facade.jpg    salon.jpg   snow.jpg
-```
-
-**So wird es scharf:** die **Originale** aus
-`design_handoff_im_birkenhain/assets/` nach `src/assets/` kopieren — nicht
-`assets/web/`, die sind 1800 px breit und die 2000-px-Stufe würde
-hochskaliert. Dann `galerie.pending.json` nach `galerie.json` umbenennen.
-
-Der Zwischenschritt ist nötig, weil `image()` den Pfad zur Buildzeit auflöst:
-ein fehlendes Bild bricht den Build. Deshalb liegen die Daten daneben statt
-drin.
-
-Zusätzlich gebraucht, nicht in der Galerie:
-
-| Datei | Verwendung |
+| Bild | eingebunden als |
 | --- | --- |
-| `logo.svg` | Header (30 px), Footer invertiert, Favicon |
-| `situationsplan.png` | `Situationsplan.astro` als `plan` (1464 × 1069) |
-| `dorfplatz.png` | Freiraum, Detailplan Quartierplatz |
-| `wegnetz.png` | Freiraum, Diagramm Wegnetz |
-| `signaturbaum.png` | Freiraum, Referenzbild Birkenhain |
-| `interior-living.png`, `interior-kitchen.png` | Wohnungen |
+| `arrival.jpg` | Hero der Startseite (`hero: true` im Datensatz, lädt eager) |
+| `aerial.jpg` | Hero Lage & Mobilität — Bild und Alt-Text aus dem Galerie-Datensatz |
+| `situationsplan.png` | `Situationsplan.astro` als `plan` auf der Startseite |
+| die acht Galeriebilder | Galerie und Lightbox |
 
-Solange sie fehlen, zeigen Hero und Situationsplan einen Platzhalter. Die
-Baubereichsliste im Situationsplan funktioniert schon — sie ist ohnehin der
-barrierefreie Zugang und bleibt danach bestehen.
+Geliefert, aber noch ohne Platz im Code — die Sektionen aus dem Entwurf
+existieren als Komponenten noch nicht:
+
+| Datei | vorgesehene Verwendung laut Design |
+| --- | --- |
+| `logo.svg` / `logo.png` | Header (30 px), Footer invertiert, Favicon, OG-Fallback |
+| `dorfplatz.png` | Freiraum — Detailplan Quartierplatz, sechs Prozent-Labels |
+| `wegnetz.png` | Freiraum — Diagramm Wegnetz (705 px breit, nicht darüber skalieren) |
+| `signaturbaum.png` | Freiraum — Referenzbild Birkenhain |
+| `interior-living.png`, `interior-kitchen.png` | Wohnungen — Wohnraum und Küche |
+| `facade.jpg`, `salon.jpg` | Architektur — Materialisierung, Sockelnutzungen (in der Galerie sind sie schon) |
+
+Die Heroes von Architektur, Freiraum, Nachhaltigkeit und Wohnungen zeigen
+weiter den Platzhalter: das Handoff legt für diese Seiten kein Hero-Bild
+fest, und geraten wird nicht.
 
 ## 2. Impressum und Datenschutz — Entwurf liegt, Prüfung fehlt
 
@@ -99,15 +94,3 @@ Skript zusätzlich, dass die Summe 278 ergibt.
 nennt beides (Dietikon/Bremgarten 20–30 Min., S17 im 15-Minuten-Takt), das
 Schema kennt sie nicht. Sie stehen bereits in `lage.metaDescription` — dort
 gehören sie hin. Leere optionale Felder anzulegen wäre spekulativ.
-
-## Erwartete Build-Meldungen
-
-Solange `galerie.json` leer ist:
-
-```
-The collection "galerie" does not exist or is empty.
-Please check your content config file for errors.
-```
-
-Die Config ist in Ordnung. Astro behandelt eine leere `file()`-Collection wie
-eine fehlende und formuliert es irreführend. Verschwindet mit den Bildern.
