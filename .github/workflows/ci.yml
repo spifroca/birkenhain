@@ -214,14 +214,20 @@ jobs:
   deploy-branch:
     name: Deploy-Branch aktualisieren
     runs-on: ubuntu-latest
-    # Nur beim Push auf den Default-Branch des Repos, nie von einem Pull
-    # Request. An den Default gekoppelt statt an einen festen Namen, damit es
-    # heute stimmt (Default ist noch der Arbeitsbranch) und nach dem
-    # Umstellen auf main weiter stimmt — ohne diese Datei erneut anzufassen.
-    # Zwei Quellen fuer denselben Branch waeren ein Wettlauf mit force-push.
+    # Nur beim Push auf main, nie von einem Pull Request.
+    #
+    # Vorher hing die Bedingung am Default-Branch des Repos. Das war richtig,
+    # solange die Arbeit auf dem Arbeitsbranch lag und main leer war. Seit dem
+    # Merge von #1 ist main die Wahrheit — der Default zeigt aber weiter auf
+    # den Arbeitsbranch, der keine Pushes mehr bekommt. Die Kopplung haette
+    # jeden Push auf main uebersprungen und der Deploy-Branch waere still
+    # stehengeblieben: gruener Lauf, alter Stand live.
+    #
+    # Eine feste Quelle, nicht zwei — zwei waeren ein Wettlauf um denselben
+    # Branch mit force-push.
     if: >-
       github.event_name == 'push' &&
-      github.ref_name == github.event.repository.default_branch
+      github.ref_name == 'main'
     needs: [build, subpath]
     permissions:
       contents: write
