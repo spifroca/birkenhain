@@ -1,0 +1,92 @@
+---
+import { useTranslations } from '../i18n/ui';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const groups = [
+  { letter: 'D', tag: t('wohnungen.zgDTag'), title: t('wohnungen.zgDTitle'), text: t('wohnungen.zgDText'), note: t('wohnungen.zgDNote') },
+  { letter: 'F', tag: t('wohnungen.zgFTag'), title: t('wohnungen.zgFTitle'), text: t('wohnungen.zgFText'), note: t('wohnungen.zgFNote') },
+  { letter: 'B', tag: t('wohnungen.zgBTag'), title: t('wohnungen.zgBTitle'), text: t('wohnungen.zgBText'), note: t('wohnungen.zgBNote') },
+];
+---
+
+<section class="zg" aria-labelledby="zg-heading">
+  <div class="container">
+    <div class="titlerow">
+      <h2 id="zg-heading">{t('wohnungen.zgTitle')}</h2>
+      <p class="credit">{t('wohnungen.zgCredit')}</p>
+    </div>
+
+    <p class="zg__intro">{t('wohnungen.zgIntro')}</p>
+
+    <div class="cards" data-reveal>
+      {
+        groups.map((group) => (
+          <article class="card">
+            <p class="zg__head">
+              <span class="zg__letter">{group.letter}</span>
+              <span class="zg__tag">{group.tag}</span>
+            </p>
+            <h3 class="zg__title">{group.title}</h3>
+            <p>{group.text}</p>
+            <p class="zg__note">{group.note}</p>
+          </article>
+        ))
+      }
+    </div>
+  </div>
+</section>
+
+<style>
+  .zg {
+    padding-bottom: var(--pad-section-m);
+  }
+
+  .zg__intro {
+    max-width: 62ch;
+    margin: 0 0 var(--space-l);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-light);
+    line-height: var(--lh-body);
+    color: var(--c-text-muted);
+  }
+
+  .zg__head {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-xs);
+    margin: 0 0 var(--space-s);
+  }
+
+  .zg__letter {
+    font-size: 2.5rem;
+    font-weight: var(--fw-extralight);
+    line-height: 1;
+    color: var(--c-accent);
+  }
+
+  .zg__tag {
+    font-size: 0.71875rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-caps-tight);
+    text-transform: uppercase;
+    color: var(--c-text-subtle);
+  }
+
+  .zg__title {
+    margin-top: 0;
+  }
+
+  .zg__note {
+    margin-top: var(--space-s);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    color: var(--c-text);
+  }
+</style>

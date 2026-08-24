@@ -1,0 +1,40 @@
+---
+interface Props {
+  /** Seitenverhaeltnis des Planbildes, z. B. "1464 / 1069". */
+  ratio?: string;
+  note?: string;
+  class?: string;
+}
+
+const { ratio, note, class: className } = Astro.props;
+---
+
+<figure class:list={['figure', className]} style={ratio ? `--plan-ratio: ${ratio}` : undefined}>
+  <i class="corner tl" aria-hidden="true">+</i>
+  <i class="corner tr" aria-hidden="true">+</i>
+  <i class="corner bl" aria-hidden="true">+</i>
+  <i class="corner br" aria-hidden="true">+</i>
+  <div class="figure__stage">
+    <slot />
+  </div>
+  {note && <figcaption class="figure__note">{note}</figcaption>}
+</figure>
+
+<style>
+  .figure__stage {
+    position: relative;
+    aspect-ratio: var(--plan-ratio, auto);
+  }
+
+  /* Ein Plan fuellt seinen Rahmen; Marker und Labels liegen darauf. */
+  .figure__stage :global(.picture),
+  .figure__stage :global(img) {
+    width: 100%;
+    height: 100%;
+  }
+
+  .figure__stage[style*='--plan-ratio'] :global(.picture) {
+    position: absolute;
+    inset: 0;
+  }
+</style>

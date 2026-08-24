@@ -1,9 +1,12 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
+import Bildband from '../Bildband.astro';
+import EnergieKarten from '../EnergieKarten.astro';
 import EnergieListe from '../EnergieListe.astro';
 import Hero from '../Hero.astro';
 import { useTranslations } from '../../i18n/ui';
 import type { Locale } from '../../i18n/routes';
+import aerial from '../../assets/aerial.jpg';
 
 interface Props {
   locale: Locale;
@@ -11,6 +14,13 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
+
+const stats = [
+  { value: t('nachhaltigkeit.s1'), label: t('nachhaltigkeit.s1Label') },
+  { value: t('nachhaltigkeit.s2'), label: t('nachhaltigkeit.s2Label') },
+  { value: t('nachhaltigkeit.s3'), label: t('nachhaltigkeit.s3Label') },
+  { value: t('nachhaltigkeit.s4'), label: t('nachhaltigkeit.s4Label') },
+];
 ---
 
 <BaseLayout
@@ -19,10 +29,73 @@ const t = useTranslations(locale);
   title={t('nachhaltigkeit.metaTitle')}
   description={t('nachhaltigkeit.metaDescription')}
 >
-  <Hero
-    eyebrow={t('nachhaltigkeit.kicker')}
-    title={t('nachhaltigkeit.title')}
-    lead={t('nachhaltigkeit.lead')}
-  />
+  <Hero kicker={t('nachhaltigkeit.kicker')} title={t('nachhaltigkeit.title')} />
+
+  <div class="nach__text container cols">
+    <p class="lead">{t('nachhaltigkeit.p1')}</p>
+    <p class="lead">{t('nachhaltigkeit.p2')}</p>
+  </div>
+
+  <section class="nach__band" aria-label={t('nachhaltigkeit.energieTitle')}>
+    <dl class="container stats nach__stats" data-reveal>
+      {
+        stats.map((stat) => (
+          <div class="stat nach__stat">
+            <dt class="nach__label">{stat.label}</dt>
+            <dd class="nach__value">{stat.value}</dd>
+          </div>
+        ))
+      }
+    </dl>
+  </section>
+
+  <EnergieKarten locale={locale} />
   <EnergieListe locale={locale} />
+
+  <Bildband
+    src={aerial}
+    alt={t('nachhaltigkeit.bandAlt')}
+    size="md"
+    position="50% 32%"
+    caption={t('nachhaltigkeit.bandCaption')}
+  />
 </BaseLayout>
+
+<style>
+  .nach__text {
+    padding-bottom: clamp(3rem, 6vw, 5.5rem);
+  }
+
+  .nach__band {
+    border-block: var(--hairline);
+  }
+
+  .nach__stats {
+    --stat-min: 12.5rem;
+  }
+
+  .nach__stat {
+    display: flex;
+    flex-direction: column-reverse;
+    justify-content: flex-end;
+    padding-block: var(--space-l);
+  }
+
+  .nach__value {
+    margin: 0;
+    font-size: clamp(1.875rem, 3vw, 2.75rem);
+    font-weight: var(--fw-extralight);
+    line-height: 1;
+    letter-spacing: var(--ls-heading);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .nach__label {
+    margin: 0.625rem 0 0;
+    padding-right: var(--space-s);
+    font-size: 0.84375rem;
+    font-weight: var(--fw-light);
+    line-height: 1.5;
+    color: var(--c-text-muted);
+  }
+</style>

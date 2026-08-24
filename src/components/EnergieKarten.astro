@@ -1,0 +1,90 @@
+---
+import { useTranslations } from '../i18n/ui';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+const cards = [
+  { kicker: t('nachhaltigkeit.e1Kicker'), title: t('nachhaltigkeit.e1'), text: t('nachhaltigkeit.e1Text') },
+  { kicker: t('nachhaltigkeit.e2Kicker'), title: t('nachhaltigkeit.e2'), text: t('nachhaltigkeit.e2Text') },
+  { kicker: t('nachhaltigkeit.e3Kicker'), title: t('nachhaltigkeit.e3'), text: t('nachhaltigkeit.e3Text') },
+  { kicker: t('nachhaltigkeit.e4Kicker'), title: t('nachhaltigkeit.e4'), text: t('nachhaltigkeit.e4Text') },
+];
+
+const rejected = [t('nachhaltigkeit.rejected1'), t('nachhaltigkeit.rejected2'), t('nachhaltigkeit.rejected3')];
+const flat = [
+  t('nachhaltigkeit.flat1'),
+  t('nachhaltigkeit.flat2'),
+  t('nachhaltigkeit.flat3'),
+  t('nachhaltigkeit.flat4'),
+];
+---
+
+<section class="energie section" aria-labelledby="energie-heading">
+  <div class="container">
+    <div class="titlerow">
+      <h2 id="energie-heading">{t('nachhaltigkeit.energieTitle')}</h2>
+      <p class="credit">{t('nachhaltigkeit.energieCredit')}</p>
+    </div>
+
+    <div class="cards" data-reveal>
+      {
+        cards.map((card) => (
+          <article class="card">
+            <p class="card__eyebrow">{card.kicker}</p>
+            <h3 class="energie__title">{card.title}</h3>
+            <p>{card.text}</p>
+          </article>
+        ))
+      }
+    </div>
+
+    <div class="cols energie__notes" data-reveal>
+      <div>
+        <p class="energie__label">{t('nachhaltigkeit.rejectedTitle')}</p>
+        <div class="rows">
+          {rejected.map((item) => (
+            <div class="row"><p>{item}</p></div>
+          ))}
+        </div>
+      </div>
+
+      <div>
+        <p class="energie__label">{t('nachhaltigkeit.flatTitle')}</p>
+        <div class="rows">
+          {flat.map((item) => (
+            <div class="row"><p>{item}</p></div>
+          ))}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<style>
+  .energie .cards {
+    --card-min: 15rem;
+  }
+
+  .energie__title {
+    margin-top: 0;
+  }
+
+  .energie__notes {
+    margin-top: clamp(1.75rem, 4vw, 3.25rem);
+  }
+
+  .energie__label {
+    margin: 0 0 var(--space-s);
+    font-size: 0.71875rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-caps-tight);
+    text-transform: uppercase;
+    color: var(--c-text-subtle);
+  }
+</style>

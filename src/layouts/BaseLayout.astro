@@ -66,5 +66,11 @@ const fontCss = withBase('/fonts/readex-pro.css');
 
     <StickyBar page={page} locale={locale} />
     <SiteFooter locale={locale} />
+
+    {/* Scroll-Reveal. Laeuft nach dem Rendern und ist fuer den Inhalt
+        nicht notwendig — ohne JS bleibt alles sichtbar. */}
+    <script>
+      import '../scripts/reveal';
+    </script>
   </body>
 </html>

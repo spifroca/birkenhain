@@ -1,5 +1,6 @@
 ---
 import LanguageSwitch from './LanguageSwitch.astro';
+import logo from '../assets/logo.svg';
 import { NAV, pathFor, type Locale, type PageId } from '../i18n/routes';
 import { useTranslations, type TranslationKey } from '../i18n/ui';
 
@@ -11,7 +12,8 @@ interface Props {
 const { page, locale } = Astro.props;
 const t = useTranslations(locale);
 
-const items = NAV.map((id) => ({
+// Die Anmeldung steht nicht im Menue, sondern als Button rechts.
+const items = NAV.filter((id) => id !== 'anmeldung').map((id) => ({
   id,
   href: pathFor(id, locale),
   label: t(`nav.${id}` as TranslationKey),
@@ -21,8 +23,8 @@ const items = NAV.map((id) => ({
 
 <header class="header">
   <div class="header__inner container">
-    <a class="brand" href={pathFor('home', locale)} aria-current={page === 'home' ? 'page' : undefined}>
-      {t('site.name')}
+    <a class="brand" href={pathFor('home', locale)} aria-label={t('site.name')}>
+      <img src={logo.src} alt={t('site.name')} width="120" height="30" />
     </a>
 
     <nav class="nav" aria-label={t('nav.label')}>
@@ -30,11 +32,7 @@ const items = NAV.map((id) => ({
         {
           items.map((item) => (
             <li>
-              <a
-                class="nav__link"
-                href={item.href}
-                aria-current={item.current ? 'page' : undefined}
-              >
+              <a class="nav__link" href={item.href} aria-current={item.current ? 'page' : undefined}>
                 {item.label}
               </a>
             </li>
@@ -45,13 +43,10 @@ const items = NAV.map((id) => ({
 
     <div class="header__aside">
       <LanguageSwitch page={page} locale={locale} />
-      <button
-        class="burger"
-        type="button"
-        aria-expanded="false"
-        aria-controls="mobile-nav"
-        data-burger
-      >
+      <a class="btn btn--primary btn--compact header__cta" href={pathFor('anmeldung', locale)}>
+        {t('nav.cta')}
+      </a>
+      <button class="burger" type="button" aria-expanded="false" aria-controls="mobile-nav" data-burger>
         <span class="visually-hidden" data-burger-open>{t('nav.menuOpen')}</span>
         <span class="visually-hidden" data-burger-close hidden>{t('nav.menuClose')}</span>
         <span class="burger__bars" aria-hidden="true"><span></span><span></span></span>
@@ -75,72 +70,94 @@ const items = NAV.map((id) => ({
 </header>
 
 <style>
+  /* Durchscheinender Grund mit Blur: der Header liegt ueber dem Hero-Bild. */
   .header {
     position: sticky;
     top: 0;
     z-index: var(--z-header);
-    background: var(--c-bg);
+    background: rgb(245 243 238 / 0.94);
+    backdrop-filter: blur(16px);
     border-bottom: var(--hairline);
   }
 
   .header__inner {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap: var(--space-m);
+    gap: clamp(0.875rem, 2.4vw, 2.5rem);
     min-height: var(--header-h);
   }
 
   .brand {
-    font-size: var(--fs-h3);
-    font-weight: var(--fw-regular);
-    letter-spacing: var(--ls-heading);
-    text-decoration: none;
-    white-space: nowrap;
+    flex: 0 0 auto;
+    display: block;
+    line-height: 0;
+  }
+
+  .brand img {
+    height: 1.875rem;
+    width: auto;
   }
 
   .nav {
     display: none;
+    margin-left: auto;
+    min-width: 0;
   }
 
-  .nav__list,
-  .mobile__list {
+  .nav__list {
     display: flex;
+    align-items: center;
+    gap: clamp(0.5rem, 1.5vw, 1.5rem);
     margin: 0;
     padding: 0;
     list-style: none;
   }
 
-  .nav__list {
-    gap: var(--space-m);
-  }
-
   .nav__link {
     display: inline-block;
-    padding-block: var(--space-2xs);
-    font-size: var(--fs-small);
+    padding-block: var(--space-3xs);
+    font-size: 0.875rem;
+    font-weight: var(--fw-regular);
+    color: #5c5852;
     text-decoration: none;
     border-bottom: var(--border-width) solid transparent;
-    transition: border-color var(--duration) var(--ease);
+    transition:
+      color var(--duration) var(--ease),
+      border-color var(--duration) var(--ease);
   }
 
-  .nav__link:hover,
+  .nav__link:hover {
+    color: var(--c-text);
+  }
+
   .nav__link[aria-current='page'] {
-    border-bottom-color: var(--c-text);
+    color: var(--c-text);
+    border-bottom-color: var(--c-accent);
   }
 
   .header__aside {
     display: flex;
     align-items: center;
     gap: var(--space-2xs);
+    margin-left: auto;
+  }
+
+  .nav + .header__aside {
+    margin-left: 0;
+    padding-left: var(--space-2xs);
+    border-left: var(--hairline);
+  }
+
+  .header__cta {
+    display: none;
   }
 
   .burger {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 2.5rem;
-    height: 2.5rem;
+    width: 2.75rem;
+    height: 2.75rem;
     border: var(--hairline);
   }
 
@@ -161,8 +178,11 @@ const items = NAV.map((id) => ({
   }
 
   .mobile__list {
+    display: flex;
     flex-direction: column;
+    margin: 0;
     padding-block: var(--space-2xs);
+    list-style: none;
   }
 
   .mobile__link {
@@ -174,6 +194,12 @@ const items = NAV.map((id) => ({
 
   .mobile__list > li:last-child .mobile__link {
     border-bottom: 0;
+  }
+
+  @media (min-width: 48rem) {
+    .header__cta {
+      display: inline-flex;
+    }
   }
 
   @media (min-width: 60rem) {
@@ -207,7 +233,6 @@ const items = NAV.map((id) => ({
       setOpen(burger.getAttribute('aria-expanded') !== 'true');
     });
 
-    // Escape schliesst das Panel und gibt den Fokus zurueck.
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && burger.getAttribute('aria-expanded') === 'true') {
         setOpen(false);

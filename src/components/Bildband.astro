@@ -1,0 +1,49 @@
+---
+import Picture from './Picture.astro';
+import type { ImageMetadata } from 'astro';
+
+interface Props {
+  src: ImageMetadata;
+  alt: string;
+  caption?: string;
+  /** Bandhoehen aus den Tokens. */
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  /** `object-position`, wenn der Bildausschnitt verschoben werden muss. */
+  position?: string;
+}
+
+const { src, alt, caption, size = 'md', position } = Astro.props;
+
+const heights = {
+  sm: 'var(--band-h-sm)',
+  md: 'var(--band-h)',
+  lg: 'var(--band-h-lg)',
+  xl: 'var(--band-h-xl)',
+} as const;
+
+const style = [`--band: ${heights[size]}`, position ? `--band-pos: ${position}` : null]
+  .filter(Boolean)
+  .join('; ');
+---
+
+<div class="band" style={style}>
+  <Picture src={src} alt={alt} sizes="100vw" />
+</div>
+{
+  caption && (
+    <div class="container">
+      <p class="band__caption">{caption}</p>
+    </div>
+  )
+}
+
+<style>
+  .band :global(.picture),
+  .band :global(img) {
+    height: 100%;
+  }
+
+  .band__caption {
+    padding-bottom: clamp(2.5rem, 5vw, 4rem);
+  }
+</style>

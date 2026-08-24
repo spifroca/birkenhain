@@ -1,4 +1,5 @@
 @import './tokens.css';
+@import './design.css';
 
 /* Die @font-face-Regel liegt in public/fonts/readex-pro.css und wird von
    BaseLayout.astro verlinkt — siehe Kommentar dort. */

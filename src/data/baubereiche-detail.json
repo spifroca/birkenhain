@@ -1,0 +1,240 @@
+{
+  "17": {
+    "ausrichtung": {
+      "de": "West",
+      "en": "west"
+    },
+    "nutzung": {
+      "de": "Wohnen, Bistro",
+      "en": "Residential, bistro"
+    },
+    "lage": {
+      "de": "Ostzeile, quer zum Hang",
+      "en": "east row, across the slope"
+    }
+  },
+  "01D": {
+    "ausrichtung": {
+      "de": "Süd-Ost",
+      "en": "south-east"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "Nordwest-Ecke",
+      "en": "north-west corner"
+    }
+  },
+  "02D": {
+    "ausrichtung": {
+      "de": "Süd-Ost",
+      "en": "south-east"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "Waldrand",
+      "en": "forest edge"
+    }
+  },
+  "03D": {
+    "ausrichtung": {
+      "de": "Süd-Ost",
+      "en": "south-east"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "Waldrand",
+      "en": "forest edge"
+    }
+  },
+  "04D": {
+    "ausrichtung": {
+      "de": "Süd-Ost",
+      "en": "south-east"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "Waldrand",
+      "en": "forest edge"
+    }
+  },
+  "05D": {
+    "ausrichtung": {
+      "de": "Süd",
+      "en": "south"
+    },
+    "nutzung": {
+      "de": "Wohnen, Durchgang",
+      "en": "Residential, passage"
+    },
+    "lage": {
+      "de": "mit Passage im EG",
+      "en": "with ground-floor passage"
+    }
+  },
+  "06D": {
+    "ausrichtung": {
+      "de": "Süd",
+      "en": "south"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "hangparallel",
+      "en": "parallel to the slope"
+    }
+  },
+  "07F": {
+    "ausrichtung": {
+      "de": "Süd-West",
+      "en": "south-west"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "hangparallel",
+      "en": "parallel to the slope"
+    }
+  },
+  "08F": {
+    "ausrichtung": {
+      "de": "Süd-West",
+      "en": "south-west"
+    },
+    "nutzung": {
+      "de": "Wohnen, Gym",
+      "en": "Residential, gym"
+    },
+    "lage": {
+      "de": "am Quartierplatz",
+      "en": "on the square"
+    }
+  },
+  "09F": {
+    "ausrichtung": {
+      "de": "Süd-Ost",
+      "en": "south-east"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "hangparallel",
+      "en": "parallel to the slope"
+    }
+  },
+  "10F": {
+    "ausrichtung": {
+      "de": "Süd",
+      "en": "south"
+    },
+    "nutzung": {
+      "de": "Wohnen, Kita 290 m²",
+      "en": "Residential, day-care 290 m²"
+    },
+    "lage": {
+      "de": "am Quartierplatz",
+      "en": "on the square"
+    }
+  },
+  "11F": {
+    "ausrichtung": {
+      "de": "West",
+      "en": "west"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "hangparallel",
+      "en": "parallel to the slope"
+    }
+  },
+  "12F": {
+    "ausrichtung": {
+      "de": "Süd",
+      "en": "south"
+    },
+    "nutzung": {
+      "de": "Wohnen, Durchgang",
+      "en": "Residential, passage"
+    },
+    "lage": {
+      "de": "mit Passage im EG",
+      "en": "with ground-floor passage"
+    }
+  },
+  "13F": {
+    "ausrichtung": {
+      "de": "Süd",
+      "en": "south"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "Obere Dorfstrasse",
+      "en": "Obere Dorfstrasse"
+    }
+  },
+  "14F": {
+    "ausrichtung": {
+      "de": "Süd-Ost",
+      "en": "south-east"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "Obere Dorfstrasse",
+      "en": "Obere Dorfstrasse"
+    }
+  },
+  "15B": {
+    "ausrichtung": {
+      "de": "Süd-West",
+      "en": "south-west"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "Obere Dorfstrasse",
+      "en": "Obere Dorfstrasse"
+    }
+  },
+  "16B": {
+    "ausrichtung": {
+      "de": "Süd-West",
+      "en": "south-west"
+    },
+    "nutzung": {
+      "de": "Wohnen",
+      "en": "Residential"
+    },
+    "lage": {
+      "de": "Obere Dorfstrasse",
+      "en": "Obere Dorfstrasse"
+    }
+  }
+}

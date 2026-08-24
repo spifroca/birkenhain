@@ -1,0 +1,83 @@
+---
+import { useTranslations } from '../i18n/ui';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+// Die Farbwerte stehen in design.css, nicht hier.
+const swatches = [
+  { token: '--c-mat-plaster', label: t('architektur.mat1'), outline: true },
+  { token: '--c-mat-eternit', label: t('architektur.mat2') },
+  { token: '--c-mat-bronze', label: t('architektur.mat3') },
+  { token: '--c-mat-bronze-dark', label: t('architektur.mat4') },
+  { token: '--c-mat-socle', label: t('architektur.mat5') },
+];
+---
+
+<section class="mat section" aria-labelledby="mat-heading">
+  <div class="container">
+    <h2 id="mat-heading">{t('architektur.matTitle')}</h2>
+    <p class="mat__lead">{t('architektur.matLead')}</p>
+
+    <ul class="mat__grid" data-reveal>
+      {
+        swatches.map((swatch) => (
+          <li>
+            <div
+              class:list={['mat__chip', swatch.outline && 'mat__chip--outline']}
+              style={`background: var(${swatch.token})`}
+            />
+            <p class="mat__label">{swatch.label}</p>
+          </li>
+        ))
+      }
+    </ul>
+  </div>
+</section>
+
+<style>
+  .mat h2 {
+    margin-bottom: var(--space-2xs);
+    line-height: 1;
+  }
+
+  .mat__lead {
+    max-width: 52ch;
+    margin: 0 0 var(--space-l);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-light);
+    line-height: var(--lh-body);
+    color: var(--c-text-muted);
+  }
+
+  .mat__grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(11.25rem, 1fr));
+    gap: clamp(0.75rem, 1.6vw, 1.375rem);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .mat__chip {
+    height: 8.125rem;
+  }
+
+  /* Weiss auf Papier braucht eine Kante, sonst verschwindet die Flaeche. */
+  .mat__chip--outline {
+    border: var(--hairline);
+  }
+
+  .mat__label {
+    max-width: none;
+    margin: var(--space-xs) 0 0;
+    font-size: 0.84375rem;
+    font-weight: var(--fw-regular);
+    line-height: 1.45;
+  }
+</style>

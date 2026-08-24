@@ -1,0 +1,424 @@
+/* =============================================================================
+   Design-Primitive — Im Birkenhain
+   -----------------------------------------------------------------------------
+   Die Bausteine, die im Entwurf mehrfach vorkommen: Bildbaender, Planrahmen
+   mit Registermarken, Kennzahlenbaender, Hairline-Listen, Kartenraster,
+   Buttons. Ergaenzt tokens.css, ersetzt es nicht.
+
+   Einbinden: in base.css nach dem tokens-Import
+       @import './design.css';
+   ========================================================================== */
+
+:root {
+  /* Bronze auf dunklem Grund — Kicker und Links im Waldgruen-Feld. */
+  --c-accent-light: #c0a47a;
+  --c-kicker-inverse: #e4dccb;
+
+  /* Bewohnertypen: die Fuellfarben der Marker im Situationsplan. */
+  --c-typ-d: #cdaf92;
+  --c-typ-f: #d6dde1;
+  --c-typ-b: #a9c3a6;
+
+  /* Planlabels: Wasser, Wald, Platz. */
+  --c-plate-water: #2f4a52;
+  --c-plate-forest: #3b4a36;
+
+  /* Materialisierung — die fuenf Oberflaechen der Fassade. */
+  --c-mat-plaster: #ede9e1;
+  --c-mat-eternit: #cfc3ac;
+  --c-mat-bronze: var(--c-accent);
+  --c-mat-bronze-dark: #4a3a2c;
+  --c-mat-socle: #8e8b84;
+
+  /* Bildband Wohnen — eine Stufe hoeher als --band-h-hero es zulaesst. */
+  --band-h-xl: min(72vh, 45rem);
+
+  /* Sektionsrhythmen des Entwurfs. */
+  --pad-section: clamp(4rem, 9vw, 8.25rem);
+  --pad-section-m: clamp(3rem, 6vw, 5.5rem);
+  --pad-section-s: clamp(2.5rem, 5vw, 4.5rem);
+}
+
+/* --- Flaechen -------------------------------------------------------------- */
+
+.section {
+  padding-block: var(--pad-section);
+}
+
+.section--m {
+  padding-block: var(--pad-section-m);
+}
+
+.section--alt {
+  background: var(--c-bg-alt);
+  border-block: var(--hairline);
+}
+
+.section--dark {
+  background: var(--c-bg-inverse);
+  color: var(--c-text-inverse-muted);
+}
+
+.section--dark h2,
+.section--dark h3 {
+  color: var(--c-text-inverse);
+}
+
+/* --- Kicker ---------------------------------------------------------------- */
+
+.kicker {
+  margin: 0 0 var(--space-m);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-caps);
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
+.kicker--inverse {
+  color: var(--c-accent-light);
+}
+
+/* --- Kopfzeile einer Sektion: Titel links, Quellenangabe rechts ----------- */
+
+.titlerow {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-m);
+  margin-bottom: var(--space-l);
+}
+
+.titlerow h2 {
+  margin: 0;
+  line-height: var(--lh-tight);
+}
+
+.credit {
+  max-width: 44ch;
+  margin: 0;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-light);
+  color: var(--c-text-subtle);
+}
+
+/* --- Fliesstext ----------------------------------------------------------- */
+
+.lead {
+  font-size: var(--fs-lead);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-lead);
+  color: #54514d;
+}
+
+.cols {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--col-min-wide), 1fr));
+  gap: var(--grid-gap);
+  align-items: start;
+}
+
+.cols--tight {
+  gap: var(--grid-gap-tight);
+}
+
+/* --- Bildbaender ---------------------------------------------------------- */
+
+.band {
+  position: relative;
+  height: var(--band, var(--band-h));
+  overflow: hidden;
+  background: var(--c-bg-inverse);
+}
+
+.band :global(img) {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: var(--band-pos, 50% 50%);
+}
+
+.band__caption {
+  margin: 0;
+  padding-block: var(--space-m) 0;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-light);
+  color: var(--c-text-subtle);
+}
+
+/* --- Planrahmen mit Registermarken ---------------------------------------- */
+
+.figure {
+  position: relative;
+  margin: 0;
+  border: var(--hairline);
+  background: var(--c-bg-alt);
+}
+
+.figure > .corner {
+  position: absolute;
+  z-index: 2;
+  font-size: 0.6875rem;
+  font-style: normal;
+  line-height: 1;
+  color: var(--c-accent);
+}
+
+.figure > .corner.tl { top: -5px; left: -5px; }
+.figure > .corner.tr { top: -5px; right: -5px; }
+.figure > .corner.bl { bottom: -5px; left: -5px; }
+.figure > .corner.br { bottom: -5px; right: -5px; }
+
+.figure__note {
+  max-width: none;
+  margin: 0;
+  padding: var(--space-2xs) var(--space-xs);
+  border-top: var(--hairline);
+  font-size: var(--fs-caption);
+  font-weight: var(--fw-light);
+  color: var(--c-text-faint);
+}
+
+/* Ortslabel auf einem Plan. */
+.plate {
+  position: absolute;
+  padding: 2px 5px;
+  background: var(--c-plate);
+  font-size: 0.625rem;
+  font-weight: var(--fw-semibold);
+  letter-spacing: var(--ls-caps-plate);
+  line-height: 1.3;
+  text-transform: uppercase;
+  color: var(--c-text);
+}
+
+/* --- Kennzahlenband ------------------------------------------------------- */
+
+.stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--stat-min, 9.375rem), 1fr));
+  margin: 0;
+}
+
+.stat {
+  padding-block: var(--space-m);
+  border-left: var(--hairline);
+  padding-left: var(--space-m);
+}
+
+.stat:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+
+.stat__value {
+  font-size: 2.375rem;
+  font-weight: var(--fw-extralight);
+  line-height: 1;
+  letter-spacing: var(--ls-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+.stat__label {
+  margin: var(--space-2xs) 0 0;
+  font-size: 0.71875rem;
+  font-weight: var(--fw-medium);
+  letter-spacing: var(--ls-caps-tight);
+  text-transform: uppercase;
+  color: #7d7871;
+}
+
+/* --- Hairline-Listen ------------------------------------------------------ */
+/* Ein 1-px-Raster als Hintergrund, die Zeilen liegen als Flaechen darauf —
+   so entsteht die Trennlinie ohne doppelte Border. */
+
+.rows {
+  display: grid;
+  gap: var(--border-width);
+  background: var(--c-hairline);
+  border-block: var(--hairline);
+  align-content: start;
+}
+
+.row {
+  display: flex;
+  justify-content: space-between;
+  gap: var(--space-m);
+  background: var(--c-bg);
+  padding-block: var(--space-xs);
+}
+
+.section--alt .row,
+.rows--alt .row {
+  background: var(--c-bg-alt);
+}
+
+.row__label {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-light);
+}
+
+.row__value {
+  font-size: var(--fs-body);
+  font-weight: var(--fw-regular);
+  color: #7d7871;
+  white-space: nowrap;
+}
+
+.row p {
+  max-width: none;
+  margin: 0;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-light);
+  line-height: var(--lh-body-tight);
+  color: #54514d;
+}
+
+/* --- Kartenraster --------------------------------------------------------- */
+/* Karten sind Linienzeichnungen: der Rahmen ist ein 1-px-Ring, keine
+   Elevation, kein Radius. */
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--card-min, 15.625rem), 1fr));
+  gap: var(--border-width);
+  background: var(--c-bg);
+}
+
+.card {
+  background: var(--c-bg);
+  box-shadow: var(--card-outline);
+  padding: var(--space-m) 1.375rem 1.75rem;
+}
+
+.section--dark .cards {
+  background: var(--c-bg-inverse);
+}
+
+.section--dark .card {
+  background: var(--c-bg-inverse);
+  box-shadow: 0 0 0 1px var(--c-hairline-inverse);
+}
+
+.card h3 {
+  margin: var(--space-s) 0 var(--space-2xs);
+  font-size: 1.1875rem;
+  font-weight: var(--fw-regular);
+}
+
+.card p {
+  max-width: none;
+  margin: 0;
+  font-size: var(--fs-small);
+  font-weight: var(--fw-light);
+  line-height: 1.58;
+  color: var(--c-text-muted);
+}
+
+.section--dark .card p {
+  color: var(--c-text-inverse-muted);
+}
+
+.card__eyebrow {
+  margin: 0 0 var(--space-xs);
+  font-size: 0.71875rem;
+  font-weight: var(--fw-bold);
+  letter-spacing: var(--ls-caps-tight);
+  text-transform: uppercase;
+  color: var(--c-accent);
+}
+
+.card__figure {
+  font-size: var(--fs-figure);
+  font-weight: var(--fw-extralight);
+  line-height: 1;
+  letter-spacing: var(--ls-heading);
+  font-variant-numeric: tabular-nums;
+}
+
+/* --- Buttons -------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2xs);
+  padding: 0.9375rem 1.625rem;
+  border: var(--border-width) solid transparent;
+  font-size: 0.875rem;
+  font-weight: var(--fw-medium);
+  text-decoration: none;
+  white-space: nowrap;
+  transition:
+    background-color var(--duration) var(--ease),
+    color var(--duration) var(--ease),
+    border-color var(--duration) var(--ease);
+}
+
+.btn--primary {
+  background: var(--c-accent);
+  color: #fff;
+}
+
+.btn--primary:hover {
+  background: var(--c-accent-hover);
+}
+
+.btn--compact {
+  padding: 0.75rem 1.25rem;
+  font-size: 0.84375rem;
+}
+
+.btn--block {
+  width: 100%;
+}
+
+/* Auf dem Bild: Glas statt Flaeche. */
+.btn--glass {
+  background: rgb(255 255 255 / 0.1);
+  border-color: rgb(255 255 255 / 0.5);
+  color: #fff;
+  font-weight: var(--fw-light);
+  backdrop-filter: blur(6px);
+}
+
+.btn--glass:hover {
+  background: rgb(255 255 255 / 0.2);
+}
+
+/* --- Textlink mit Unterkante --------------------------------------------- */
+
+.link-rule {
+  font-size: var(--fs-body);
+  text-decoration: none;
+  border-bottom: var(--border-width) solid var(--c-accent-tint-line, rgb(169 114 47 / 0.4));
+  color: var(--c-accent);
+}
+
+.link-rule:hover {
+  color: var(--c-accent-hover);
+  border-bottom-color: currentcolor;
+}
+
+/* --- Scroll-Reveal -------------------------------------------------------- */
+/* Die Klasse wird gesetzt, das Aufdecken uebernimmt reveal.ts. Ohne JS
+   bleibt der Inhalt sichtbar — kein Inhalt haengt an einem Observer. */
+
+[data-reveal] {
+  transition:
+    opacity var(--duration-reveal) var(--ease-reveal),
+    transform var(--duration-reveal) var(--ease-reveal);
+}
+
+[data-reveal='pending'] {
+  opacity: 0;
+  transform: translateY(var(--reveal-offset));
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-reveal='pending'] {
+    opacity: 1;
+    transform: none;
+  }
+}

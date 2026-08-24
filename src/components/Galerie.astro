@@ -29,82 +29,70 @@ const images: LightboxImage[] = shown.map((entry) => ({
 
 {
   images.length > 0 && (
-    <section class="galerie container" aria-labelledby="galerie-heading">
-      <h2 id="galerie-heading">{heading ?? t('home.galerieHeading')}</h2>
+    <section class="galerie" aria-labelledby="galerie-heading">
+      <div class="container">
+        <div class="titlerow">
+          <h2 id="galerie-heading">{heading ?? t('home.galerieHeading')}</h2>
+          <p class="credit">{t('home.galerieCredit')}</p>
+        </div>
 
-      <ul class="galerie__grid">
-        {
-          images.map((image, index) => (
-            <li class="galerie__cell">
-              <button
-                class="galerie__trigger"
-                type="button"
-                data-lb-open={index}
-                aria-label={t('lightbox.open', { caption: image.caption || image.alt })}
-              >
-                <Picture
-                  src={image.src}
-                  alt={image.alt}
-                  sizes="(min-width: 68rem) 33vw, (min-width: 45rem) 50vw, 100vw"
-                  hero={shown[index]?.data.hero ?? false}
-                  ratio="3 / 2"
-                />
-              </button>
-              {image.caption && <p class="galerie__caption">{image.caption}</p>}
-            </li>
-          ))
-        }
-      </ul>
+        <ul class="galerie__grid" data-reveal>
+          {
+            images.map((image, index) => (
+              <li class="galerie__cell">
+                <button
+                  class="galerie__trigger"
+                  type="button"
+                  data-lb-open={index}
+                  aria-label={t('lightbox.open', { caption: image.caption || image.alt })}
+                >
+                  <Picture
+                    src={image.src}
+                    alt={image.alt}
+                    sizes="(min-width: 68rem) 25vw, (min-width: 45rem) 50vw, 100vw"
+                    hero={shown[index]?.data.hero ?? false}
+                    ratio="3 / 2"
+                  />
+                </button>
+              </li>
+            ))
+          }
+        </ul>
 
-      <Lightbox images={images} locale={locale} />
+        <Lightbox images={images} locale={locale} />
+      </div>
     </section>
   )
 }
 
 <style>
+  /* Die Galerie ist ein Raster aus Bildern, keine Liste mit Legenden — die
+     Bildlegende steht in der Lightbox. */
   .galerie {
-    padding-block: var(--space-2xl);
-  }
-
-  .galerie h2 {
-    margin-bottom: var(--space-l);
+    padding-block: clamp(3.5rem, 7vw, 6rem);
+    border-top: var(--hairline);
   }
 
   .galerie__grid {
     display: grid;
-    gap: var(--space-m);
+    grid-template-columns: repeat(auto-fit, minmax(13.75rem, 1fr));
+    gap: var(--space-xs);
     margin: 0;
     padding: 0;
     list-style: none;
-    grid-template-columns: 1fr;
   }
 
   .galerie__trigger {
     display: block;
     width: 100%;
-    border: var(--hairline);
+    background: var(--c-image-placeholder);
   }
 
-  .galerie__trigger:hover {
-    border-color: var(--c-text);
+  .galerie__trigger :global(img) {
+    transition: opacity var(--duration) var(--ease);
   }
 
-  .galerie__caption {
-    max-width: none;
-    padding-top: var(--space-2xs);
-    font-size: var(--fs-small);
-    color: var(--c-text-muted);
-  }
-
-  @media (min-width: 45rem) {
-    .galerie__grid {
-      grid-template-columns: repeat(2, 1fr);
-    }
-  }
-
-  @media (min-width: 68rem) {
-    .galerie__grid {
-      grid-template-columns: repeat(3, 1fr);
-    }
+  .galerie__trigger:hover :global(img) {
+    opacity: 0.88;
   }
 </style>
