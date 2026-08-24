@@ -14,7 +14,7 @@ der Rest — und warum er offen ist.
 | Energiekonzept | 9 Positionen mit Kennwerten und Erläuterung |
 | Koordinaten | 47.36438 / 8.37068 — die Karte rendert |
 | Projekttexte | Meta, Titel, Lead und Kicker für 6 Screens, DE und EN |
-| Domain | `www.birkenhain.ch`, live nachgemessen |
+| Domain | `birkenhain.ch` ohne www, live nachgemessen — `www.` leitet pfadtreu per 301 dorthin |
 
 Neu dazugekommen ist der **Kicker** je Screen — die Zeile über dem Titel,
 `--fs-caption` / `--fw-bold` / `--ls-caps` / `--c-accent`. Eigene Klasse

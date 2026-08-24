@@ -67,16 +67,16 @@ Liegt in `httpdocs` etwas, das nicht aus dem Build kommt — eine
 
 ```bash
 # muss www enthalten
-curl -s https://www.birkenhain.ch/ | grep -o 'rel="canonical" href="[^"]*"'
+curl -s https://birkenhain.ch/ | grep -o 'rel="canonical" href="[^"]*"'
 
 # muss 200 sein
-curl -so /dev/null -w '%{http_code}\n' https://www.birkenhain.ch/architektur/
+curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/architektur/
 
 # muss 404 sein
-curl -so /dev/null -w '%{http_code}\n' https://www.birkenhain.ch/api/lib/birkenhain.php
+curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/api/lib/birkenhain.php
 
 # muss 405 sein
-curl -so /dev/null -w '%{http_code}\n' https://www.birkenhain.ch/api/anmeldung.php
+curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/api/anmeldung.php
 ```
 
 ## Was das nicht löst

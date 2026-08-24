@@ -1,11 +1,31 @@
 # nginx-Direktiven für Plesk
 
-**Warum das nötig ist:** live nachgemessen antwortet `www.birkenhain.ch` mit
-`server: nginx` und **ohne** einen einzigen Security-Header. nginx bedient
-die statischen Dateien selbst, und damit wird die mitgelieferte `.htaccess`
-**ignoriert**. Ohne die Regeln unten fehlen:
+**Stand 24.08.2026, live nachgemessen:** die Direktiven unten sind auf
+`birkenhain.ch` **aktiv**. Der Server antwortet mit `x-content-type-options`,
+`referrer-policy`, `x-frame-options` und der vollen CSP; `/_assets/` liefert
+`cache-control: public, immutable` mit einem Jahr `expires`, das HTML
+`public, must-revalidate` mit fünf Minuten. `/api/lib/birkenhain.php`
+antwortet 404. Diese Datei ist damit von der Anleitung zur Referenz
+geworden — sie dokumentiert, was gesetzt ist.
 
-| fehlt | Folge |
+**Ein Punkt fehlt weiterhin:** `strict-transport-security` erscheint in
+keiner Antwort, obwohl die Direktive unten steht. Zu prüfen, in dieser
+Reihenfolge, statt zu raten:
+
+1. Ob der Block wirklich in **beiden** Vhosts steht — `birkenhain.ch` und
+   `www.birkenhain.ch` sind in Plesk getrennte Einträge.
+2. Ob Plesk unter *Hosting & DNS → Hosting-Einstellungen* eine eigene
+   HSTS-Option führt, die die manuelle Direktive überschreibt.
+3. Ob ein `add_header` weiter oben ohne `always` steht — dann verliert der
+   Block bei 301/304-Antworten alle Header darüber.
+
+Bis das geklärt ist, bleibt der erste Aufruf über `http://` angreifbar. Alles
+andere ist gesetzt.
+
+**Warum es nötig war:** nginx bedient die statischen Dateien selbst, und damit
+wird die mitgelieferte `.htaccess` **ignoriert**. Ohne die Regeln unten fehlten:
+
+| fehlte | Folge |
 | --- | --- |
 | Security-Header, CSP | keine Klickjacking- und MIME-Sniffing-Sperre |
 | HSTS | erster Aufruf über HTTP bleibt angreifbar |
@@ -96,19 +116,19 @@ location ~* \.(sqlite|sqlite-wal|sqlite-shm)$ {
 
 ```bash
 # Security-Header müssen jetzt da sein
-curl -sI https://www.birkenhain.ch/ | grep -i "x-content-type\|strict-transport\|content-security"
+curl -sI https://birkenhain.ch/ | grep -i "x-content-type\|strict-transport\|content-security"
 
 # Assets müssen immutable sein
-curl -sI https://www.birkenhain.ch/_assets/*.css | grep -i cache-control
+curl -sI https://birkenhain.ch/_assets/*.css | grep -i cache-control
 
 # Die gemeinsame Logik muss 404 liefern, nicht 200
-curl -so /dev/null -w '%{http_code}\n' https://www.birkenhain.ch/api/lib/birkenhain.php
+curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/api/lib/birkenhain.php
 
 # Eine falsche URL muss die Projekt-404 zeigen, nicht nginx'
-curl -s https://www.birkenhain.ch/gibt-es-nicht | grep -o "Seite nicht gefunden"
+curl -s https://birkenhain.ch/gibt-es-nicht | grep -o "Seite nicht gefunden"
 
 # Der Endpoint muss weiter 405 auf GET liefern
-curl -so /dev/null -w '%{http_code}\n' https://www.birkenhain.ch/api/anmeldung.php
+curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/api/anmeldung.php
 ```
 
 ## Zwei bewusste Einschränkungen

@@ -260,13 +260,13 @@ SSL bleiben unberührt, nur die Dateien im Webroot werden ersetzt.
 
 ```bash
 # muss www enthalten
-curl -s https://www.birkenhain.ch/ | grep -o 'rel="canonical" href="[^"]*"'
+curl -s https://birkenhain.ch/ | grep -o 'rel="canonical" href="[^"]*"'
 
 # muss 200 sein, nicht 301
-curl -so /dev/null -w '%{http_code}\n' https://www.birkenhain.ch/architektur/
+curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/architektur/
 
 # muss 404 sein, nicht 200
-curl -so /dev/null -w '%{http_code}\n' https://www.birkenhain.ch/api/lib/birkenhain.php
+curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/api/lib/birkenhain.php
 ```
 
 Zeigt der Canonical noch `https://birkenhain.ch/` ohne `www`, liegt noch der

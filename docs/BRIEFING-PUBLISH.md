@@ -1,7 +1,7 @@
 # Briefing: birkenhain.ch veröffentlichen
 
 Für eine neue Claude-Code-Session auf `spifroca/birkenhain`.
-**Ziel: die Site geht live auf `www.birkenhain.ch` und sieht aus wie der
+**Ziel: die Site geht live auf `birkenhain.ch` und sieht aus wie der
 Entwurf.** Stand dieses Briefings: 24.08.2026, 07:32 UTC.
 
 ---
@@ -40,7 +40,7 @@ Schluss. Das ist in diesem Projekt schon einmal passiert.
 - 19 Endpoint-Tests grün (`./scripts/test-endpoint.sh`, PHP-eigener Server)
 - Basispfad-Fähigkeit unter echtem Unterpfad-Build geprüft
 - Projektfakten in der CI erzwungen (siehe **Harte Regeln**)
-- Live-Probe möglich: `www.birkenhain.ch` ist aus der Session erreichbar,
+- Live-Probe möglich: `birkenhain.ch` ist aus der Session erreichbar,
   `github.io` nicht
 
 ## Der Weg zum Ziel, in dieser Reihenfolge
@@ -67,10 +67,10 @@ Ebene höher und trägt Konfiguration und Anmeldedaten.
 Prüfen danach:
 
 ```bash
-curl -s https://www.birkenhain.ch/ | grep -o 'rel="canonical" href="[^"]*"'   # muss www enthalten
-curl -so /dev/null -w '%{http_code}\n' https://www.birkenhain.ch/architektur/            # 200
-curl -so /dev/null -w '%{http_code}\n' https://www.birkenhain.ch/api/lib/birkenhain.php  # 404
-curl -s https://www.birkenhain.ch/ | grep -c 'a9722f'                                    # > 0 = Design da
+curl -s https://birkenhain.ch/ | grep -o 'rel="canonical" href="[^"]*"'   # ohne www
+curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/architektur/            # 200
+curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/api/lib/birkenhain.php  # 404
+curl -s https://birkenhain.ch/ | grep -c 'a9722f'                                    # > 0 = Design da
 ```
 
 Details: [`PLESK-GIT.md`](PLESK-GIT.md)
