@@ -406,10 +406,6 @@
     "detailClose": "Details schliessen"
   },
   "map": {
-    "consentHeading": "Karte laden",
-    "consentBody": "Die Karte lädt Kartenausschnitte von OpenStreetMap. Dabei wird Ihre IP-Adresse an OpenStreetMap übermittelt.",
-    "consentButton": "Karte laden",
-    "consentRemember": "Auswahl für diesen Besuch merken",
     "label": "Karte der Umgebung",
     "attribution": "Kartendaten © OpenStreetMap-Mitwirkende",
     "fallback": "Karte konnte nicht geladen werden."
@@ -481,7 +477,7 @@
     "processorsBody": "Es findet keine Weitergabe zu Werbezwecken statt und es werden keine Daten verkauft. Für den Versand der Bestätigungsmail wird der Mailserver des Hosting-Anbieters verwendet, der insoweit als Auftragsbearbeiter tätig ist.",
     "processorsPending": "Zu ergänzen: Name und Sitz des Hosting-Anbieters.",
     "mapHeading": "Karte",
-    "mapBody": "Die Karte auf «Lage & Mobilität» lädt Kartenausschnitte von OpenStreetMap. Sie wird erst geladen, wenn Sie ausdrücklich darauf klicken — vorher geht kein Aufruf an OpenStreetMap. Mit dem Klick wird Ihre IP-Adresse an OpenStreetMap übermittelt. Die Einwilligung wird nur im Zwischenspeicher Ihres Browsers gehalten und endet, wenn Sie den Tab schliessen.",
+    "mapBody": "Die Karte auf «Lage & Mobilität» lädt Kartenausschnitte von OpenStreetMap. Sie lädt automatisch mit der Seite; dabei wird Ihre IP-Adresse an OpenStreetMap übermittelt. Dafür werden keine Cookies gesetzt, und es wird nichts in Ihrem Browser gespeichert.",
     "cookiesHeading": "Cookies, Tracking, Schriften",
     "cookiesBody": "Diese Website setzt keine Cookies, verwendet keine Analyse- oder Tracking-Werkzeuge und bindet keine Werbenetzwerke ein. Die Schriften werden von der eigenen Domain ausgeliefert, nicht von einem fremden Anbieter. Der Webserver protokolliert Zugriffe technisch, wie bei jedem Webhosting üblich.",
     "cookiesPending": "Zu ergänzen: Aufbewahrungsdauer der Server-Zugriffsprotokolle beim Hosting-Anbieter.",

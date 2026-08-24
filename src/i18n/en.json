@@ -406,10 +406,6 @@
     "detailClose": "Close details"
   },
   "map": {
-    "consentHeading": "Load map",
-    "consentBody": "The map loads map tiles from OpenStreetMap. Your IP address is transmitted to OpenStreetMap in the process.",
-    "consentButton": "Load map",
-    "consentRemember": "Remember this choice for this visit",
     "label": "Map of the surroundings",
     "attribution": "Map data © OpenStreetMap contributors",
     "fallback": "The map could not be loaded."
@@ -481,7 +477,7 @@
     "processorsBody": "No data is disclosed for advertising purposes and no data is sold. The hosting provider's mail server is used to send the confirmation email and acts as a processor in that respect.",
     "processorsPending": "To be added: name and domicile of the hosting provider.",
     "mapHeading": "Map",
-    "mapBody": "The map on «Location & mobility» loads map tiles from OpenStreetMap. It loads only after you explicitly click it — before that, no request reaches OpenStreetMap. Clicking transmits your IP address to OpenStreetMap. The consent is held only in your browser's session storage and ends when you close the tab.",
+    "mapBody": "The map on «Location & mobility» loads map tiles from OpenStreetMap. It loads automatically with the page; this transmits your IP address to OpenStreetMap. No cookies are set for this, and nothing is stored in your browser.",
     "cookiesHeading": "Cookies, tracking, fonts",
     "cookiesBody": "This website sets no cookies, uses no analytics or tracking tools and embeds no advertising networks. Fonts are served from our own domain, not by a third party. The web server logs access technically, as is usual with any web hosting.",
     "cookiesPending": "To be added: retention period of the hosting provider's server access logs.",
