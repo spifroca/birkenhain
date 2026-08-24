@@ -1,5 +1,5 @@
 ---
-import { alternatePath, type Locale, type PageId } from '../i18n/routes';
+import { alternatePath, LOCALES, type Locale, type PageId } from '../i18n/routes';
 import { useTranslations } from '../i18n/ui';
 
 interface Props {
@@ -9,30 +9,78 @@ interface Props {
 
 const { page, locale } = Astro.props;
 const t = useTranslations(locale);
+
+/**
+ * Beide Sprachen stehen im Kopf, in fester Reihenfolge DE dann EN — so
+ * zeigt es der Entwurf. Die aktuelle ist kein Link, sondern eine Marke;
+ * die andere traegt den Wechsel. Bei genau zwei Sprachen ist die nicht
+ * aktive immer das Gegenstueck aus `alternatePath`.
+ */
 const other = alternatePath(page, locale);
-const otherName = other.locale === 'de' ? 'Deutsch' : 'English';
+const items = LOCALES.map((code) => ({
+  code,
+  current: code === locale,
+}));
 ---
 
-<a class="lang" href={other.path} hreflang={other.locale} lang={other.locale} rel="alternate">
-  <span class="visually-hidden">{t('common.languageSwitch')}</span>
-  <span aria-hidden="true">{other.locale.toUpperCase()}</span>
-  <span class="visually-hidden">{otherName}</span>
-</a>
+<p class="lang">
+  {
+    items.map((item) =>
+      item.current ? (
+        <span class="lang__item lang__item--current" aria-current="true">
+          {item.code.toUpperCase()}
+        </span>
+      ) : (
+        <a
+          class="lang__item"
+          href={other.path}
+          hreflang={item.code}
+          lang={item.code}
+          rel="alternate"
+        >
+          <span class="visually-hidden">{t('common.languageSwitch')}</span>
+          <span aria-hidden="true">{item.code.toUpperCase()}</span>
+        </a>
+      ),
+    )
+  }
+</p>
 
 <style>
   .lang {
     display: inline-flex;
     align-items: center;
-    padding: var(--space-3xs) var(--space-2xs);
-    border: var(--hairline);
-    font-size: var(--fs-small);
-    font-weight: var(--fw-medium);
-    letter-spacing: var(--ls-caps);
-    text-decoration: none;
-    transition: border-color var(--duration) var(--ease);
+    gap: var(--space-3xs);
+    margin: 0;
+    padding-left: var(--space-2xs);
+    border-left: var(--hairline);
   }
 
-  .lang:hover {
-    border-color: var(--c-text);
+  .lang__item {
+    padding: var(--space-3xs) var(--space-2xs);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    letter-spacing: var(--ls-caps-plate);
+    text-transform: uppercase;
+    text-decoration: none;
+    /* Die inaktive Sprache ist der eigentliche Schalter, also ein Link.
+       Der Entwurf setzt sie auf #9A9691 — das sind 2.65:1 auf dem
+       Papier-Grund und faellt unter AA. Eine Stufe dunkler: 5.06:1. */
+    color: var(--c-text-muted);
+    transition: color var(--duration) var(--ease);
+  }
+
+  .lang__item:hover {
+    color: var(--c-text);
+  }
+
+  /* Der aktive Zustand haengt nicht an der Farbe allein: der Entwurf
+     trennt die beiden ueber einen sehr hellen Grauwert, der als Linktext
+     unter AA faellt. Mit dem zulaessigen Grau ist der Farbsprung kleiner,
+     darum traegt die Schriftstaerke mit. Nebeneffekt: die Unterscheidung
+     bleibt auch bei Farbfehlsichtigkeit lesbar. */
+  .lang__item--current {
+    color: var(--c-text);
+    font-weight: var(--fw-semibold);
   }
 </style>
