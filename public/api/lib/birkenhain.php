@@ -37,6 +37,12 @@ const LIMITS = [
     'message' => 2000,
 ];
 
+/**
+ * Erlaubte Bezugstermine. Sprachneutrale Schluessel, damit die Ablage nicht
+ * von der Formularsprache abhaengt; die Beschriftung steht im Dictionary.
+ */
+const MOVE_IN = ['asap', 'flexibel', '2030', '2032'];
+
 /** Zielseiten. Echte Routen, damit es ohne JavaScript funktioniert. */
 const PATHS = [
     'de' => [
@@ -182,6 +188,7 @@ function bh_validate(array $post): array
         'email' => mb_strtolower(bh_field($post, 'email', LIMITS['email'])),
         'phone' => bh_field($post, 'phone', LIMITS['phone']),
         'rooms' => bh_field($post, 'rooms', 8),
+        'area' => bh_field($post, 'area', 8),
         'moveIn' => bh_field($post, 'moveIn', 16),
         'message' => bh_field($post, 'message', LIMITS['message']),
         'consent' => isset($post['consent']),
@@ -206,7 +213,20 @@ function bh_validate(array $post): array
     if ($value['rooms'] !== '' && preg_match('/^\d(?:\.\d)?$/', $value['rooms']) !== 1) {
         $value['rooms'] = '';
     }
-    if ($value['moveIn'] !== '' && preg_match('/^\d{4}-(?:0[1-9]|1[0-2])$/', $value['moveIn']) !== 1) {
+    // Mindestflaeche in Quadratmetern, aus der Auswahlliste des Formulars.
+    if ($value['area'] !== '' && preg_match('/^\d{2,3}$/', $value['area']) !== 1) {
+        $value['area'] = '';
+    }
+    // Der Bezugstermin ist eine Auswahl, kein Datum: der Entwurf zeigt
+    // "so frueh wie moeglich", "flexibel", "ab 2030", "ab 2032". Ein
+    // Monatswert bleibt zusaetzlich erlaubt — aeltere Formulare und der
+    // month-Input eines Browsers senden ihn, und wegwerfen waere schlechter
+    // als annehmen.
+    if (
+        $value['moveIn'] !== ''
+        && !in_array($value['moveIn'], MOVE_IN, true)
+        && preg_match('/^\d{4}-(?:0[1-9]|1[0-2])$/', $value['moveIn']) !== 1
+    ) {
         $value['moveIn'] = '';
     }
 

@@ -29,6 +29,9 @@
   --c-accent-hover: #3b4a36;
   --c-accent-tint: rgb(74 90 68 / 0.07);
   --c-hairline: rgb(51 49 47 / 0.15);
+  /* Grundlinie der Formularfelder — im Entwurf kraeftiger als eine
+     Hairline, weil sie das Feld allein traegt. */
+  --c-field-line: #b9b3a8;
   --c-hairline-inverse: rgb(245 243 238 / 0.16);
   /* Flaeche hinter Bildern, bis sie geladen sind. */
   --c-image-placeholder: #ddd8ce;
