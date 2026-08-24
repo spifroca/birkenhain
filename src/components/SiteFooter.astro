@@ -1,7 +1,8 @@
 ---
-import { LEGAL, NAV, pathFor, type Locale } from '../i18n/routes';
+import { existsSync } from 'node:fs';
+import logo from '../assets/logo.svg';
+import { LEGAL, pathFor, withBase, type Locale, type PageId } from '../i18n/routes';
 import { useTranslations, type TranslationKey } from '../i18n/ui';
-import { projekt } from '../lib/projekt';
 
 interface Props {
   locale: Locale;
@@ -9,119 +10,196 @@ interface Props {
 
 const { locale } = Astro.props;
 const t = useTranslations(locale);
-const year = new Date().getFullYear();
+
+const projectLinks: { page: PageId; label: string }[] = [
+  { page: 'lage', label: t('footer.linkLocation') },
+  { page: 'architektur', label: t('footer.linkArchitecture') },
+  { page: 'freiraum', label: t('footer.linkLandscape') },
+  { page: 'wohnungen', label: t('footer.linkRental') },
+];
+
+// Der Planungsbericht liegt als Datei in public/, deshalb withBase. Fehlt
+// die Datei, entfaellt der Eintrag — ein toter Download ist schlimmer als
+// eine fehlende Zeile.
+const reportFile = 'planungsbericht-gp-birkenhain.pdf';
+const reportVorhanden = existsSync(new URL(`../../public/dokumente/${reportFile}`, import.meta.url));
+const reportHref = withBase(`/dokumente/${reportFile}`);
 ---
 
 <footer class="footer">
-  <div class="footer__inner container">
-    <div class="footer__col">
-      <p class="eyebrow">{t('footer.projectHeading')}</p>
-      <p class="footer__name">{t('site.name')}</p>
-      <p class="footer__meta">
-        {projekt.gemeinde} ({projekt.kanton})
+  <div class="footer__grid container">
+    <div>
+      <img class="footer__logo" src={logo.src} alt={t('site.name')} width="120" height="30" />
+      <p class="footer__place">{t('footer.place')}</p>
+    </div>
+
+    <div>
+      <p class="eyebrow footer__heading">{t('footer.projectHeading')}</p>
+      <ul class="footer__list">
+        {
+          projectLinks.map((link) => (
+            <li>
+              <a class="footer__link" href={pathFor(link.page, locale)}>
+                {link.label}
+              </a>
+            </li>
+          ))
+        }
+      </ul>
+    </div>
+
+    <div>
+      <p class="eyebrow footer__heading">{t('footer.planningHeading')}</p>
+      <ul class="footer__list">
+        {
+          reportVorhanden && (
+            <li><a class="footer__link" href={reportHref}>{t('footer.linkReport')}</a></li>
+          )
+        }
+        <li>
+          <a class="footer__link" href={pathFor('nachhaltigkeit', locale)}>
+            {t('footer.linkSustainability')}
+          </a>
+        </li>
+        <li>
+          <a class="footer__link" href={`mailto:${t('anmeldung.askMail')}`}>
+            {t('footer.linkQuestions')}
+          </a>
+        </li>
+      </ul>
+    </div>
+
+    <div>
+      <p class="eyebrow footer__heading">{t('footer.ownerHeading')}</p>
+      <p class="footer__address">
+        {t('footer.ownerName')}<br />
+        {t('footer.ownerStreet')}<br />
+        {t('footer.ownerCity')}
       </p>
-      <p class="footer__meta">{t('footer.rentalNote')}</p>
-    </div>
-
-    <div class="footer__col">
-      <p class="eyebrow">{t('nav.label')}</p>
-      <ul class="footer__list">
-        {
-          NAV.map((id) => (
-            <li>
-              <a href={pathFor(id, locale)}>{t(`nav.${id}` as TranslationKey)}</a>
-            </li>
-          ))
-        }
-      </ul>
-    </div>
-
-    <div class="footer__col">
-      <p class="eyebrow">{t('footer.contactHeading')}</p>
-      <p class="footer__meta">{t('footer.owner')}</p>
-      {/* TODO(handoff): Adresse, Telefon und E-Mail fehlen im Handoff. */}
-      <p class="footer__meta">{t('footer.contactPending')}</p>
-    </div>
-
-    <div class="footer__col">
-      <p class="eyebrow">{t('footer.legalHeading')}</p>
-      <ul class="footer__list">
-        {
-          LEGAL.map((id) => (
-            <li>
-              <a href={pathFor(id, locale)}>{t(`nav.${id}` as TranslationKey)}</a>
-            </li>
-          ))
-        }
-      </ul>
+      <a class="footer__site" href="https://www.realnorth.ch" target="_blank" rel="noopener">
+        {t('footer.ownerSite')}
+      </a>
     </div>
   </div>
 
-  <div class="footer__bar container">
-    <p class="footer__meta">{t('footer.copyright', { year })}</p>
+  <div class="footer__base container">
+    <p class="footer__note">{t('footer.note')}</p>
+    <ul class="footer__legal">
+      {
+        LEGAL.map((page) => (
+          <li>
+            <a class="footer__legallink" href={pathFor(page, locale)}>
+              {t(`nav.${page}` as TranslationKey)}
+            </a>
+          </li>
+        ))
+      }
+    </ul>
   </div>
 </footer>
 
 <style>
   .footer {
-    margin-top: var(--space-2xl);
-    border-top: var(--hairline);
+    background: var(--c-bg-inverse);
+    color: var(--c-text-inverse-muted);
   }
 
-  .footer__inner {
+  .footer__grid {
     display: grid;
-    gap: var(--space-l);
-    padding-block: var(--space-xl);
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(12.5rem, 1fr));
+    gap: var(--grid-gap);
+    padding-top: clamp(3rem, 6vw, 5.5rem);
+    padding-bottom: var(--space-l);
   }
 
-  .footer__col > .eyebrow {
-    display: block;
-    margin-bottom: var(--space-2xs);
+  /* Das Logo ist einfarbig — invertiert ergibt es die Papier-Variante. */
+  .footer__logo {
+    height: 1.875rem;
+    width: auto;
+    filter: brightness(0) invert(1);
   }
 
-  .footer__name {
-    font-size: var(--fs-h3);
-    font-weight: var(--fw-extralight);
-  }
-
-  .footer__meta {
+  .footer__place {
     max-width: none;
-    font-size: var(--fs-small);
-    color: var(--c-text-muted);
+    margin: var(--space-m) 0 0;
+    font-size: 0.875rem;
+    font-weight: var(--fw-light);
+    line-height: var(--lh-body);
+  }
+
+  .footer__heading {
+    margin: 0 0 var(--space-s);
+    font-size: 0.71875rem;
+    letter-spacing: var(--ls-caps-tight);
+    color: var(--c-text-inverse-subtle);
   }
 
   .footer__list {
+    display: grid;
+    gap: 0.5625rem;
     margin: 0;
     padding: 0;
     list-style: none;
-    font-size: var(--fs-small);
   }
 
-  .footer__list a {
-    display: inline-block;
-    padding-block: var(--space-3xs);
+  .footer__link,
+  .footer__site {
+    font-size: 0.90625rem;
+    font-weight: var(--fw-light);
+    color: var(--c-link-inverse);
     text-decoration: none;
   }
 
-  .footer__list a:hover {
+  .footer__link:hover,
+  .footer__site:hover,
+  .footer__legallink:hover {
     text-decoration: underline;
   }
 
-  .footer__bar {
-    padding-block: var(--space-s);
-    border-top: var(--hairline);
+  .footer__address {
+    max-width: none;
+    margin: 0;
+    font-size: 0.90625rem;
+    font-weight: var(--fw-light);
+    line-height: 1.65;
+    color: var(--c-link-inverse);
   }
 
-  @media (min-width: 45rem) {
-    .footer__inner {
-      grid-template-columns: repeat(2, 1fr);
-    }
+  .footer__site {
+    display: inline-block;
+    margin-top: var(--space-2xs);
+    color: var(--c-accent-light);
   }
 
-  @media (min-width: 68rem) {
-    .footer__inner {
-      grid-template-columns: 1.5fr 1fr 1fr 1fr;
-    }
+  .footer__base {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: var(--space-s);
+    padding-top: var(--space-m);
+    padding-bottom: var(--space-l);
+    border-top: var(--hairline-inverse);
+  }
+
+  .footer__note {
+    max-width: 62ch;
+    margin: 0;
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-light);
+    color: #8b877f;
+  }
+
+  .footer__legal {
+    display: flex;
+    gap: var(--space-m);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .footer__legallink {
+    font-size: var(--fs-caption);
+    color: #8b877f;
+    text-decoration: none;
   }
 </style>

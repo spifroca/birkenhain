@@ -1,0 +1,216 @@
+---
+import { existsSync } from 'node:fs';
+import Icon from './Icon.astro';
+import { withBase, type Locale } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+/**
+ * Die Unterlagen liegen als Datei in `public/dokumente/`. Fehlt eine, bleibt
+ * die Zeile stehen, aber ohne Link — ein toter Download ist schlimmer als
+ * eine sichtbare Luecke.
+ */
+const downloads = [
+  { label: t('home.dl1'), meta: t('home.dl1Meta'), file: 'planungsbericht-gp-birkenhain.pdf' },
+  { label: t('home.dl2'), meta: t('home.dl2Meta'), file: 'situationsplan-1-500.pdf' },
+  { label: t('home.dl3'), meta: t('home.dl3Meta'), file: 'sondernutzungsvorschriften.pdf' },
+].map((item) => ({
+  ...item,
+  // Zur Buildzeit geprueft: liegt die Datei nicht in public/dokumente/,
+  // bleibt die Zeile ohne Link stehen.
+  vorhanden: existsSync(new URL(`../../public/dokumente/${item.file}`, import.meta.url)),
+}));
+
+const timeline = [
+  { time: t('home.tl1Time'), text: t('home.tl1') },
+  { time: t('home.tl2Time'), text: t('home.tl2') },
+  { time: t('home.tl3Time'), text: t('home.tl3') },
+  { time: t('home.tl4Time'), text: t('home.tl4'), badge: t('home.tl4Badge') },
+  { time: t('home.tl5Time'), text: t('home.tl5') },
+  { time: t('home.tl6Time'), text: t('home.tl6') },
+];
+---
+
+<section class="planung section" aria-labelledby="planung-heading">
+  <div class="container cols" data-reveal>
+    <div>
+      <p class="kicker">{t('home.planungKicker')}</p>
+      <h2 id="planung-heading">{t('home.planungTitle')}</h2>
+      <p class="planung__body">{t('home.planungBody')}</p>
+
+      <ul class="downloads">
+        {
+          downloads.map((item) =>
+            item.vorhanden ? (
+              <li>
+                <a class="download" href={withBase(`/dokumente/${item.file}`)}>
+                  <span>
+                    <span class="download__label">{item.label}</span>
+                    <span class="download__meta">{item.meta}</span>
+                  </span>
+                  <span class="download__icon"><Icon name="arrow-down" /></span>
+                </a>
+              </li>
+            ) : (
+              <li>
+                <span class="download download--pending">
+                  <span>
+                    <span class="download__label">{item.label}</span>
+                    <span class="download__meta">{item.meta}</span>
+                  </span>
+                </span>
+              </li>
+            ),
+          )
+        }
+      </ul>
+    </div>
+
+    <ol class="timeline">
+      {
+        timeline.map((step) => (
+          <li class:list={['timeline__step', step.badge && 'timeline__step--now']}>
+            <span class="timeline__time">{step.time}</span>
+            <span>
+              <span class="timeline__text">{step.text}</span>
+              {step.badge && <span class="timeline__badge">{step.badge}</span>}
+            </span>
+          </li>
+        ))
+      }
+    </ol>
+  </div>
+</section>
+
+<style>
+  .planung h2 {
+    margin-bottom: var(--space-m);
+    line-height: 1.08;
+  }
+
+  .planung__body {
+    max-width: 44ch;
+    margin: 0;
+    font-size: var(--fs-body);
+    font-weight: var(--fw-light);
+    line-height: var(--lh-body);
+    color: #54514d;
+  }
+
+  .downloads {
+    display: grid;
+    gap: var(--border-width);
+    margin: var(--space-l) 0 0;
+    padding: 0;
+    list-style: none;
+    background: var(--c-hairline);
+    border: var(--hairline);
+  }
+
+  .download {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding: var(--space-s) 1.125rem;
+    background: var(--c-bg);
+    color: var(--c-text);
+    text-decoration: none;
+  }
+
+  .download:hover {
+    background: var(--c-bg-alt);
+  }
+
+  /* Ohne Datei: die Zeile bleibt sichtbar, gibt sich aber nicht als Link
+     aus — kein Zeiger, kein Hover, gedaempft. */
+  .download--pending {
+    color: var(--c-text-muted);
+  }
+
+  .download--pending:hover {
+    background: var(--c-bg);
+  }
+
+  .download__label {
+    display: block;
+    font-size: var(--fs-small);
+    font-weight: var(--fw-regular);
+  }
+
+  .download__meta {
+    display: block;
+    margin-top: 3px;
+    font-size: var(--fs-caption);
+    color: var(--c-text-subtle);
+  }
+
+  .download__icon {
+    flex: 0 0 auto;
+    color: var(--c-accent);
+  }
+
+  /* --- Zeitachse --------------------------------------------------------- */
+
+  .timeline {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .timeline__step {
+    display: grid;
+    grid-template-columns: 6rem 1fr;
+    gap: var(--space-m);
+    padding-block: 1.125rem;
+    border-top: var(--hairline);
+  }
+
+  .timeline__step:last-child {
+    border-bottom: var(--hairline);
+  }
+
+  /* Der aktuelle Stand ist die einzige Zeile mit Flaeche. */
+  .timeline__step--now {
+    background: linear-gradient(90deg, rgb(169 114 47 / 0.09), transparent 62%);
+  }
+
+  .timeline__time {
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-medium);
+    letter-spacing: 0.06em;
+    color: var(--c-text-subtle);
+  }
+
+  .timeline__step--now .timeline__time {
+    color: var(--c-accent);
+  }
+
+  .timeline__text {
+    font-size: var(--fs-small);
+    font-weight: var(--fw-light);
+    line-height: 1.5;
+    color: #54514d;
+  }
+
+  .timeline__step--now .timeline__text {
+    font-weight: var(--fw-regular);
+    color: var(--c-text);
+  }
+
+  .timeline__badge {
+    display: block;
+    margin-top: var(--space-3xs);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-caps-tight);
+    text-transform: uppercase;
+    color: var(--c-accent);
+  }
+</style>

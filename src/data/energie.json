@@ -2,13 +2,13 @@
   {
     "id": "erdsonden",
     "thema": {
-      "de": "Erdsonden-Waermepumpe",
+      "de": "Erdsonden-Wärmepumpe",
       "en": "Ground-source heat pump"
     },
     "kennwert": "22'000",
-    "einheit": "m Sondenlaenge",
+    "einheit": "m Sondenlänge",
     "erlaeuterung": {
-      "de": "Heizung und Warmwasser kommen aus Erdsonden, ausgelegt auf einen geschaetzten Bedarf von 1000 kW.",
+      "de": "Heizung und Warmwasser kommen aus Erdsonden, ausgelegt auf einen geschätzten Bedarf von 1000 kW.",
       "en": "Heating and hot water come from boreholes, sized for an estimated demand of 1,000 kW."
     },
     "icon": "thermometer",
@@ -21,9 +21,9 @@
       "en": "Photovoltaics"
     },
     "kennwert": "2'900",
-    "einheit": "m2 Dachflaeche",
+    "einheit": "m2 Dachfläche",
     "erlaeuterung": {
-      "de": "Ein Wechselrichter pro Gebaeude. Der Solarstrom deckt zuerst Heizung, Kuehlung und Warmwasser; der Ueberschuss geht ueber einen Zusammenschluss zum Eigenverbrauch an die Bewohnenden.",
+      "de": "Ein Wechselrichter pro Gebäude. Der Solarstrom deckt zuerst Heizung, Kühlung und Warmwasser; der Überschuss geht ueber einen Zusammenschluss zum Eigenverbrauch an die Bewohnenden.",
       "en": "One inverter per building. Solar power serves heating, cooling and hot water first; the surplus goes to residents through a self-consumption group."
     },
     "icon": "sun",
@@ -38,7 +38,7 @@
     "kennwert": "1–3",
     "einheit": "MWh",
     "erlaeuterung": {
-      "de": "Ein zentraler Speicherraum ist vorgesehen: mehr Eigenverbrauch, gekappte Lastspitzen, ein stabileres lokales Netz. Vorbehaeltlich der Wirtschaftlichkeit.",
+      "de": "Ein zentraler Speicherraum ist vorgesehen: mehr Eigenverbrauch, gekappte Lastspitzen, ein stabileres lokales Netz. Vorbehältlich der Wirtschaftlichkeit.",
       "en": "A central battery room is planned: more self-consumption, flattened peak loads, a more stable local grid. Subject to proven viability."
     },
     "icon": "battery-charging",
@@ -53,7 +53,7 @@
     "kennwert": null,
     "einheit": null,
     "erlaeuterung": {
-      "de": "Im Sommer kuehlt dasselbe Sondenfeld die Wohnungen passiv ueber die Bodenheizung.",
+      "de": "Im Sommer kühlt dasselbe Sondenfeld die Wohnungen passiv ueber die Bodenheizung.",
       "en": "In summer the same borehole field cools the flats passively through the underfloor circuit."
     },
     "icon": "snowflake",
@@ -62,13 +62,13 @@
   {
     "id": "huelle",
     "thema": {
-      "de": "Gebaeudehuelle",
+      "de": "Gebäudehülle",
       "en": "Building envelope"
     },
     "kennwert": null,
     "einheit": null,
     "erlaeuterung": {
-      "de": "Am Minergie-Standard angeglichen, nicht zertifiziert: starke Daemmung, Dreifachverglasung, luftdichte Huelle, Bodenheizung mit Einzelraumregulierung (21 Grad Wohnen, 23 Grad Bad).",
+      "de": "Am Minergie-Standard angeglichen, nicht zertifiziert: starke Dämmung, Dreifachverglasung, luftdichte Hülle, Bodenheizung mit Einzelraumregulierung (21 Grad Wohnen, 23 Grad Bad).",
       "en": "Aligned with the Minergie standard but not certified: heavy insulation, triple glazing, an airtight envelope, underfloor heating with room-by-room control (21 C living, 23 C bathrooms)."
     },
     "icon": "layers",
@@ -77,13 +77,13 @@
   {
     "id": "gruendach",
     "thema": {
-      "de": "Dachbegruenung",
+      "de": "Dachbegrünung",
       "en": "Green roofs"
     },
     "kennwert": null,
     "einheit": null,
     "erlaeuterung": {
-      "de": "Extensive Begruenung auf jedem Flachdach ohne Photovoltaik oder Terrasse.",
+      "de": "Extensive Begrünung auf jedem Flachdach ohne Photovoltaik oder Terrasse.",
       "en": "Extensive planting on every flat roof not used for photovoltaics or terraces."
     },
     "icon": "leaf",
@@ -98,7 +98,7 @@
     "kennwert": null,
     "einheit": null,
     "erlaeuterung": {
-      "de": "Oberflaechenwasser bleibt auf dem Areal: Versickerung und Substratschichten statt Ableitung.",
+      "de": "Oberflächenwasser bleibt auf dem Areal: Versickerung und Substratschichten statt Ableitung.",
       "en": "Surface water stays on site: infiltration and planted layers instead of drainage."
     },
     "icon": "droplets",
@@ -113,7 +113,7 @@
     "kennwert": null,
     "einheit": null,
     "erlaeuterung": {
-      "de": "Ladestationen in der Einstellhalle, auf Erweiterung vorbereitet, mit Lademanagement gegen Ueberlastungen.",
+      "de": "Ladestationen in der Einstellhalle, auf Erweiterung vorbereitet, mit Lademanagement gegen Überlastungen.",
       "en": "Charging points in the underground garage, prepared for expansion, with load management to prevent overloads."
     },
     "icon": "plug",
@@ -128,7 +128,7 @@
     "kennwert": "180",
     "einheit": "E/ha",
     "erlaeuterung": {
-      "de": "Das Quartier nutzt ein Schluesselgebiet innerhalb des bestehenden Siedlungsgebiets statt neues Bauland am Rand. Maximal 70 Prozent der Flaeche werden ueber- oder unterbaut, im Richtprojekt 61 Prozent.",
+      "de": "Das Quartier nutzt ein Schlüsselgebiet innerhalb des bestehenden Siedlungsgebiets statt neues Bauland am Rand. Maximal 70 Prozent der Fläche werden ueber- oder unterbaut, im Richtprojekt 61 Prozent.",
       "en": "The quarter uses a key site inside the existing settlement instead of new building land at the edges. At most 70 per cent of the area is built over or under, 61 per cent in the guiding project."
     },
     "icon": "map-pin",

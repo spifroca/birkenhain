@@ -1,10 +1,13 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import BaubereicheTabelle from '../BaubereicheTabelle.astro';
-import Galerie from '../Galerie.astro';
+import Bildband from '../Bildband.astro';
 import Hero from '../Hero.astro';
+import Materialisierung from '../Materialisierung.astro';
+import Situationsplan from '../Situationsplan.astro';
 import { useTranslations } from '../../i18n/ui';
 import type { Locale } from '../../i18n/routes';
+import situationsplan from '../../assets/situationsplan.png';
+import facade from '../../assets/facade.jpg';
 
 interface Props {
   locale: Locale;
@@ -20,11 +23,40 @@ const t = useTranslations(locale);
   title={t('architektur.metaTitle')}
   description={t('architektur.metaDescription')}
 >
-  <Hero
-    eyebrow={t('architektur.kicker')}
-    title={t('architektur.title')}
-    lead={t('architektur.lead')}
+  <Hero kicker={t('architektur.kicker')} title={t('architektur.title')} />
+
+  <div class="container arch__text">
+    <p>{t('architektur.p1')}</p>
+    <p>{t('architektur.p2')}</p>
+    <p>{t('architektur.p3')}</p>
+  </div>
+
+  <Situationsplan
+    locale={locale}
+    plan={situationsplan}
+    planAlt={t('situationsplan.label')}
+    heading={t('home.situationsplanHeading')}
   />
-  <BaubereicheTabelle locale={locale} />
-  <Galerie locale={locale} />
+
+  <Materialisierung locale={locale} />
+
+  <Bildband src={facade} alt={t('architektur.mat2')} size="lg" />
 </BaseLayout>
+
+<style>
+  .arch__text {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(var(--col-min), 1fr));
+    gap: var(--grid-gap);
+    padding-bottom: clamp(3rem, 6vw, 5.5rem);
+  }
+
+  .arch__text p {
+    max-width: none;
+    margin: 0;
+    font-size: var(--fs-lead);
+    font-weight: var(--fw-light);
+    line-height: var(--lh-lead);
+    color: #54514d;
+  }
+</style>

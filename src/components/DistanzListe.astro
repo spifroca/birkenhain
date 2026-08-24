@@ -1,0 +1,69 @@
+---
+import Icon from './Icon.astro';
+import { useTranslations } from '../i18n/ui';
+import type { Locale } from '../i18n/routes';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+
+/**
+ * Die Zeilen stehen im Dictionary, nicht in `distanzen.json`: der Entwurf
+ * zeigt hier Taktfrequenz und Velodistanz, und die kennt das Datenschema
+ * bewusst nicht. Die Tabelle aus dem Datensatz bleibt daneben bestehen.
+ */
+const rows = [
+  { icon: 'train-front', label: t('lage.r1'), value: t('lage.r1Value') },
+  { icon: 'clock', label: t('lage.r2'), value: t('lage.r2Value') },
+  { icon: 'clock', label: t('lage.r3'), value: t('lage.r3Value') },
+  { icon: 'shopping-bag', label: t('lage.r4'), value: t('lage.r4Value') },
+  { icon: 'trees', label: t('lage.r5'), value: t('lage.r5Value') },
+  { icon: 'bike', label: t('lage.r6'), value: t('lage.r6Value') },
+];
+---
+
+<ul class="dl rows" data-reveal>
+  {
+    rows.map((row) => (
+      <li class="row dl__row">
+        <span class="dl__icon"><Icon name={row.icon} /></span>
+        <span class="dl__label">{row.label}</span>
+        <span class="row__value">{row.value}</span>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  .dl {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .dl__row {
+    align-items: flex-start;
+    gap: var(--space-s);
+    padding-block: 0.6875rem;
+  }
+
+  .dl__icon {
+    flex: 0 0 1.25rem;
+    margin-top: 1px;
+    color: var(--c-accent);
+  }
+
+  .dl__label {
+    flex: 1 1 auto;
+    font-size: 0.90625rem;
+    font-weight: var(--fw-light);
+    line-height: 1.35;
+  }
+
+  .dl .row__value {
+    font-size: 0.90625rem;
+  }
+</style>

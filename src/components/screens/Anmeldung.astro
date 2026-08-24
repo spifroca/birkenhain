@@ -18,23 +18,73 @@ const t = useTranslations(locale);
   title={t('anmeldung.metaTitle')}
   description={t('anmeldung.metaDescription')}
 >
-  <section class="anmeldung container">
-    <h1>{t('anmeldung.title')}</h1>
-    <p class="anmeldung__lead">{t('anmeldung.lead')}</p>
-    <AnmeldungForm locale={locale} />
+  <section class="anm container">
+    <div class="anm__intro">
+      <p class="kicker">{t('anmeldung.kicker')}</p>
+      <h1 class="anm__title">{t('anmeldung.title')}</h1>
+      <p class="anm__lead">{t('anmeldung.lead')}</p>
+
+      <div class="anm__ask">
+        <p class="anm__asktitle">{t('anmeldung.askTitle')}</p>
+        <p class="anm__askbody">{t('anmeldung.askBody')}</p>
+        <a class="link-rule" href={`mailto:${t('anmeldung.askMail')}`}>{t('anmeldung.askMail')}</a>
+      </div>
+    </div>
+
+    <div class="anm__form">
+      <AnmeldungForm locale={locale} />
+    </div>
   </section>
 </BaseLayout>
 
 <style>
-  .anmeldung {
-    padding-block: var(--space-xl) var(--space-2xl);
+  .anm {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
+    gap: var(--grid-gap);
+    align-items: start;
+    padding-top: clamp(3rem, 7vw, 6rem);
+    padding-bottom: clamp(4rem, 8vw, 7.5rem);
   }
 
-  .anmeldung__lead {
-    padding-top: var(--space-m);
-    max-width: var(--container-text);
+  .anm__title {
+    margin: 0 0 var(--space-m);
+    max-width: 18em;
+  }
+
+  .anm__lead {
+    max-width: 46ch;
+    margin: 0 0 var(--space-l);
     font-size: var(--fs-lead);
-    font-weight: var(--fw-extralight);
-    line-height: 1.45;
+    font-weight: var(--fw-light);
+    line-height: var(--lh-lead);
+    color: #54514d;
+  }
+
+  .anm__ask {
+    padding-top: 1.375rem;
+    border-top: var(--hairline);
+  }
+
+  .anm__asktitle {
+    margin: 0 0 var(--space-2xs);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-medium);
+  }
+
+  .anm__askbody {
+    max-width: none;
+    margin: 0 0 var(--space-3xs);
+    font-size: var(--fs-body);
+    font-weight: var(--fw-light);
+    line-height: var(--lh-body-tight);
+    color: var(--c-text-muted);
+  }
+
+  /* Das Formular steht als Flaeche im Raster, wie im Entwurf. */
+  .anm__form {
+    border: var(--hairline);
+    background: var(--c-bg-alt);
+    padding: clamp(1.5rem, 3vw, 2.5rem);
   }
 </style>
