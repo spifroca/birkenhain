@@ -232,7 +232,9 @@
     "r5Value": "direkt angrenzend",
     "r6": "Dietikon / Bremgarten mit Velo",
     "r6Value": "20–30 Min.",
-    "mapCaption": "Islerenstrasse, 8964 Rudolfstetten-Friedlisberg · 550 m ü. M."
+    "mapCaption": "Islerenstrasse, 8964 Rudolfstetten-Friedlisberg · 550 m ü. M.",
+    "mapAddress": "Islerenstrasse, 8964 Rudolfstetten-Friedlisberg",
+    "mapLink": "In Google Maps öffnen"
   },
   "nachhaltigkeit": {
     "metaTitle": "Nachhaltigkeit — Im Birkenhain",
