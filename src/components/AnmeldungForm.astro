@@ -1,5 +1,4 @@
 ---
-import Icon from './Icon.astro';
 import { useTranslations } from '../i18n/ui';
 import { withBase, type Locale } from '../i18n/routes';
 import { features } from '../lib/flags';
@@ -11,7 +10,36 @@ interface Props {
 const { locale } = Astro.props;
 const t = useTranslations(locale);
 
-const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
+/**
+ * Der Entwurf zeigt das Formular als eine Karte auf dem Papier-Grund:
+ * unterstrichene Felder ohne Kasten, Beschriftungen in Kapitaelchen, und
+ * genau eine Zwischenueberschrift — «Wohnungswunsch». Kontakt und
+ * Einverstaendnis tragen im Entwurf keine Legende; fuer Screenreader bleibt
+ * sie als visually-hidden stehen, sonst waeren die Gruppen unbenannt.
+ */
+const roomOptions = ['2.5', '3.5', '4.5', '5.5'];
+
+/**
+ * Mindestflaeche in Quadratmetern. Der Wert geht ohne Einheit ans Feld.
+ *
+ * Alle drei Auswahllisten beginnen mit «noch offen» und keiner Vorauswahl.
+ * Der Entwurf zeigt sie mit Werten — ein Select kann nicht leer aussehen —,
+ * aber eine Vorauswahl wuerde einen Wunsch protokollieren, den niemand
+ * geaeussert hat. «noch offen» steht im Entwurf selbst.
+ */
+const areaOptions = ['60', '80', '100', '120', '150'];
+
+/**
+ * Bezugstermin als Auswahl, nicht als Monat: das Projekt nennt keinen
+ * Vermietungsstart, ein Monatsfeld wuerde eine Genauigkeit vorspiegeln, die
+ * es nicht gibt. Die Schluessel sind sprachneutral, der Endpoint kennt sie.
+ */
+const moveInOptions = [
+  { value: 'asap', label: t('anmeldung.moveInAsap') },
+  { value: 'flexibel', label: t('anmeldung.moveInFlex') },
+  { value: '2030', label: t('anmeldung.moveIn2030') },
+  { value: '2032', label: t('anmeldung.moveIn2032') },
+];
 ---
 
 <form class="form" action={withBase("/api/anmeldung.php")} method="post" data-form novalidate>
@@ -24,7 +52,7 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
   </div>
 
   <fieldset class="form__set">
-    <legend class="eyebrow">{t('anmeldung.legendPerson')}</legend>
+    <legend class="visually-hidden">{t('anmeldung.legendContact')}</legend>
 
     <div class="form__grid">
       <p class="form__field">
@@ -77,19 +105,16 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
       </p>
 
       <p class="form__field">
-        <label for="phone">
-          {t('anmeldung.phone')}
-          <span class="form__optional">{t('anmeldung.phoneOptional')}</span>
-        </label>
+        <label for="phone">{t('anmeldung.phone')}</label>
         <input id="phone" name="phone" type="tel" autocomplete="tel" inputmode="tel" />
       </p>
     </div>
   </fieldset>
 
-  <fieldset class="form__set">
-    <legend class="eyebrow">{t('anmeldung.legendWish')}</legend>
+  <fieldset class="form__set form__set--wish">
+    <legend class="form__legend">{t('anmeldung.legendWish')}</legend>
 
-    <div class="form__grid">
+    <div class="form__grid form__grid--three">
       <p class="form__field">
         <label for="rooms">{t('anmeldung.rooms')}</label>
         <select id="rooms" name="rooms">
@@ -99,29 +124,36 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
       </p>
 
       <p class="form__field">
+        <label for="area">{t('anmeldung.area')}</label>
+        <select id="area" name="area">
+          <option value="">{t('anmeldung.areaAny')}</option>
+          {areaOptions.map((option) => <option value={option}>{option} m²</option>)}
+        </select>
+      </p>
+
+      <p class="form__field">
         <label for="moveIn">{t('anmeldung.moveIn')}</label>
-        <input id="moveIn" name="moveIn" type="month" />
+        <select id="moveIn" name="moveIn">
+          <option value="">{t('anmeldung.moveInAny')}</option>
+          {moveInOptions.map((option) => <option value={option.value}>{option.label}</option>)}
+        </select>
       </p>
     </div>
 
-    <p class="form__field">
-      <label for="message">
-        {t('anmeldung.message')}
-        <span class="form__optional">{t('anmeldung.messageOptional')}</span>
-      </label>
-      <textarea id="message" name="message" rows="4"></textarea>
+    <p class="form__field form__field--wide">
+      <label for="message">{t('anmeldung.message')}</label>
+      <textarea id="message" name="message" rows="3"></textarea>
     </p>
   </fieldset>
 
-  <fieldset class="form__set">
-    <legend class="eyebrow">{t('anmeldung.legendConsent')}</legend>
+  <fieldset class="form__set form__set--consent">
+    <legend class="visually-hidden">{t('anmeldung.legendConsent')}</legend>
 
     <p class="form__check">
       <input id="consent" name="consent" type="checkbox" required aria-describedby="consent-error" />
       <label for="consent">{t('anmeldung.consent')}</label>
     </p>
     <span class="form__error" id="consent-error" data-error-for="consent"></span>
-    <p class="form__note">{t('anmeldung.privacyNote')}</p>
   </fieldset>
 
   <div class="form__actions">
@@ -130,7 +162,6 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
     <button class="form__submit" type="submit" data-submit disabled={features.staticPreview}>
       <span data-submit-idle>{t('anmeldung.submit')}</span>
       <span data-submit-busy hidden>{t('anmeldung.submitting')}</span>
-      <Icon name="arrow-right" />
     </button>
   </div>
 
@@ -162,11 +193,12 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
 </form>
 
 <style>
+  /* Den Rahmen traegt die Karte drumherum (.anm__form), nicht das Formular:
+     so bleibt die Flaeche auch dann eine, wenn oben ein Status steht. */
   .form {
     display: grid;
-    gap: var(--space-l);
-    max-width: var(--container-text);
-    margin-top: var(--space-l);
+    gap: 0;
+    max-width: none;
   }
 
   .form__trap {
@@ -179,52 +211,75 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
 
   .form__set {
     margin: 0;
-    padding: var(--space-m) 0 0;
+    padding: 0;
     border: 0;
-    border-top: var(--hairline);
   }
 
-  .form__set legend {
-    padding: 0;
+  /* Abstand als margin, nicht als padding: ein <legend> sitzt an der
+     Rahmenkante des fieldset und ignoriert dessen padding-top — mit padding
+     rutschte die Zwischenueberschrift in die Zeile darueber. */
+  .form__set--wish {
+    margin-top: clamp(1.5rem, 2.5vw, 2.125rem);
+  }
+
+  .form__set--consent {
+    margin-top: var(--space-m);
+  }
+
+  .form__legend {
+    padding: 0 0 0.875rem;
+    font-size: 0.75rem;
+    font-weight: var(--fw-bold);
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--c-text);
   }
 
   .form__grid {
     display: grid;
-    gap: var(--space-m);
-    margin-top: var(--space-m);
+    gap: 1.125rem;
     grid-template-columns: 1fr;
   }
 
   .form__field {
     display: grid;
-    gap: var(--space-3xs);
+    gap: 0.4375rem;
+    align-content: start;
     max-width: none;
     margin: 0;
   }
 
+  .form__field--wide {
+    margin-top: 1.625rem;
+  }
+
+  /* Beschriftung in Kapitaelchen, wie im Entwurf. */
   .form__field label {
-    display: flex;
-    align-items: baseline;
-    gap: var(--space-3xs);
-    font-size: var(--fs-small);
+    font-size: 0.75rem;
+    font-weight: var(--fw-semibold);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--c-text-subtle);
   }
 
-  .form__optional {
-    font-size: var(--fs-caption);
-    color: var(--c-text-muted);
-  }
-
+  /* Unterstrichene Felder ohne Kasten: nur die Grundlinie traegt. */
   .form__field input,
-  .form__field select,
-  .form__field textarea {
-    min-height: 2.75rem;
-    padding: var(--space-2xs);
-    background: var(--c-bg);
-    border: var(--hairline);
+  .form__field select {
+    min-height: 2.375rem;
+    padding: 0.5625rem 0;
+    background: none;
+    border: 0;
+    border-bottom: var(--border-width) solid var(--c-field-line);
+    font-size: 1rem;
+    font-weight: var(--fw-light);
   }
 
   .form__field textarea {
-    min-height: auto;
+    padding: 0.75rem;
+    background: var(--c-bg);
+    border: var(--border-width) solid var(--c-field-line);
+    font-size: 1rem;
+    font-weight: var(--fw-light);
     resize: vertical;
   }
 
@@ -236,7 +291,6 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
 
   .form__field [aria-invalid='true'] {
     border-color: var(--c-accent);
-    border-width: 2px;
   }
 
   .form__error:empty {
@@ -251,45 +305,51 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
   .form__check {
     display: flex;
     align-items: start;
-    gap: var(--space-2xs);
+    gap: 0.75rem;
     max-width: none;
-    margin-top: var(--space-m);
-    font-size: var(--fs-small);
+    margin: 0;
+  }
+
+  .form__check label {
+    font-size: 0.84375rem;
+    font-weight: var(--fw-light);
+    line-height: 1.5;
+    color: var(--c-text-muted);
   }
 
   .form__check input {
-    width: 1.125rem;
-    height: 1.125rem;
-    margin-top: 0.25rem;
+    width: 1.0625rem;
+    height: 1.0625rem;
+    margin-top: 0.1875rem;
     flex: none;
     accent-color: var(--c-accent);
   }
 
-  .form__note {
-    padding-top: var(--space-2xs);
-    font-size: var(--fs-caption);
-    color: var(--c-text-muted);
+  .form__actions {
+    padding-top: 1.75rem;
   }
 
+  /* Der Knopf traegt die ganze Breite der Karte — so zeigt es der Entwurf. */
   .form__submit {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    gap: var(--space-2xs);
-    min-height: 3rem;
-    padding-inline: var(--space-l);
-    background: var(--c-bg-inverse);
+    justify-content: center;
+    width: 100%;
+    min-height: 3.25rem;
+    padding-inline: var(--space-m);
+    background: var(--c-accent);
     color: var(--c-text-inverse);
-    border: var(--border-width) solid var(--c-bg-inverse);
-    font-size: var(--fs-small);
+    border: var(--border-width) solid var(--c-accent);
+    font-size: 0.9375rem;
     font-weight: var(--fw-medium);
     transition:
       background-color var(--duration) var(--ease),
-      color var(--duration) var(--ease);
+      border-color var(--duration) var(--ease);
   }
 
   .form__submit:hover:not([disabled]) {
-    background: var(--c-bg);
-    color: var(--c-text);
+    background: var(--c-accent-hover);
+    border-color: var(--c-accent-hover);
   }
 
   .form__submit[disabled] {
@@ -304,8 +364,10 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
   }
 
   .form__status {
+    margin-top: var(--space-m);
     padding: var(--space-m);
     border: var(--hairline);
+    background: var(--c-bg);
   }
 
   .form__status[data-state='error'] {
@@ -323,9 +385,13 @@ const roomOptions = ['1.5', '2.5', '3.5', '4.5', '5.5'];
     color: var(--c-text-muted);
   }
 
-  @media (min-width: 45rem) {
+  @media (min-width: 34rem) {
     .form__grid {
       grid-template-columns: repeat(2, 1fr);
+    }
+
+    .form__grid--three {
+      grid-template-columns: repeat(auto-fit, minmax(9.375rem, 1fr));
     }
   }
 </style>

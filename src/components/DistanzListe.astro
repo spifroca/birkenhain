@@ -13,7 +13,8 @@ const t = useTranslations(locale);
 /**
  * Die Zeilen stehen im Dictionary, nicht in `distanzen.json`: der Entwurf
  * zeigt hier Taktfrequenz und Velodistanz, und die kennt das Datenschema
- * bewusst nicht. Die Tabelle aus dem Datensatz bleibt daneben bestehen.
+ * bewusst nicht. Eine zweite Tabelle aus `distanzen.json` zeigt der Entwurf
+ * nicht — sie stand hier doppelt und ist entfernt.
  */
 const rows = [
   { icon: 'train-front', label: t('lage.r1'), value: t('lage.r1Value') },

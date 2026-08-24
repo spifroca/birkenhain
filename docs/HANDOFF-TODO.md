@@ -1,7 +1,8 @@
 # Offene Punkte aus dem Design-Handoff
 
-Der Werte-Patch aus dem Handoff ist eingearbeitet (Stand 24.08.2026).
-`npm run check:data` meldet **0 Fehler, 2 offene Punkte**. Was hier steht, ist
+Der Werte-Patch aus dem Handoff ist eingearbeitet (Stand 24.08.2026), der
+Abgleich mit dem Entwurfsexport vom selben Tag ebenfalls.
+`npm run check:data` meldet **0 Fehler, 1 offenen Punkt**. Was hier steht, ist
 der Rest — und warum er offen ist.
 
 ## Eingearbeitet
@@ -15,6 +16,9 @@ der Rest — und warum er offen ist.
 | Koordinaten | 47.36438 / 8.37068 — die Karte rendert |
 | Projekttexte | Meta, Titel, Lead und Kicker für 6 Screens, DE und EN |
 | Domain | `birkenhain.ch` ohne www, live nachgemessen — `www.` leitet pfadtreu per 301 dorthin |
+| Wohnungen je Baubereich | 17 Werte aus dem Entwurfsexport, Summe exakt 278 — `check:data` erzwingt sie |
+| Anmeldeformular | Feldsatz des Entwurfs: Fläche ab, Bezugstermin als Auswahl, unterstrichene Felder, Knopf über die ganze Breite |
+| Karte | im Planrahmen mit Adresszeile und Google-Maps-Link, wie im Entwurf — die Tiles bleiben von OpenStreetMap |
 
 Neu dazugekommen ist der **Kicker** je Screen — die Zeile über dem Titel,
 `--fs-caption` / `--fw-bold` / `--ls-caps` / `--c-accent`. Eigene Klasse
@@ -78,19 +82,70 @@ Rechtsberatung.
 
 Adresse, Telefon und E-Mail fehlen im Handoff.
 
-## 4. Wohnungen je Baubereich
+## 4. Wohnungen je Baubereich — eingearbeitet
 
-Bleibt bewusst `null`. Die Zahlen im Prototyp waren prozedural erzeugt, echte
-Werte je Baubereich liegen nicht vor. Die Gesamtzahl **278** ist gesichert und
-wird von `check:data` erzwungen. Sind eines Tages alle 17 gefüllt, prüft das
-Skript zusätzlich, dass die Summe 278 ergibt.
+Nicht mehr offen. Der Entwurfsexport vom 24.08.2026 trägt alle 17 Werte, und
+sie ergeben in der Summe genau **278** — die Zahl, die `check:data` ohnehin
+erzwingt. Damit sind sie kein prozeduraler Platzhalter mehr, sondern ein
+konsistenter Datensatz aus dem Entwurf; die Prüfung der Summe belegt es bei
+jedem Lauf.
 
-`src/data/wohnungen.json` bleibt leer, `features.wohnungsspiegel` bleibt
-`false`.
+`src/data/wohnungen.json` bleibt weiter leer, `features.wohnungsspiegel` bleibt
+`false`: das ist der Wohnungsspiegel je Wohnung, nicht je Baubereich.
+
+## 5. Drei Unterlagen als PDF
+
+Der Abschnitt «Planung & Mitwirkung» und die Footer-Spalte «Planung» sind
+fertig verdrahtet und warten nur auf die Dateien. Liegt eine nicht in
+`public/dokumente/`, bleibt die Zeile stehen — ohne Link und ohne Pfeil. Ein
+toter Download wäre schlimmer als eine sichtbare Lücke, darum prüft
+`Planung.astro` zur Buildzeit, ob die Datei da ist.
+
+| Datei in `public/dokumente/` | Beschriftung im Entwurf |
+| --- | --- |
+| `planungsbericht-gp-birkenhain.pdf` | Planungsbericht nach Art. 47 RPV · PDF · 3.12.2025 |
+| `situationsplan-1-500.pdf` | Situationsplan 1:500 · PDF · 6.11.2025 |
+| `sondernutzungsvorschriften.pdf` | Sondernutzungsvorschriften · PDF · 3.12.2025 |
+
+**Welche Fassung öffentlich wird, entscheidet die Bauherrschaft, nicht der
+Build.** Es liegen mehrere Versionen des Planungsberichts vor; die falsche zu
+publizieren wäre schlimmer als eine Woche ohne Download.
+
+## Nicht gerendert, aber gepflegt
+
+`src/data/energie.json` (9 Positionen) und `src/data/distanzen.json` (6 Ziele)
+haben derzeit keine Ansicht. Der Entwurf zeigt das Energiekonzept als vier
+Karten aus dem Dictionary und die Distanzen als eine Liste — beides steht so
+in `EnergieKarten.astro` und `DistanzListe.astro`. Die zweite Darstellung
+derselben Zahlen (`EnergieListe`, `DistanzTabelle`) war im Entwurf nicht
+vorgesehen und ist entfernt; sie stand zusätzlich mit derselben
+Überschrifts-ID im Dokument.
+
+Die Datenfiles bleiben: `check:data` prüft sie, und sie sind der belegte
+Stand. Wer eine Tabelle zurückholt, hat die Werte damit zur Hand.
 
 ## Bewusst nicht gemacht
 
 **Velodistanz und Taktfrequenz** als Felder in `distanzen.json`. Der Entwurf
 nennt beides (Dietikon/Bremgarten 20–30 Min., S17 im 15-Minuten-Takt), das
-Schema kennt sie nicht. Sie stehen bereits in `lage.metaDescription` — dort
-gehören sie hin. Leere optionale Felder anzulegen wäre spekulativ.
+Schema kennt sie nicht. Sie stehen in der Distanzliste und in
+`lage.metaDescription` — dort gehören sie hin. Leere optionale Felder
+anzulegen wäre spekulativ.
+
+**Eine Vorauswahl in den drei Auswahllisten des Formulars.** Der Entwurf zeigt
+sie mit Werten (4.5 Zimmer, 100 m², flexibel) — ein Select kann nicht leer
+aussehen. Übernommen wäre das eine protokollierte Angabe, die niemand gemacht
+hat: jede Anmeldung ohne Klick käme als «4.5 Zimmer» in die Ablage. Die Listen
+beginnen deshalb mit «noch offen», einer Option, die der Entwurf selbst
+vorsieht.
+
+**Den Kurztext je Baubereich aus dem Panel entfernen.** Der Entwurf zeigt im
+Situationsplan-Panel nur die Kennwerte. Der Text kommt aber aus demselben
+Handoff, ist zweisprachig gepflegt und beantwortet genau die Frage, die ein
+Klick auf ein Haus stellt. Er bleibt.
+
+**Die Karte durch einen Google-Maps-Embed ersetzen.** Genau das zeigt der
+Entwurf. Der Rahmen, die Adresszeile und der Link «In Google Maps öffnen» sind
+übernommen; die Tiles kommen weiter von OpenStreetMap. Ein iframe von Google
+wäre ein Third-Party-Embed, und die Datenschutzerklärung sagt, dass es keines
+gibt.

@@ -45,6 +45,9 @@ post() { curl -s --noproxy '*' -H 'Accept: application/json' "$@" "http://127.0.
 code() { curl -s --noproxy '*' -o /dev/null -w '%{http_code}' "$@"; }
 target() { curl -s --noproxy '*' -o /dev/null -w '%{redirect_url}' "$@"; }
 rows() { php -r "\$d=new PDO('sqlite:$DATA/anmeldungen.sqlite');echo \$d->query('SELECT COUNT(*) FROM $1')->fetchColumn();" 2>/dev/null || echo 0; }
+# Ein Feld aus der letzten Zeile einer Tabelle. Nur so sind die freiwilligen
+# Angaben pruefbar: die Antwort enthaelt sie nicht.
+field() { php -r "\$d=new PDO('sqlite:$DATA/anmeldungen.sqlite');\$p=\$d->query('SELECT payload FROM $1 ORDER BY rowid DESC LIMIT 1')->fetchColumn();\$v=json_decode(\$p,true);echo \$v['$2'] ?? '';" 2>/dev/null || echo ''; }
 
 check() {
   if [ "$2" = "$3" ]; then
@@ -82,9 +85,15 @@ check "Honeypot legt nichts an" "$(rows pending)" "0"
 
 check "gültige Anmeldung ohne JS" \
   "$(target -d firstName=Anna -d lastName=Muster -d email=anna@example.test -d rooms=3.5 \
-      -d moveIn=2027-04 -d consent=on -d locale=de "http://127.0.0.1:$PORT/api/anmeldung.php")" \
+      -d area=100 -d moveIn=flexibel -d bemerkung=x -d consent=on -d locale=de \
+      "http://127.0.0.1:$PORT/api/anmeldung.php")" \
   "http://127.0.0.1:$PORT/anmeldung/gesendet"
 check "unbestätigte Anmeldung liegt vor" "$(rows pending)" "1"
+
+# Die drei freiwilligen Felder des Formulars landen unveraendert in der Ablage.
+check "Zimmerwunsch gespeichert" "$(field pending rooms)" "3.5"
+check "Mindestfläche gespeichert" "$(field pending area)" "100"
+check "Bezugstermin gespeichert" "$(field pending moveIn)" "flexibel"
 
 LINK=$(grep -o "http://127.0.0.1:$PORT/api/bestaetigen.php?[^ ]*" "$DATA/mail.log" | tail -1)
 ID=$(printf '%s' "$LINK" | sed 's/.*id=\([^&]*\).*/\1/')
@@ -112,7 +121,16 @@ check "EN-Locale trifft englische Statusseite" \
       -d locale=en "http://127.0.0.1:$PORT/api/anmeldung.php")" \
   "http://127.0.0.1:$PORT/en/register/sent"
 
-# Zaehler stehen jetzt bei 3 gezaehlten Versuchen; bis 10 sind es sieben.
+# Unplausible freiwillige Angaben werden verworfen, nicht abgelehnt — und ein
+# Monatswert aus einem month-Input bleibt erlaubt. Sichtbar nur an der Ablage,
+# darum hier: die Zeilenzahlen behaupten ab jetzt nichts mehr, und das
+# Rate-Limit unten wuerde die Anfrage sonst schon abweisen.
+post -d firstName=Rita -d lastName=Muster -d email=rita@example.test \
+  -d area=abc -d moveIn=2029-11 -d consent=on -d locale=de >/dev/null
+check "unplausible Fläche verworfen" "$(field pending area)" ""
+check "Monatswert bleibt erlaubt" "$(field pending moveIn)" "2029-11"
+
+# Zaehler stehen jetzt bei 4 gezaehlten Versuchen; bis 10 sind es sechs.
 last=""
 for n in $(seq 1 9); do
   last=$(code -H 'Accept: application/json' -d "firstName=T$n" -d lastName=M \

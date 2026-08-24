@@ -5,60 +5,72 @@ import type { Locale } from '../i18n/routes';
 
 interface Props {
   locale: Locale;
-  heading?: string;
 }
 
-const { locale, heading } = Astro.props;
+const { locale } = Astro.props;
 const t = useTranslations(locale);
 
 // Ohne Koordinaten im Datenfile gibt es keine Karte — statt einer leeren
 // Flaeche wird der Abschnitt weggelassen.
 const ready = hasCoordinates(projekt);
+
+/**
+ * Der Entwurf zeigt die Karte in einem Planrahmen mit Eckkreuzen und einer
+ * Fusszeile: links die Adresse, rechts der Sprung nach Google Maps. Keine
+ * eigene Ueberschrift — die Karte steht als Figur unter dem Lauftext.
+ *
+ * Der Rahmen traegt die Karte selbst, nicht einen Google-Embed: die Tiles
+ * kommen weiter direkt von OpenStreetMap, ohne Third-Party-Script und ohne
+ * iframe. Der Link daneben genuegt fuer die Wegbeschreibung und laesst die
+ * Datenschutzerklaerung stimmen.
+ */
+const mapsQuery = encodeURIComponent(t('lage.mapAddress'));
+const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
 ---
 
-<section class="karte" aria-labelledby="karte-heading">
-  <div class="container">
-    <h2 id="karte-heading">{heading ?? t('lage.mapHeading')}</h2>
+<figure class="figure karte">
+  <i class="corner tl" aria-hidden="true">+</i>
+  <i class="corner tr" aria-hidden="true">+</i>
+  <i class="corner bl" aria-hidden="true">+</i>
+  <i class="corner br" aria-hidden="true">+</i>
 
-    {
-      ready ? (
-        <div
-          class="karte__frame"
-          data-karte
-          data-lat={projekt.koordinaten.lat}
-          data-lng={projekt.koordinaten.lng}
-          data-zoom={projekt.koordinaten.zoom}
-          data-label={t('map.label')}
-          data-attribution={t('map.attribution')}
-          data-fallback={t('map.fallback')}
-        >
-          {/* Kein Cookie, kein Third-Party-Script, kein iframe — die Tiles
-              kommen direkt von OpenStreetMap, Leaflet liegt im Bundle.
-              Ohne JavaScript bleibt der Hinweistext stehen. */}
-          <div class="karte__canvas" data-karte-canvas>
-            <p class="karte__pending">{t('map.fallback')}</p>
-          </div>
+  {
+    ready ? (
+      <div
+        class="karte__stage"
+        data-karte
+        data-lat={projekt.koordinaten.lat}
+        data-lng={projekt.koordinaten.lng}
+        data-zoom={projekt.koordinaten.zoom}
+        data-label={t('map.label')}
+        data-attribution={t('map.attribution')}
+        data-fallback={t('map.fallback')}
+      >
+        {/* Kein Cookie, kein Third-Party-Script, kein iframe — die Tiles
+            kommen direkt von OpenStreetMap, Leaflet liegt im Bundle.
+            Ohne JavaScript bleibt der Hinweistext stehen. */}
+        <div class="karte__canvas" data-karte-canvas>
+          <p class="karte__pending">{t('map.fallback')}</p>
         </div>
-      ) : (
-        /* Koordinaten stehen in projekt.json. Der Zweig bleibt als Schutz:
-           fehlen sie je, erscheint ein Hinweis statt einer leeren Flaeche. */
+      </div>
+    ) : (
+      /* Koordinaten stehen in projekt.json. Der Zweig bleibt als Schutz:
+         fehlen sie je, erscheint ein Hinweis statt einer leeren Flaeche. */
+      <div class="karte__stage">
         <p class="karte__pending">{t('map.fallback')}</p>
-      )
-    }
-  </div>
-</section>
-
-<style>
-  .karte {
-    padding-block: var(--space-2xl);
+      </div>
+    )
   }
 
-  .karte__frame {
-    position: relative;
-    margin-top: var(--space-l);
-    border: var(--hairline);
-    background: var(--c-bg-alt);
-    aspect-ratio: 16 / 9;
+  <figcaption class="karte__foot">
+    <span class="karte__address">{t('lage.mapCaption')}</span>
+    <a class="karte__link" href={mapsUrl} target="_blank" rel="noopener">{t('lage.mapLink')}</a>
+  </figcaption>
+</figure>
+
+<style>
+  .karte__stage {
+    height: min(56vh, 27.5rem);
   }
 
   .karte__canvas {
@@ -73,10 +85,25 @@ const ready = hasCoordinates(projekt);
     font-size: var(--fs-small);
   }
 
-  /* Ausserhalb des Rahmens — der Zweig ohne Koordinaten. */
-  .karte > .container > .karte__pending {
-    padding-inline: 0;
-    text-align: start;
+  .karte__foot {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-2xs) var(--space-s);
+    padding: var(--space-2xs) var(--space-xs);
+    border-top: var(--hairline);
+  }
+
+  .karte__address {
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-light);
+    color: var(--c-text-subtle);
+  }
+
+  .karte__link {
+    font-size: var(--fs-caption);
+    white-space: nowrap;
   }
 
   /* Leaflet-Chrome an die Designsprache angleichen: rechtwinklig, Hairlines. */

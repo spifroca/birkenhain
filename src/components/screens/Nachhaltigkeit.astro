@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Bildband from '../Bildband.astro';
 import EnergieKarten from '../EnergieKarten.astro';
-import EnergieListe from '../EnergieListe.astro';
 import Hero from '../Hero.astro';
 import { useTranslations } from '../../i18n/ui';
 import type { Locale } from '../../i18n/routes';
@@ -50,7 +49,6 @@ const stats = [
   </section>
 
   <EnergieKarten locale={locale} />
-  <EnergieListe locale={locale} />
 
   <Bildband
     src={aerial}
