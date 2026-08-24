@@ -5,6 +5,10 @@ Einmal einrichten, danach zieht Plesk den fertigen Stand selbst.
 
 ## Wie es funktioniert
 
+Quelle des Deploy-Branches ist **`main`**. Ein Push auf `main` baut und
+schreibt neu; Pushes auf Arbeitsbranches nicht. So trägt der Branch immer den
+gemergten Stand und nie einen Zwischenschritt.
+
 Die CI baut bei jedem Push und schreibt **nur den Inhalt von `dist/`** auf
 den Branch `deploy`. Der Branch enthält kein TypeScript, kein `node_modules`,
 keine Konfiguration — genau das, was ins Webroot gehört: HTML, `_assets/`,
