@@ -12,7 +12,8 @@
 
 :root {
   /* --- Farben ------------------------------------------------------------- */
-  /* Papier-Grund, Bronze-Akzent, Waldgruen fuer invertierte Flaechen. */
+  /* Papier-Grund, Waldgruen als Akzent, dunkles Waldgruen fuer
+     invertierte Flaechen. Beide Gruenwerte stehen so im Design-Entwurf. */
   --c-bg: #f5f3ee;
   --c-bg-alt: #efebe3;
   --c-bg-inverse: #2c332b;
@@ -24,9 +25,9 @@
   --c-text-inverse-muted: #b4b0a6;
   --c-text-inverse-subtle: #7e7a72;
   --c-link-inverse: #d8d3c8;
-  --c-accent: #a9722f;
-  --c-accent-hover: #8a5b20;
-  --c-accent-tint: rgb(169 114 47 / 0.07);
+  --c-accent: #4a5a44;
+  --c-accent-hover: #3b4a36;
+  --c-accent-tint: rgb(74 90 68 / 0.07);
   --c-hairline: rgb(51 49 47 / 0.15);
   --c-hairline-inverse: rgb(245 243 238 / 0.16);
   /* Flaeche hinter Bildern, bis sie geladen sind. */
