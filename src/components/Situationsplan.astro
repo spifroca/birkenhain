@@ -154,25 +154,6 @@ function markerLabel(area: (typeof areas)[number]): string {
         </ul>
 
         <p class="plan__note">{t('architektur.planNote')}</p>
-
-        <ul class="plan__list">
-          {
-            areas.map((area) => (
-              <li>
-                <button
-                  class="plan__listitem"
-                  type="button"
-                  data-area={area.id}
-                  aria-label={markerLabel(area)}
-                  aria-pressed="false"
-                  aria-controls="plan-detail"
-                >
-                  <span aria-hidden="true">{area.data.label}</span>
-                </button>
-              </li>
-            ))
-          }
-        </ul>
       </div>
     </div>
   </div>
@@ -344,38 +325,6 @@ function markerLabel(area: (typeof areas)[number]): string {
     font-weight: var(--fw-light);
     line-height: 1.5;
     color: var(--c-text-faint);
-  }
-
-  .plan__list {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-3xs);
-    margin: var(--space-m) 0 0;
-    padding: 0;
-    list-style: none;
-  }
-
-  .plan__listitem {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 2.75rem;
-    min-height: 2.75rem;
-    padding-inline: var(--space-2xs);
-    border: var(--hairline);
-    font-size: var(--fs-small);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .plan__listitem:hover {
-    border-color: var(--c-text);
-    background: var(--c-bg);
-  }
-
-  .plan__listitem[aria-pressed='true'] {
-    background: var(--c-accent);
-    border-color: var(--c-accent);
-    color: #fff;
   }
 
   @media (min-width: 68rem) {
