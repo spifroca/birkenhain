@@ -3,7 +3,7 @@
     "id": "bb-01",
     "label": "01D",
     "vollgeschosse": 8,
-    "wohnungen": null,
+    "wohnungen": 32,
     "plan": {
       "x": 12.6,
       "y": 18.2
@@ -17,7 +17,7 @@
     "id": "bb-02",
     "label": "02D",
     "vollgeschosse": 6,
-    "wohnungen": null,
+    "wohnungen": 24,
     "plan": {
       "x": 23.9,
       "y": 20.5
@@ -31,7 +31,7 @@
     "id": "bb-03",
     "label": "03D",
     "vollgeschosse": 6,
-    "wohnungen": null,
+    "wohnungen": 24,
     "plan": {
       "x": 33.6,
       "y": 19.6
@@ -45,7 +45,7 @@
     "id": "bb-04",
     "label": "04D",
     "vollgeschosse": 6,
-    "wohnungen": null,
+    "wohnungen": 24,
     "plan": {
       "x": 43,
       "y": 21.9
@@ -59,7 +59,7 @@
     "id": "bb-05",
     "label": "05D",
     "vollgeschosse": 5,
-    "wohnungen": null,
+    "wohnungen": 20,
     "plan": {
       "x": 53.6,
       "y": 21.4
@@ -73,7 +73,7 @@
     "id": "bb-06",
     "label": "06D",
     "vollgeschosse": 4,
-    "wohnungen": null,
+    "wohnungen": 16,
     "plan": {
       "x": 63.9,
       "y": 23.6
@@ -87,7 +87,7 @@
     "id": "bb-07",
     "label": "07F",
     "vollgeschosse": 3,
-    "wohnungen": null,
+    "wohnungen": 12,
     "plan": {
       "x": 73.6,
       "y": 30.9
@@ -101,7 +101,7 @@
     "id": "bb-08",
     "label": "08F",
     "vollgeschosse": 6,
-    "wohnungen": null,
+    "wohnungen": 21,
     "plan": {
       "x": 25.4,
       "y": 41.8
@@ -115,7 +115,7 @@
     "id": "bb-09",
     "label": "09F",
     "vollgeschosse": 5,
-    "wohnungen": null,
+    "wohnungen": 15,
     "plan": {
       "x": 35.8,
       "y": 39.2
@@ -129,7 +129,7 @@
     "id": "bb-10",
     "label": "10F",
     "vollgeschosse": 5,
-    "wohnungen": null,
+    "wohnungen": 15,
     "plan": {
       "x": 56.6,
       "y": 42.9
@@ -143,7 +143,7 @@
     "id": "bb-11",
     "label": "11F",
     "vollgeschosse": 3,
-    "wohnungen": null,
+    "wohnungen": 9,
     "plan": {
       "x": 66,
       "y": 48.7
@@ -157,7 +157,7 @@
     "id": "bb-12",
     "label": "12F",
     "vollgeschosse": 4,
-    "wohnungen": null,
+    "wohnungen": 12,
     "plan": {
       "x": 38,
       "y": 56.6
@@ -171,7 +171,7 @@
     "id": "bb-13",
     "label": "13F",
     "vollgeschosse": 4,
-    "wohnungen": null,
+    "wohnungen": 12,
     "plan": {
       "x": 38,
       "y": 72.9
@@ -185,7 +185,7 @@
     "id": "bb-14",
     "label": "14F",
     "vollgeschosse": 4,
-    "wohnungen": null,
+    "wohnungen": 12,
     "plan": {
       "x": 50.7,
       "y": 64.1
@@ -199,7 +199,7 @@
     "id": "bb-15",
     "label": "15B",
     "vollgeschosse": 3,
-    "wohnungen": null,
+    "wohnungen": 9,
     "plan": {
       "x": 41.1,
       "y": 86.1
@@ -213,7 +213,7 @@
     "id": "bb-16",
     "label": "16B",
     "vollgeschosse": 3,
-    "wohnungen": null,
+    "wohnungen": 9,
     "plan": {
       "x": 55.1,
       "y": 76.7
@@ -227,7 +227,7 @@
     "id": "bb-17",
     "label": "17",
     "vollgeschosse": 4,
-    "wohnungen": null,
+    "wohnungen": 12,
     "plan": {
       "x": 11.6,
       "y": 39.7

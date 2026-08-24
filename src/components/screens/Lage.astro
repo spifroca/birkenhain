@@ -2,7 +2,6 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Bildband from '../Bildband.astro';
 import DistanzListe from '../DistanzListe.astro';
-import DistanzTabelle from '../DistanzTabelle.astro';
 import Hero from '../Hero.astro';
 import Karte from '../Karte.astro';
 import { useTranslations } from '../../i18n/ui';
@@ -34,12 +33,9 @@ const t = useTranslations(locale);
     hasCoordinates() && (
       <div class="lage__map container">
         <Karte locale={locale} />
-        <p class="lage__mapcaption">{t('lage.mapCaption')}</p>
       </div>
     )
   }
-
-  <DistanzTabelle locale={locale} />
 
   <Bildband src={aerial} alt={t('home.teaserLage')} size="sm" />
 </BaseLayout>
@@ -67,13 +63,5 @@ const t = useTranslations(locale);
 
   .lage__map {
     padding-bottom: clamp(2.5rem, 5vw, 4.5rem);
-  }
-
-  .lage__mapcaption {
-    max-width: none;
-    margin: var(--space-2xs) 0 0;
-    font-size: var(--fs-caption);
-    font-weight: var(--fw-light);
-    color: var(--c-text-subtle);
   }
 </style>
