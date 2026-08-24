@@ -105,6 +105,9 @@ jobs:
         with:
           name: dist
           path: dist
+          # upload-artifact@v4 laesst Punkt-Dateien sonst weg - die gebaute
+          # .htaccess landet dann nie im Artefakt.
+          include-hidden-files: true
           retention-days: 7
 
   fonts:
