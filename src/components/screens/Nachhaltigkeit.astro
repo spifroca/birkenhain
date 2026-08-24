@@ -19,6 +19,10 @@ const t = useTranslations(locale);
   title={t('nachhaltigkeit.metaTitle')}
   description={t('nachhaltigkeit.metaDescription')}
 >
-  <Hero title={t('nachhaltigkeit.title')} lead={t('nachhaltigkeit.lead')} />
+  <Hero
+    eyebrow={t('nachhaltigkeit.kicker')}
+    title={t('nachhaltigkeit.title')}
+    lead={t('nachhaltigkeit.lead')}
+  />
   <EnergieListe locale={locale} />
 </BaseLayout>

@@ -15,7 +15,7 @@ const { eyebrow, title, lead, image, imageAlt } = Astro.props;
 
 <section class="hero">
   <div class="hero__text container">
-    {eyebrow && <p class="eyebrow">{eyebrow}</p>}
+    {eyebrow && <p class="hero__kicker">{eyebrow}</p>}
     <h1>{title}</h1>
     {lead && <p class="hero__lead">{lead}</p>}
   </div>
@@ -41,9 +41,18 @@ const { eyebrow, title, lead, image, imageAlt } = Astro.props;
     padding-bottom: var(--space-l);
   }
 
-  .hero__text .eyebrow {
+  /* Kicker: die Zeile ueber dem Titel. Eigene Klasse, nicht .eyebrow —
+     die traegt auch Footer-Spalten, Formular-Legenden und das 404-Label,
+     und die sollen leise bleiben statt bronzefarben. Werte aus den
+     Design-Tokens, kein Literal. */
+  .hero__kicker {
     display: block;
     margin-bottom: var(--space-s);
+    font-size: var(--fs-caption);
+    font-weight: var(--fw-bold);
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+    color: var(--c-accent);
   }
 
   .hero__lead {

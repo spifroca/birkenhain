@@ -1,1 +1,80 @@
-[]
+[
+  {
+    "id": "bahnhof-berikon-widen",
+    "ziel": {
+      "de": "Bahnhof Berikon-Widen (S17)",
+      "en": "Berikon-Widen station (S17)"
+    },
+    "meter": 500,
+    "minutenFuss": 10,
+    "minutenOev": null,
+    "minutenAuto": null,
+    "kategorie": "oev",
+    "order": 10
+  },
+  {
+    "id": "haltestelle-hofacker",
+    "ziel": {
+      "de": "Haltestelle Hofacker",
+      "en": "Hofacker stop"
+    },
+    "meter": 500,
+    "minutenFuss": 10,
+    "minutenOev": null,
+    "minutenAuto": null,
+    "kategorie": "oev",
+    "order": 20
+  },
+  {
+    "id": "zuerich-hb",
+    "ziel": {
+      "de": "Zuerich HB ab Berikon-Widen",
+      "en": "Zurich HB from Berikon-Widen"
+    },
+    "meter": null,
+    "minutenFuss": null,
+    "minutenOev": 31,
+    "minutenAuto": null,
+    "kategorie": "zentrum",
+    "order": 30
+  },
+  {
+    "id": "zentrum-mutschellen",
+    "ziel": {
+      "de": "Einkauf Zentrum Mutschellen",
+      "en": "Shops, Mutschellen centre"
+    },
+    "meter": null,
+    "minutenFuss": 10,
+    "minutenOev": null,
+    "minutenAuto": null,
+    "kategorie": "alltag",
+    "order": 40
+  },
+  {
+    "id": "kita-quartier",
+    "ziel": {
+      "de": "Kita im Quartier (Baubereich 10F)",
+      "en": "Day-care in the quarter (building 10F)"
+    },
+    "meter": null,
+    "minutenFuss": 2,
+    "minutenOev": null,
+    "minutenAuto": null,
+    "kategorie": "bildung",
+    "order": 50
+  },
+  {
+    "id": "wald-isleren",
+    "ziel": {
+      "de": "Wald Isleren",
+      "en": "Isleren forest"
+    },
+    "meter": null,
+    "minutenFuss": 1,
+    "minutenOev": null,
+    "minutenAuto": null,
+    "kategorie": "freizeit",
+    "order": 60
+  }
+]

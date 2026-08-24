@@ -20,7 +20,11 @@ const t = useTranslations(locale);
   title={t('architektur.metaTitle')}
   description={t('architektur.metaDescription')}
 >
-  <Hero title={t('architektur.title')} lead={t('architektur.lead')} />
+  <Hero
+    eyebrow={t('architektur.kicker')}
+    title={t('architektur.title')}
+    lead={t('architektur.lead')}
+  />
   <BaubereicheTabelle locale={locale} />
   <Galerie locale={locale} />
 </BaseLayout>

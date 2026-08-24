@@ -45,36 +45,38 @@
   },
   "home": {
     "metaTitle": "Im Birkenhain — Wohnüberbauung in Rudolfstetten-Friedlisberg",
-    "metaDescription": "TODO(handoff): Meta-Description aus README übernehmen.",
-    "heroEyebrow": "Rudolfstetten-Friedlisberg AG",
-    "heroTitle": "TODO(handoff): Hero-Titel aus README übernehmen.",
-    "heroLead": "TODO(handoff): Hero-Lead aus README übernehmen.",
+    "metaDescription": "Im Birkenhain: 278 Mietwohnungen am Waldrand in Rudolfstetten-Friedlisberg. 17 Baubereiche, oberirdisch autofrei, Naturpool, Bistro, Kita und Gym im Quartier.",
+    "heroTitle": "Grosszuegig und nachhaltig wohnen am Rand des Waldes",
+    "heroLead": "Auf dem Areal Isleren entsteht ein Quartier aus 17 gestaffelten Haeusern zwischen Mutschellen-Knoten und Wald: 278 Mietwohnungen, ein Quartierplatz unter Birken, und oberirdisch kein einziges Auto.",
     "situationsplanHeading": "Situationsplan",
     "situationsplanHint": "Baubereich wählen, um Details zu sehen.",
-    "galerieHeading": "Bilder"
+    "galerieHeading": "Bilder",
+    "kicker": "Rudolfstetten-Friedlisberg AG"
   },
   "architektur": {
     "metaTitle": "Architektur — Im Birkenhain",
-    "metaDescription": "TODO(handoff): Meta-Description aus README übernehmen.",
-    "title": "Architektur",
-    "lead": "TODO(handoff): Lead aus README übernehmen.",
+    "metaDescription": "17 Baubereiche mit 3 bis 8 Vollgeschossen, gestaffelt zum Waldrand. Beige Eternit-Fassade, dunkle Bronze und Steinsockel — Materialisierung und Etappierung im Ueberblick.",
+    "title": "17 Townhouses, gestaffelt zum Wald",
+    "lead": "Die Haeuser stehen nicht in Reihe, sondern versetzt: jedes hat seine eigene Adresse, jedes gibt dem Nachbarn Aussicht. Von acht Geschossen an der Nordwest-Ecke nehmen sie zum Waldrand hin ab.",
     "baubereicheHeading": "Die 17 Baubereiche",
     "tableArea": "Baubereich",
     "tableFloors": "Vollgeschosse",
     "tableUnits": "Wohnungen",
-    "pendingData": "Zahl folgt aus dem Gestaltungsplan."
+    "pendingData": "Zahl folgt aus dem Gestaltungsplan.",
+    "kicker": "Architektur"
   },
   "freiraum": {
     "metaTitle": "Freiraum — Im Birkenhain",
-    "metaDescription": "TODO(handoff): Meta-Description aus README übernehmen.",
-    "title": "Freiraum",
-    "lead": "TODO(handoff): Lead aus README übernehmen."
+    "metaDescription": "Wegnetz wie die Wurzeln eines Baumes, der Birkenhain als Signaturbaum, Quartierplatz mit Wasserspiel, Sitzstufen und Bistro-Terrasse. Umgebungsgestaltung deltavormgroep.",
+    "title": "Der Wald setzt sich ins Quartier fort",
+    "lead": "Zwischen den Haeusern liegt keine Restflaeche, sondern ein durchgehender Freiraum: Wege verzweigen sich wie Wurzeln, Hoehenunterschiede werden begruent ueberwunden, und in der Mitte steht der Birkenhain.",
+    "kicker": "Freiraum & Landschaft"
   },
   "lage": {
     "metaTitle": "Lage & Mobilität — Im Birkenhain",
-    "metaDescription": "TODO(handoff): Meta-Description aus README übernehmen.",
-    "title": "Lage & Mobilität",
-    "lead": "TODO(handoff): Lead aus README übernehmen.",
+    "metaDescription": "Am Rand des Mutschellen-Knotens: S17 im 15-Minuten-Takt, Zuerich HB in 31 Minuten, zwei Haltestellen in zehn Gehminuten. Oberirdisch autofrei, Tiefgarage beim Arealzugang.",
+    "title": "Zwischen Mutschellen-Knoten und Wald",
+    "lead": "Gut erschlossen und doch am Ende der Strasse. Die Autos verschwinden direkt beim Arealzugang unter Terrain; oberirdisch bleibt das Quartier autofrei — befahrbar nur fuer Anlieferung, Notfahrzeuge und Zuegeltage.",
     "distanzenHeading": "Distanzen",
     "tableTarget": "Ziel",
     "tableDistance": "Distanz",
@@ -84,23 +86,25 @@
     "unitMeters": "m",
     "unitKilometers": "km",
     "unitMinutes": "Min.",
-    "mapHeading": "Karte"
+    "mapHeading": "Karte",
+    "kicker": "Lage & Mobilitaet"
   },
   "nachhaltigkeit": {
     "metaTitle": "Nachhaltigkeit — Im Birkenhain",
-    "metaDescription": "TODO(handoff): Meta-Description aus README übernehmen.",
-    "title": "Nachhaltigkeit",
-    "lead": "TODO(handoff): Lead aus README übernehmen.",
+    "metaDescription": "Erdsonden-Waermepumpe mit 22 000 m Sondenlaenge, 2900 m2 Photovoltaik, Batteriespeicher, Freecooling und Retention auf dem Areal — das Energiekonzept im Detail.",
+    "title": "Dichte dort, wo die Infrastruktur schon ist",
+    "lead": "Statt neuem Bauland am Rand nutzt das Quartier ein Schluesselgebiet innerhalb des bestehenden Siedlungsgebiets, zehn Minuten von der Bahn. Das ist die wirksamste Nachhaltigkeitsmassnahme im ganzen Projekt.",
     "energieHeading": "Energiekonzept",
     "tableTopic": "Bereich",
     "tableValue": "Kennwert",
-    "tableNote": "Erläuterung"
+    "tableNote": "Erläuterung",
+    "kicker": "Nachhaltigkeit & Energie"
   },
   "wohnungen": {
     "metaTitle": "Wohnungen — Im Birkenhain",
-    "metaDescription": "TODO(handoff): Meta-Description aus README übernehmen.",
-    "title": "Wohnungen",
-    "lead": "TODO(handoff): Lead aus README übernehmen.",
+    "metaDescription": "278 Mietwohnungen von 2.5 bis 5.5 Zimmern, ausgelegt auf DINKs, Familien und Best Ager. Grundrisse und Flaechen provisorisch, Mietpreise und Vermietungsstart folgen.",
+    "title": "278 Mietwohnungen",
+    "lead": "Die Wohnungen sind auf drei Bewohnertypen ausgelegt: kompakte Wohnungen fuer DINKs, Familienwohnungen mit 3.5 bis 5.5 Zimmern und schwellenlose Wohnungen fuer Best Ager. Grundrisse und Flaechen sind provisorisch; Mietpreise und Vermietungsstart folgen spaeter.",
     "spiegelHeading": "Wohnungsspiegel",
     "spiegelPending": "Der Wohnungsspiegel wird veröffentlicht, sobald die Wohnungsdaten vorliegen.",
     "spiegelPendingCta": "Für die Anmeldeliste eintragen",
@@ -118,7 +122,8 @@
     "tableFloor": "Geschoss",
     "tableSize": "Fläche",
     "tableOrientation": "Ausrichtung",
-    "noPricing": "Mietpreise werden nicht publiziert."
+    "noPricing": "Mietpreise werden nicht publiziert.",
+    "kicker": "Wohnungen"
   },
   "anmeldung": {
     "metaTitle": "Anmeldung — Im Birkenhain",
@@ -191,7 +196,9 @@
     "imprint": "Impressum",
     "privacy": "Datenschutz",
     "rentalNote": "278 Mietwohnungen. Kein Verkauf.",
-    "copyright": "© {year} Im Birkenhain"
+    "copyright": "© {year} Im Birkenhain",
+    "owner": "Bauherrin: Real North AG",
+    "contactPending": "Kontaktangaben folgen."
   },
   "impressum": {
     "metaTitle": "Impressum — Im Birkenhain",

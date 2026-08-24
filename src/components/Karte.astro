@@ -51,8 +51,9 @@ const ready = hasCoordinates(projekt);
           <div class="karte__canvas" data-karte-canvas hidden></div>
         </div>
       ) : (
-        /* TODO(handoff): lat/lng in src/data/projekt.json setzen. */
-        <p class="karte__pending">TODO(handoff): Koordinaten fehlen in projekt.json.</p>
+        /* Koordinaten stehen in projekt.json. Der Zweig bleibt als Schutz:
+           fehlen sie je, erscheint ein Hinweis statt einer leeren Flaeche. */
+        <p class="karte__pending">{t('map.fallback')}</p>
       )
     }
   </div>
