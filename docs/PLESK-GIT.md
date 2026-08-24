@@ -20,6 +20,12 @@ Der Branch trägt bewusst keine Historie (`--orphan`, force-push): ein
 Build-Ergebnis ist kein Quellcode, und ohne das würde das Repo mit jedem
 Deploy um die vollen Assets wachsen.
 
+Gebaut wird **nur beim Push auf den Default-Branch** des Repos. Das ist an
+den Default gekoppelt und nicht an einen festen Namen: heute ist es
+`claude/new-session-1fphb2`, nach dem Umstellen auf `main` folgt es dorthin,
+ohne dass am Workflow etwas geändert werden muss. Zwei Quellen für denselben
+Branch wären ein Wettlauf mit force-push.
+
 ## Einrichten in Plesk
 
 *Websites & Domains* → Domain → **Git** → *Repository hinzufügen*.

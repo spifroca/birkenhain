@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: [main, claude/new-session-1fphb2]
   pull_request:
 
 # Ein überholter Lauf auf demselben Branch wird abgebrochen.
@@ -214,9 +214,14 @@ jobs:
   deploy-branch:
     name: Deploy-Branch aktualisieren
     runs-on: ubuntu-latest
-    # Nur vom Arbeitsbranch und von main, nie von einem Pull Request: der
-    # Branch soll den Stand tragen, der wirklich gemergt bzw. gepusht ist.
-    if: github.event_name == 'push'
+    # Nur beim Push auf den Default-Branch des Repos, nie von einem Pull
+    # Request. An den Default gekoppelt statt an einen festen Namen, damit es
+    # heute stimmt (Default ist noch der Arbeitsbranch) und nach dem
+    # Umstellen auf main weiter stimmt — ohne diese Datei erneut anzufassen.
+    # Zwei Quellen fuer denselben Branch waeren ein Wettlauf mit force-push.
+    if: >-
+      github.event_name == 'push' &&
+      github.ref_name == github.event.repository.default_branch
     needs: [build, subpath]
     permissions:
       contents: write
