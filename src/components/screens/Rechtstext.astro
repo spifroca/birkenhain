@@ -1,16 +1,20 @@
 ---
+import Icon from '../Icon.astro';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import type { Locale } from '../../i18n/routes';
 import { useTranslations, type TranslationKey } from '../../i18n/ui';
 
 /**
- * Gerüst für Impressum und Datenschutz. Die verbindlichen Texte fehlen im
- * Handoff und müssen juristisch geprüft werden — hier steht ein
- * TODO(handoff) statt einer erfundenen Erklärung.
+ * Impressum und Datenschutz.
  *
- * Beim Datenschutz ist zusätzlich aufgeführt, was die Website technisch
- * tatsächlich bearbeitet. Das ist aus dem Code belegt und dient als
- * Grundlage für die Erklärung, ersetzt sie aber nicht.
+ * Die Texte sind Entwürfe. Der Datenschutztext ist aus der tatsächlichen
+ * technischen Umsetzung geschrieben — was hier steht, tut die Website
+ * nachweislich so. Was sie nicht selbst weiss (Adresse, Hosting-Anbieter,
+ * Protokoll-Aufbewahrung), steht als offener Punkt sichtbar in der Seite,
+ * nicht versteckt in einem Kommentar: eine Rechtsseite mit stillen Lücken
+ * ist schlimmer als eine, die ihre Lücken zeigt.
+ *
+ * `features.indexable` bleibt false, bis die Prüfung durch ist.
  */
 interface Props {
   locale: Locale;
@@ -20,31 +24,56 @@ interface Props {
 const { locale, page } = Astro.props;
 const t = useTranslations(locale);
 
-const FACTS = ['form', 'rateLimit', 'mail', 'map', 'cookies', 'fonts'] as const;
+/** Abschnitte je Seite. `pending` markiert eine offene Angabe. */
+const SECTIONS: Record<Props['page'], { key: string; pending?: string }[]> = {
+  impressum: [
+    { key: 'owner', pending: 'ownerPending' },
+    { key: 'contact', pending: 'contactPendingBody' },
+    { key: 'project' },
+    { key: 'content' },
+  ],
+  datenschutz: [
+    { key: 'controller', pending: 'controllerPending' },
+    { key: 'data' },
+    { key: 'purpose' },
+    { key: 'consent' },
+    { key: 'retention' },
+    { key: 'security' },
+    { key: 'abuse' },
+    { key: 'processors', pending: 'processorsPending' },
+    { key: 'map' },
+    { key: 'cookies', pending: 'cookiesPending' },
+    { key: 'rights' },
+  ],
+};
+
+const sections = SECTIONS[page];
+const tk = (suffix: string) => t(`${page}.${suffix}` as TranslationKey);
 ---
 
 <BaseLayout
   page={page}
   locale={locale}
-  title={t(`${page}.metaTitle` as TranslationKey)}
-  description={t(`${page}.metaDescription` as TranslationKey)}
+  title={tk('metaTitle')}
+  description={tk('metaDescription')}
 >
   <article class="legal container">
-    <h1>{t(`${page}.title` as TranslationKey)}</h1>
-    <p class="legal__body">{t(`${page}.body` as TranslationKey)}</p>
+    <p class="hero__kicker">{tk('kicker')}</p>
+    <h1>{tk('title')}</h1>
+
+    <p class="legal__review" role="note">
+      <Icon name="info" />
+      <span>{tk('reviewNote')}</span>
+    </p>
 
     {
-      page === 'datenschutz' && (
-        <section class="legal__facts" aria-labelledby="facts-heading">
-          <h2 id="facts-heading">{t('datenschutz.processingHeading')}</h2>
-          <p class="legal__intro">{t('datenschutz.processingIntro')}</p>
-          <ul>
-            {FACTS.map((key) => (
-              <li>{t(`datenschutz.facts.${key}` as TranslationKey)}</li>
-            ))}
-          </ul>
+      sections.map((section) => (
+        <section class="legal__section">
+          <h2>{tk(`${section.key}Heading`)}</h2>
+          {section.key !== 'contact' && <p>{tk(`${section.key}Body`)}</p>}
+          {section.pending && <p class="legal__pending">{tk(section.pending)}</p>}
         </section>
-      )
+      ))
     }
   </article>
 </BaseLayout>
@@ -52,37 +81,51 @@ const FACTS = ['form', 'rateLimit', 'mail', 'map', 'cookies', 'fonts'] as const;
 <style>
   .legal {
     padding-block: var(--space-xl) var(--space-2xl);
+    max-width: var(--container-text);
   }
 
-  .legal__body {
-    padding-top: var(--space-m);
-    font-size: var(--fs-lead);
-    font-weight: var(--fw-extralight);
-    line-height: 1.45;
+  .legal h1 {
+    margin-bottom: var(--space-l);
   }
 
-  .legal__facts {
-    margin-top: var(--space-2xl);
+  .legal__review {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2xs);
+    max-width: none;
+    margin-bottom: var(--space-xl);
+    padding: var(--space-s);
+    border: var(--border-width) solid var(--c-accent);
+    background: var(--c-accent-tint);
+    font-size: var(--fs-small);
+  }
+
+  .legal__section {
     padding-top: var(--space-l);
     border-top: var(--hairline);
   }
 
-  .legal__intro {
-    padding-top: var(--space-s);
+  .legal__section:first-of-type {
+    border-top: 0;
+    padding-top: 0;
+  }
+
+  .legal__section h2 {
+    margin-bottom: var(--space-s);
+    font-size: var(--fs-h3);
+    font-weight: var(--fw-regular);
+  }
+
+  .legal__section p {
+    line-height: var(--lh-body);
+  }
+
+  /* Offene Angabe: sichtbar, nicht versteckt. */
+  .legal__pending {
+    margin-top: var(--space-s);
+    padding-left: var(--space-s);
+    border-left: var(--border-width) solid var(--c-accent);
     font-size: var(--fs-small);
-    color: var(--c-text-muted);
-  }
-
-  .legal__facts ul {
-    margin: var(--space-l) 0 0;
-    padding: 0;
-    list-style: none;
-    max-width: var(--container-text);
-    border-top: var(--hairline);
-  }
-
-  .legal__facts li {
-    padding-block: var(--space-m);
-    border-bottom: var(--hairline);
+    color: var(--c-text-subtle);
   }
 </style>

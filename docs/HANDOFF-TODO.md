@@ -56,15 +56,28 @@ Solange sie fehlen, zeigen Hero und Situationsplan einen Platzhalter. Die
 Baubereichsliste im Situationsplan funktioniert schon — sie ist ohnehin der
 barrierefreie Zugang und bleibt danach bestehen.
 
-## 2. Impressum und Datenschutz
+## 2. Impressum und Datenschutz — Entwurf liegt, Prüfung fehlt
 
-Inhalt liegt nicht vor, beides braucht juristische Prüfung. Belegt ist
-bisher nur: **Bauherrin ist die Real North AG** (steht im Footer).
+Beide Seiten tragen jetzt ausformulierte Entwürfe statt eines TODO. Der
+Datenschutztext ist aus der tatsächlichen Umsetzung geschrieben: Formularfelder,
+Double-Opt-In mit Sieben-Tage-Löschfrist, HMAC-Index auf der Adresse, der
+IP-Zähler des Rate-Limits, die erst nach Klick ladende Karte, keine Cookies,
+Schriften von der eigenen Domain. Was dort steht, tut die Website nachweislich so.
 
-Der Datenschutztext muss die Leaflet/OSM-Einbindung und den
-Formular-Endpoint abdecken. Was die Website technisch tatsächlich bearbeitet,
-ist auf `/datenschutz` aus dem Code belegt aufgeführt — als Grundlage, nicht
-als Ersatz.
+**Was fehlt, steht sichtbar in der Seite selbst** — bronzefarben markiert, nicht
+in einem Kommentar versteckt:
+
+| Seite | offene Angabe |
+| --- | --- |
+| Impressum | Firmenbezeichnung, Adresse, UID (CHE), zeichnungsberechtigte Person |
+| Impressum | E-Mail und Telefon für Anfragen |
+| Datenschutz | Adresse und E-Mail der verantwortlichen Stelle |
+| Datenschutz | Name und Sitz des Hosting-Anbieters |
+| Datenschutz | Aufbewahrungsdauer der Server-Zugriffsprotokolle |
+
+**Beides muss juristisch geprüft werden, bevor `features.indexable` auf `true`
+geht.** Ein Entwurf aus der Technik ist eine gute Grundlage und keine
+Rechtsberatung.
 
 ## 3. Footer-Kontakt
 
