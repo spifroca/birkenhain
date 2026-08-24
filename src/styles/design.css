@@ -10,8 +10,8 @@
    ========================================================================== */
 
 :root {
-  /* Bronze auf dunklem Grund — Kicker und Links im Waldgruen-Feld. */
-  --c-accent-light: #c0a47a;
+  /* Heller Akzent auf dunklem Grund — Kicker und Links im Waldgruen-Feld. */
+  --c-accent-light: #a9c3a6;
   --c-kicker-inverse: #e4dccb;
 
   /* Bewohnertypen: die Fuellfarben der Marker im Situationsplan. */
@@ -26,7 +26,7 @@
   /* Materialisierung — die fuenf Oberflaechen der Fassade. */
   --c-mat-plaster: #ede9e1;
   --c-mat-eternit: #cfc3ac;
-  --c-mat-bronze: var(--c-accent);
+  --c-mat-bronze: #a9722f;
   --c-mat-bronze-dark: #4a3a2c;
   --c-mat-socle: #8e8b84;
 
@@ -392,7 +392,7 @@
 .link-rule {
   font-size: var(--fs-body);
   text-decoration: none;
-  border-bottom: var(--border-width) solid var(--c-accent-tint-line, rgb(169 114 47 / 0.4));
+  border-bottom: var(--border-width) solid var(--c-accent-tint-line, rgb(74 90 68 / 0.4));
   color: var(--c-accent);
 }
 
