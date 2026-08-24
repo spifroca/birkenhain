@@ -1,0 +1,3 @@
+# Vorschau-Stand, noch nicht zur Veröffentlichung freigegeben.
+User-agent: *
+Disallow: /

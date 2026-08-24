@@ -1,0 +1,79 @@
+# Apache-Konfiguration für die statische Site auf klassischem Hosting.
+# Astro kopiert public/ unverändert nach dist/ — diese Datei landet also
+# im Webroot.
+
+DirectoryIndex index.html
+
+# --- Fehlerseiten ---------------------------------------------------------
+ErrorDocument 404 /404.html
+
+# Unter /en/ die englische Variante (Apache 2.4).
+# Astro behandelt nur das oberste 404.astro besonders und legt es als
+# /404.html ab. Das verschachtelte en/404.astro wird eine normale
+# Verzeichnisroute — daher der ausgeschriebene Pfad.
+<IfModule mod_rewrite.c>
+  <If "%{REQUEST_URI} =~ m#^/en/#">
+    ErrorDocument 404 /en/404/index.html
+  </If>
+</IfModule>
+
+# --- Zeichensatz ----------------------------------------------------------
+AddDefaultCharset UTF-8
+
+<IfModule mod_mime.c>
+  AddType font/woff2 .woff2
+  AddType image/avif .avif
+  AddType application/xml .xml
+</IfModule>
+
+# --- Caching --------------------------------------------------------------
+<IfModule mod_expires.c>
+  ExpiresActive On
+
+  # Astro hängt an alles unter /_assets/ einen Hash — der Inhalt unter einer
+  # URL ändert sich nie, also unbegrenzt cachebar.
+  <FilesMatch "\.(js|css|woff2|avif|webp|jpg|jpeg|png|svg)$">
+    ExpiresDefault "access plus 1 year"
+    Header set Cache-Control "public, immutable"
+  </FilesMatch>
+
+  # HTML dagegen kurz: ein Deploy soll ankommen.
+  <FilesMatch "\.html$">
+    ExpiresDefault "access plus 5 minutes"
+    Header set Cache-Control "public, must-revalidate"
+  </FilesMatch>
+</IfModule>
+
+# --- Kompression ----------------------------------------------------------
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html text/css text/plain text/xml \
+    application/javascript application/xml image/svg+xml
+</IfModule>
+
+# --- Sicherheits-Header ---------------------------------------------------
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set X-Frame-Options "SAMEORIGIN"
+
+  # Die Site lädt nichts von Dritten — ausser den OSM-Kartenausschnitten,
+  # und die erst nach ausdrücklicher Einwilligung.
+  Header always set Content-Security-Policy "default-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'"
+
+  # Nicht erforderlich, solange die Schrift von derselben Origin kommt: CORS
+  # greift nur cross-origin, und Preload wie CSS-Abruf sind beide anonym, der
+  # Cache-Eintrag passt also. Live nachgemessen — ohne diesen Header laedt die
+  # Schrift korrekt und einmal. Steht hier fuer den Fall, dass die Dateien je
+  # von einem anderen Host ausgeliefert werden.
+  <FilesMatch "\.woff2$">
+    Header set Access-Control-Allow-Origin "*"
+  </FilesMatch>
+</IfModule>
+
+# --- Datenverzeichnis ------------------------------------------------------
+# Liegt normalerweise ausserhalb des Webroots. Falls es doch hier landet,
+# ist es hiermit trotzdem unerreichbar.
+<IfModule mod_authz_core.c>
+  RedirectMatch 404 ^/birkenhain-data/
+  RedirectMatch 404 \.sqlite$
+</IfModule>
