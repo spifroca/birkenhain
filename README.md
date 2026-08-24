@@ -173,8 +173,13 @@ Rate-Limit, Locale-Zuordnung. Läuft auch in der CI.
 
 ## Deployment
 
-Klassisches PHP-Hosting. Runbook und Launch-Checkliste:
-[`docs/DEPLOY.md`](docs/DEPLOY.md).
+Klassisches PHP-Hosting.
+
+**Übergabe an eine neue Session mit dem Ziel «live gehen»:**
+[`docs/BRIEFING-PUBLISH.md`](docs/BRIEFING-PUBLISH.md) — Stand, Reihenfolge,
+harte Regeln und die Fallen, die schon zugeschlagen haben.
+
+Runbook und Launch-Checkliste: [`docs/DEPLOY.md`](docs/DEPLOY.md).
 
 Statische Vorschau des jeweils letzten Stands:
 <https://spifroca.github.io/birkenhain/> — zum Anschauen, nicht als

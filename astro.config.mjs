@@ -10,12 +10,14 @@ import { defineConfig } from 'astro/config';
  * Produktionsstand heraus — ein `npm run build` ohne Umgebung ist also
  * immer das Richtige.
  *
- * Die Domain ist www.birkenhain.ch — live nachgemessen: birkenhain.ch
- * antwortet 301 auf https://www.birkenhain.ch/. Der Canonical muss auf die
+ * Die Domain ist birkenhain.ch, ohne www — live nachgemessen am 24.08.2026:
+ * https://www.birkenhain.ch/architektur/ antwortet 301 auf
+ * https://birkenhain.ch/architektur/, pfadtreu. Vorher war es umgekehrt; die
+ * bevorzugte Domain wurde serverseitig umgestellt. Der Canonical muss auf die
  * Adresse zeigen, die tatsaechlich 200 liefert, sonst verweist er auf eine
- * Weiterleitung.
+ * Weiterleitung. Dreht die Einstellung wieder, genuegt SITE_ORIGIN im Build.
  */
-const SITE = process.env.SITE_ORIGIN || 'https://www.birkenhain.ch';
+const SITE = process.env.SITE_ORIGIN || 'https://birkenhain.ch';
 const BASE = process.env.SITE_BASE || '/';
 
 export default defineConfig({
