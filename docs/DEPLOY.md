@@ -187,7 +187,8 @@ Apache sitzt und `.htaccess` damit ignoriert wird.
 - [ ] Formular ohne JavaScript getestet (Redirect auf die Statusseite)
 - [ ] Rate-Limit greift (mehr als 10 Versuche pro Stunde)
 - [ ] `anmeldungen.sqlite` nicht per URL erreichbar
-- [ ] Karte lädt erst nach Klick, im Netzwerk-Tab vorher kein OSM-Request
+- [ ] Karte lädt die Tiles von OpenStreetMap und von nirgends sonst — im
+      Netzwerk-Tab kein Request an einen Dritten, auch nicht an Google
 - [ ] Tastatur-Durchgang: Skip-Link, Navigation, Situationsplan, Lightbox
 - [ ] Lighthouse und axe auf `/` und `/anmeldung`
 - [ ] `features.indexable` auf `true`, Deploy, `robots.txt` und
