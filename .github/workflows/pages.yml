@@ -34,6 +34,20 @@ jobs:
     name: Vorschau (sofern Pages aktiv)
     runs-on: ubuntu-latest
 
+    # Nur auf dem Default-Branch des Repos. Schaltet man Pages mit Quelle
+    # "GitHub Actions" ein, legt GitHub das Environment github-pages mit einer
+    # Branch-Regel an, die Deployments auf den Default-Branch beschraenkt. Ein
+    # Push auf einen anderen Branch laesst den Job am Environment-Gate
+    # scheitern — vor der Runner-Zuweisung, ohne Schritte und ohne Log, in
+    # zwei Sekunden. So geschehen auf main, zweimal.
+    #
+    # An den Default gekoppelt statt an einen Namen: wird der Default auf main
+    # umgestellt, folgt die Vorschau mit, ohne dass diese Datei angefasst
+    # werden muss. Der Deploy-Branch-Job in ci.yml haengt bewusst fest an
+    # main — der hat kein Environment-Gate und soll der Wahrheit folgen, nicht
+    # einer Einstellung.
+    if: github.ref_name == github.event.repository.default_branch
+
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}

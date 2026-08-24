@@ -85,6 +85,18 @@ Die **nginx-Direktiven** aus [`PLESK-NGINX.md`](PLESK-NGINX.md) bleiben
 nötig. Sie sind Serverkonfiguration und liegen nicht in den Dateien — kein
 Deployment bringt sie mit.
 
+## Vorschau und Default-Branch
+
+Die GitHub-Pages-Vorschau deployt nur vom **Default-Branch** des Repos. Das
+ist keine Wahl, sondern eine Regel: das Environment `github-pages` beschraenkt
+Deployments darauf, und ein Push auf einen anderen Branch scheitert am
+Environment-Gate — ohne Log, in zwei Sekunden.
+
+Solange der Default `claude/new-session-1fphb2` ist, zeigt die Vorschau also
+diesen Branch. Nach dem Umstellen auf `main` folgt sie `main`. Der
+Deploy-Branch fuer Plesk haengt dagegen fest an `main` und ist davon
+unabhaengig.
+
 ## Wenn die Git-Extension fehlt
 
 Manche Plesk-Pakete haben sie nicht installiert. Dann bleibt der Weg über das
