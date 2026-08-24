@@ -280,9 +280,17 @@ jobs:
       # was ins Webroot gehoert. Plesks Git-Extension kann ihn direkt dorthin
       # ziehen, ohne Node auf dem Server und ohne Zip-Hantieren.
       #
-      # Historie wird bewusst nicht aufbewahrt: ein Build-Ergebnis ist kein
-      # Quellcode, und ohne --orphan waechst das Repo mit jedem Deploy um die
-      # vollen Assets.
+      # Jeder Build committet auf den bestehenden Deploy-Branch, statt ihn als
+      # --orphan neu zu wurzeln und force-zu-pushen. Das war der Grund, warum
+      # die Website nach dem ersten Klon nie wieder aktuell wurde: Plesk zieht
+      # mit einem Merge, und zwei Wurzel-Commits haben keine gemeinsame
+      # Historie ("refusing to merge unrelated histories"). Der Lauf blieb
+      # gruen, der Branch wurde geschrieben — und der Server kam nicht mehr
+      # mit. Ein Fast-Forward kann Plesk ziehen.
+      #
+      # Das Repo waechst dadurch nur um das, was sich wirklich aendert:
+      # Astro haengt den Inhalts-Hash an die Asset-Namen, ein unveraendertes
+      # Bild bleibt also derselbe Blob.
       - name: dist/ auf den Deploy-Branch schreiben
         run: |
           test -f dist/index.html
@@ -291,18 +299,40 @@ jobs:
           test -s dist/fonts/readex-pro-variable.woff2
 
           SRC_SHA="$(git rev-parse HEAD)"
+          REMOTE="https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git"
           cd dist
-          git init -q
-          git config user.email "actions@github.com"
-          git config user.name "GitHub Actions"
-          git checkout -q --orphan deploy
-          git add -A
-          git commit -q -m "Build von ${SRC_SHA}
+
+          # Nebenlaeufige Laeufe: wer verliert, setzt auf dem neuen Stand neu
+          # auf. Kein force-push — ein fremder Build soll nicht verschwinden.
+          pushed=""
+          for versuch in 1 2 3; do
+            rm -rf .git
+            git init -q
+            git config user.email "actions@github.com"
+            git config user.name "GitHub Actions"
+            git checkout -q -b deploy
+
+            # Nur die Spitze holen; der Push braucht die Historie nicht, die
+            # Gegenseite hat sie. Beim allerersten Lauf gibt es sie noch nicht.
+            if git fetch -q --depth=1 "${REMOTE}" deploy 2>/dev/null; then
+              git reset -q --soft FETCH_HEAD
+            fi
+
+            git add -A
+            # --allow-empty: ein Build ohne Aenderung ist kein Fehler.
+            git commit -q --allow-empty -m "Build von ${SRC_SHA}
 
           Erzeugt aus ${GITHUB_REF_NAME} durch .github/workflows/ci.yml.
           Dieser Branch enthaelt nur Build-Ergebnis, keinen Quellcode —
           nicht hier committen, Aenderungen gehoeren in den Quellbranch."
-          git push -q --force \
-            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
-            deploy
+
+            if git push -q "${REMOTE}" deploy; then
+              pushed="ja"
+              break
+            fi
+            echo "::warning::Deploy-Branch wurde nebenlaeufig geschrieben, Versuch ${versuch} setzt neu auf."
+            sleep 5
+          done
+
+          test -n "${pushed}"
           echo "::notice::Deploy-Branch aktualisiert auf Basis von ${SRC_SHA}"
