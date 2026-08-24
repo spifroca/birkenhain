@@ -93,6 +93,13 @@ Angabe sucht der Endpoint `birkenhain-data/` neben dem Webroot.
 
 ## 4. Hochladen
 
+**Empfohlen: einmal einrichten, danach automatisch.** Die CI schreibt den
+fertigen Stand auf den Branch `deploy`, und Plesks Git-Extension zieht ihn
+direkt ins Webroot — kein Zip, kein Entpacken, bei keiner Änderung mehr.
+Anleitung: [`PLESK-GIT.md`](PLESK-GIT.md).
+
+Wer es von Hand machen will oder muss:
+
 Den **Inhalt** von `dist/` ins Webroot, nicht den Ordner selbst. Per SFTP,
 rsync oder Deploy-Tool des Hosters:
 

@@ -210,3 +210,61 @@ jobs:
             || fail "Absende-Knopf in der statischen Vorschau nicht gesperrt"
 
           echo "Basispfad, Vorschau-Hinweis und Sperren in Ordnung."
+
+  deploy-branch:
+    name: Deploy-Branch aktualisieren
+    runs-on: ubuntu-latest
+    # Nur vom Arbeitsbranch und von main, nie von einem Pull Request: der
+    # Branch soll den Stand tragen, der wirklich gemergt bzw. gepusht ist.
+    if: github.event_name == 'push'
+    needs: [build, subpath]
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Abhängigkeiten
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+
+      - name: Schriften
+        run: npm run fonts
+
+      - name: Build
+        run: npm run build
+
+      # Der Branch traegt ausschliesslich den Inhalt von dist/ — genau das,
+      # was ins Webroot gehoert. Plesks Git-Extension kann ihn direkt dorthin
+      # ziehen, ohne Node auf dem Server und ohne Zip-Hantieren.
+      #
+      # Historie wird bewusst nicht aufbewahrt: ein Build-Ergebnis ist kein
+      # Quellcode, und ohne --orphan waechst das Repo mit jedem Deploy um die
+      # vollen Assets.
+      - name: dist/ auf den Deploy-Branch schreiben
+        run: |
+          test -f dist/index.html
+          test -f dist/.htaccess
+          test -f dist/api/anmeldung.php
+          test -s dist/fonts/readex-pro-variable.woff2
+
+          SRC_SHA="$(git rev-parse HEAD)"
+          cd dist
+          git init -q
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git checkout -q --orphan deploy
+          git add -A
+          git commit -q -m "Build von ${SRC_SHA}
+
+          Erzeugt aus ${GITHUB_REF_NAME} durch .github/workflows/ci.yml.
+          Dieser Branch enthaelt nur Build-Ergebnis, keinen Quellcode —
+          nicht hier committen, Aenderungen gehoeren in den Quellbranch."
+          git push -q --force \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            deploy
+          echo "::notice::Deploy-Branch aktualisiert auf Basis von ${SRC_SHA}"
