@@ -11,6 +11,8 @@ export const PAGES = [
   'nachhaltigkeit',
   'wohnungen',
   'anmeldung',
+  'impressum',
+  'datenschutz',
 ] as const;
 export type PageId = (typeof PAGES)[number];
 
@@ -26,6 +28,8 @@ const SLUGS: Record<PageId, Record<Locale, string>> = {
   nachhaltigkeit: { de: 'nachhaltigkeit', en: 'sustainability' },
   wohnungen: { de: 'wohnungen', en: 'apartments' },
   anmeldung: { de: 'anmeldung', en: 'register' },
+  impressum: { de: 'impressum', en: 'imprint' },
+  datenschutz: { de: 'datenschutz', en: 'privacy' },
 };
 
 /** Reihenfolge in Header und Footer. `home` ist das Logo, nicht ein Menuepunkt. */
@@ -38,17 +42,42 @@ export const NAV: readonly PageId[] = [
   'anmeldung',
 ];
 
-/** Absoluter Pfad einer Seite in einer Sprache, immer mit fuehrendem Slash. */
+/** Fusszeile, rechtliche Spalte. Bewusst nicht in der Hauptnavigation. */
+export const LEGAL: readonly PageId[] = ['impressum', 'datenschutz'];
+
+/**
+ * Basispfad des Builds, ohne abschliessenden Slash. Im Webroot ist er leer,
+ * unter einem Unterpfad (Vorschau) z. B. `/birkenhain`. Astro liefert
+ * BASE_URL immer mit abschliessendem Slash.
+ */
+const BASE = (import.meta.env.BASE_URL ?? '/').replace(/\/+$/, '');
+
+/** Ein Pfad im Build, mit Basispfad davor. */
+export function withBase(path: string): string {
+  const normalized = path.startsWith('/') ? path : `/${path}`;
+  return BASE === '' ? normalized : `${BASE}${normalized}`;
+}
+
+/**
+ * Absoluter Pfad einer Seite in einer Sprache, immer mit fuehrendem Slash
+ * und inklusive Basispfad. Einzige Quelle fuer Navigation,
+ * Sprachumschalter, hreflang und Sitemap — deshalb muss der Basispfad
+ * hier hinein und nicht an jede Aufrufstelle.
+ */
 export function pathFor(page: PageId, locale: Locale): string {
   const slug = SLUGS[page][locale];
   const prefix = locale === DEFAULT_LOCALE ? '' : `/${locale}`;
-  if (slug === '') return prefix === '' ? '/' : `${prefix}/`;
-  return `${prefix}/${slug}`;
+  if (slug === '') return withBase(prefix === '' ? '/' : `${prefix}/`);
+  // Mit Slash: der Build legt Verzeichnisse an, und der Server leitet eine
+  // Adresse ohne Slash per 301 dorthin um. Ohne den Slash kostete jeder
+  // interne Klick einen zusaetzlichen Roundtrip.
+  return withBase(`${prefix}/${slug}/`);
 }
 
-/** Locale aus einem URL-Pfad lesen. */
+/** Locale aus einem URL-Pfad lesen, Basispfad wird uebersprungen. */
 export function localeFromPath(pathname: string): Locale {
-  const first = pathname.split('/').filter(Boolean)[0];
+  const rest = BASE !== '' && pathname.startsWith(BASE) ? pathname.slice(BASE.length) : pathname;
+  const first = rest.split('/').filter(Boolean)[0];
   return LOCALES.includes(first as Locale) ? (first as Locale) : DEFAULT_LOCALE;
 }
 

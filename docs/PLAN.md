@@ -15,7 +15,7 @@ Begründung gegenüber Next.js App Router mit `output: 'export'`:
 | i18n DE/EN über `/` und `/en/` | In den Core eingebaut (`i18n`-Config, `prefixDefaultLocale: false`) | Middleware-basiert; im static export ist Middleware nicht verfügbar, i18n-Routing muss über `next-intl` + generierte Segmente nachgebaut werden |
 | Bild-Pipeline AVIF/WebP + `srcset` 640/1024/1600/2000 | `astro:assets` mit sharp, build-time, im static output voll nutzbar | `next/image` ist im static export auf `unoptimized: true` gezwungen — genau das Feature fällt weg |
 | Inhalte als validierte Datenfiles | Content Layer + Zod-Schemas, Validierung zur Buildzeit | manuell, ohne Schema-Validierung |
-| Formular-Endpoint | Endpoint liegt bewusst ausserhalb des Builds (Pages Function), static output bleibt rein | API-Routes im static export nicht unterstützt, ebenfalls extern nötig |
+| Formular-Endpoint | Endpoint liegt ausserhalb des Builds, static output bleibt rein | API-Routes im static export nicht unterstützt, ebenfalls extern nötig |
 
 Der entscheidende Punkt ist die Bild-Pipeline: die Anforderung
 AVIF/WebP mit `srcset` ist im Next.js-static-export nur mit einer
@@ -52,9 +52,14 @@ src/
     base.css              Reset, :focus-visible, prefers-reduced-motion
   pages/                  DE-Routen
   pages/en/               EN-Routen
-functions/api/anmeldung.ts   Serverless-Endpoint (Cloudflare Pages Function)
+public/
+  .htaccess             Caching, Security-Header, CSP, Fehlerseiten
+  api/anmeldung.php     Formular annehmen, Double-Opt-In verschicken
+  api/bestaetigen.php   Opt-In-Link einlösen
+  api/lib/              gemeinsame Logik, per .htaccess gesperrt
+  fonts/                gehostete Schrift
 scripts/fetch-fonts.mjs      Readex Pro woff2 lokal holen
-public/fonts/                gehostete Schnitte
+scripts/test-endpoint.sh     19 Fälle gegen PHPs eingebauten Server
 ```
 
 Routen (echte Dateien, kein clientseitiger State):
@@ -119,3 +124,31 @@ tragen Inhalt.
   Umschalter linkt auf die Übersetzung der aktuellen Seite.
 - **Wohnungsspiegel.** Im Prototyp prozedural erzeugte Daten. Komponente
   vorgebaut, Flag aus, Datenfile leer.
+
+## 6. Nachtrag: Hosting
+
+Der erste Entwurf setzte auf Cloudflare Pages mit einer Pages Function und
+KV für den Formular-Endpoint. Das war eine Annahme, keine Anforderung — die
+sieben Screens sind statisches HTML und laufen auf jedem Webhoster.
+
+Tatsächlich läuft das Projekt auf klassischem PHP-Hosting. Der Endpoint ist
+deshalb portiert:
+
+| vorher | jetzt |
+| --- | --- |
+| Pages Function (TypeScript, Workers-Runtime) | zwei PHP-Dateien in `public/api/` |
+| KV-Namespace für Rate-Limit und Anmeldungen | SQLite-Datei über dem Webroot |
+| Mailversand über einen Drittanbieter-Dienst | Mailserver des Hosters |
+| `wrangler`, `@cloudflare/workers-types` | keine zusätzliche Abhängigkeit |
+| Secrets im Cloudflare-Dashboard | `config.php` über dem Webroot |
+
+Die Logik ist dieselbe geblieben: serverseitige Validierung, Honeypot,
+Rate-Limit, Double-Opt-In mit HMAC-signiertem Einmal-Link, 303-Redirect ohne
+JavaScript und JSON mit. Neu dazugekommen ist eine Testabdeckung — der
+Endpoint ist der einzige Teil des Projekts mit echter Logik, und
+`npm run test:endpoint` prüft ihn in 19 Fällen.
+
+Was der Wechsel gekostet hat: nichts an Funktion. Was er gebracht hat: ein
+Anbieter statt zwei, keine Node-Abhängigkeit auf dem Server, und die
+Anmeldungen liegen in einer Datei, die man kopieren und als CSV exportieren
+kann.

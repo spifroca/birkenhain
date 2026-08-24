@@ -1,0 +1,88 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import type { Locale } from '../../i18n/routes';
+import { useTranslations, type TranslationKey } from '../../i18n/ui';
+
+/**
+ * Gerüst für Impressum und Datenschutz. Die verbindlichen Texte fehlen im
+ * Handoff und müssen juristisch geprüft werden — hier steht ein
+ * TODO(handoff) statt einer erfundenen Erklärung.
+ *
+ * Beim Datenschutz ist zusätzlich aufgeführt, was die Website technisch
+ * tatsächlich bearbeitet. Das ist aus dem Code belegt und dient als
+ * Grundlage für die Erklärung, ersetzt sie aber nicht.
+ */
+interface Props {
+  locale: Locale;
+  page: 'impressum' | 'datenschutz';
+}
+
+const { locale, page } = Astro.props;
+const t = useTranslations(locale);
+
+const FACTS = ['form', 'rateLimit', 'mail', 'map', 'cookies', 'fonts'] as const;
+---
+
+<BaseLayout
+  page={page}
+  locale={locale}
+  title={t(`${page}.metaTitle` as TranslationKey)}
+  description={t(`${page}.metaDescription` as TranslationKey)}
+>
+  <article class="legal container">
+    <h1>{t(`${page}.title` as TranslationKey)}</h1>
+    <p class="legal__body">{t(`${page}.body` as TranslationKey)}</p>
+
+    {
+      page === 'datenschutz' && (
+        <section class="legal__facts" aria-labelledby="facts-heading">
+          <h2 id="facts-heading">{t('datenschutz.processingHeading')}</h2>
+          <p class="legal__intro">{t('datenschutz.processingIntro')}</p>
+          <ul>
+            {FACTS.map((key) => (
+              <li>{t(`datenschutz.facts.${key}` as TranslationKey)}</li>
+            ))}
+          </ul>
+        </section>
+      )
+    }
+  </article>
+</BaseLayout>
+
+<style>
+  .legal {
+    padding-block: var(--space-xl) var(--space-2xl);
+  }
+
+  .legal__body {
+    padding-top: var(--space-m);
+    font-size: var(--fs-lead);
+    font-weight: var(--fw-extralight);
+    line-height: 1.45;
+  }
+
+  .legal__facts {
+    margin-top: var(--space-2xl);
+    padding-top: var(--space-l);
+    border-top: var(--hairline);
+  }
+
+  .legal__intro {
+    padding-top: var(--space-s);
+    font-size: var(--fs-small);
+    color: var(--c-text-muted);
+  }
+
+  .legal__facts ul {
+    margin: var(--space-l) 0 0;
+    padding: 0;
+    list-style: none;
+    max-width: var(--container-text);
+    border-top: var(--hairline);
+  }
+
+  .legal__facts li {
+    padding-block: var(--space-m);
+    border-bottom: var(--hairline);
+  }
+</style>

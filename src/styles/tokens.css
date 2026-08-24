@@ -1,11 +1,8 @@
 /* =============================================================================
    Design-Tokens — Im Birkenhain
    -----------------------------------------------------------------------------
-   TODO(handoff): Die Werte unten sind PROVISORISCH. Die verbindlichen Werte
-   stehen im Design-Handoff (design_handoff_im_birkenhain/README.md, Abschnitt
-   Design-Tokens / Typografie) und in den Inline-Styles von
-   design/Im Birkenhain.dc.html. Diese Datei ist die einzige Stelle, an der sie
-   ersetzt werden muessen — sonst greift nirgends ein Literal.
+   Verbindliche Werte aus dem Design-Handoff (Stand 24.08.2026).
+   Einzige Stelle mit Farb-, Groessen- und Zeitwerten im Projekt.
 
    Gesetzt und nicht verhandelbar (aus dem Briefing):
    - kein border-radius
@@ -15,16 +12,27 @@
 
 :root {
   /* --- Farben ------------------------------------------------------------- */
-  --c-bg: #ffffff;
-  --c-bg-alt: #f6f5f2;
-  --c-bg-inverse: #1a1a18;
-  --c-text: #1a1a18;
-  --c-text-muted: #6b6b66;
-  --c-text-inverse: #ffffff;
-  --c-accent: #5c6b4a;
-  --c-accent-hover: #47543a;
-  --c-hairline: #d8d6d0;
-  --c-hairline-inverse: #3a3a36;
+  /* Papier-Grund, Bronze-Akzent, Waldgruen fuer invertierte Flaechen. */
+  --c-bg: #f5f3ee;
+  --c-bg-alt: #efebe3;
+  --c-bg-inverse: #2c332b;
+  --c-text: #33312f;
+  --c-text-muted: #6c675f;
+  --c-text-subtle: #8a857d;
+  --c-text-faint: #a19c94;
+  --c-text-inverse: #f5f3ee;
+  --c-text-inverse-muted: #b4b0a6;
+  --c-text-inverse-subtle: #7e7a72;
+  --c-link-inverse: #d8d3c8;
+  --c-accent: #a9722f;
+  --c-accent-hover: #8a5b20;
+  --c-accent-tint: rgb(169 114 47 / 0.07);
+  --c-hairline: rgb(51 49 47 / 0.15);
+  --c-hairline-inverse: rgb(245 243 238 / 0.16);
+  /* Flaeche hinter Bildern, bis sie geladen sind. */
+  --c-image-placeholder: #ddd8ce;
+  /* Deckung der Label-Plaketten auf Plaenen. */
+  --c-plate: rgb(245 243 238 / 0.82);
 
   /* --- Hairlines ---------------------------------------------------------- */
   /* Die einzige erlaubte Abgrenzung: 1 px, keine Schatten. */
@@ -36,8 +44,11 @@
   /* Absichtlich als Token gesetzt, damit ein Verstoss sichtbar wird. */
   --radius: 0;
   --shadow: none;
+  /* Karten tragen die Hairline als Rahmen, nicht als Elevation. */
+  --card-outline: 0 0 0 1px var(--c-hairline);
 
   /* --- Typografie --------------------------------------------------------- */
+  /* Eine Familie fuer alles: Readex Pro, Weights 200-700. */
   --font-sans: 'Readex Pro', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --fw-extralight: 200;
   --fw-light: 300;
@@ -46,23 +57,31 @@
   --fw-semibold: 600;
   --fw-bold: 700;
 
-  --fs-display: clamp(2.75rem, 6vw, 5rem);
-  --fs-h1: clamp(2.25rem, 4.5vw, 3.5rem);
-  --fs-h2: clamp(1.625rem, 3vw, 2.25rem);
-  --fs-h3: clamp(1.25rem, 2vw, 1.5rem);
-  --fs-lead: clamp(1.125rem, 1.6vw, 1.375rem);
-  --fs-body: 1rem;
-  --fs-small: 0.875rem;
-  --fs-caption: 0.75rem;
+  /* Hero 38-92 px, Seitentitel 34-68 px, H2 26-44 px. */
+  --fs-display: clamp(2.375rem, 6vw, 5.75rem);
+  --fs-h1: clamp(2.125rem, 4.8vw, 4.25rem);
+  --fs-h2: clamp(1.625rem, 3.2vw, 2.75rem);
+  --fs-h3: clamp(1.1875rem, 1.6vw, 1.3125rem);
+  --fs-figure: clamp(1.875rem, 3vw, 2.75rem);
+  --fs-lead: 1.09375rem;
+  --fs-body: 1.03125rem;
+  --fs-small: 0.90625rem;
+  --fs-caption: 0.71875rem;
 
-  --lh-tight: 1.08;
-  --lh-heading: 1.2;
+  --lh-tight: 1.02;
+  --lh-heading: 1.06;
   --lh-body: 1.6;
+  --lh-body-tight: 1.55;
+  --lh-lead: 1.62;
 
-  --ls-display: -0.02em;
-  --ls-heading: -0.01em;
+  --ls-display: -0.03em;
+  --ls-h1: -0.025em;
+  --ls-heading: -0.02em;
   --ls-body: 0;
-  --ls-caps: 0.08em;
+  /* Kicker .2em, Spaltentitel .16em, Planlabels .1em. */
+  --ls-caps: 0.2em;
+  --ls-caps-tight: 0.16em;
+  --ls-caps-plate: 0.1em;
 
   /* --- Raster / Abstaende ------------------------------------------------- */
   --space-3xs: 0.25rem;
@@ -75,13 +94,34 @@
   --space-2xl: 6rem;
   --space-3xl: 9rem;
 
-  --container: 82.5rem;
+  /* Vertikale Sektionsrhythmen und Grid-Gaps als Clamp, wie im Entwurf. */
+  --space-section: clamp(2.5rem, 6vw, 6rem);
+  --space-section-lg: clamp(3rem, 7vw, 6rem);
+  --grid-gap: clamp(1rem, 3vw, 4.5rem);
+  --grid-gap-tight: clamp(1rem, 2vw, 1.75rem);
+
+  /* Inhaltsbreite 1440 px, Gutter 18-56 px. */
+  --container: 90rem;
   --container-text: 46rem;
-  --gutter: clamp(1.25rem, 4vw, 3rem);
+  --gutter: clamp(1.125rem, 4vw, 3.5rem);
+
+  /* Minimale Spaltenbreiten der auto-fit-Grids. */
+  --col-min-wide: 18.75rem;
+  --col-min: 17.5rem;
+  --col-min-narrow: 15rem;
+  --col-min-tile: 13.75rem;
 
   /* --- Shell-Masse ------------------------------------------------------- */
-  --header-h: 4.5rem;
-  --stickybar-h: 3.5rem;
+  --header-h: 4.625rem;
+  --stickybar-h: 5.5rem;
+
+  /* --- Bildbaender -------------------------------------------------------- */
+  --band-h-hero: min(88vh, 53.75rem);
+  --band-h-lg: min(70vh, 43.75rem);
+  --band-h: min(66vh, 41.25rem);
+  --band-h-sm: min(62vh, 38.75rem);
+  --band-h-min: 32.5rem;
+  --lightbox-image-h: 76vh;
 
   /* --- Interaktion -------------------------------------------------------- */
   --focus-width: 2px;
@@ -90,7 +130,13 @@
   --duration-fast: 120ms;
   --duration: 200ms;
   --duration-slow: 400ms;
+  /* Scroll-Reveal und Bild-Zoom laufen bewusst langsamer. */
+  --duration-reveal: 620ms;
+  --duration-zoom: 700ms;
   --ease: cubic-bezier(0.2, 0, 0.2, 1);
+  --ease-reveal: cubic-bezier(0.22, 0.61, 0.36, 1);
+  --reveal-offset: 0.875rem;
+  --zoom-scale: 1.03;
 
   /* --- Icons -------------------------------------------------------------- */
   --icon-stroke: 1.5;

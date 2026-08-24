@@ -1,6 +1,7 @@
 ---
-import Lightbox, { type LightboxImage } from './Lightbox.astro';
+import Lightbox from './Lightbox.astro';
 import Picture from './Picture.astro';
+import type { LightboxImage } from '../lib/media';
 import { getCollection } from 'astro:content';
 import { pick, useTranslations } from '../i18n/ui';
 import type { Locale } from '../i18n/routes';

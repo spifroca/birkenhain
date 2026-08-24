@@ -7,3 +7,11 @@ dist/
 .DS_Store
 npm-debug.log*
 public/fonts/*.woff2
+
+# Anmeldedaten liegen im Betrieb ueber dem Webroot. Falls doch mal ein
+# Datenverzeichnis im Repo landet, gehoert es nicht in die Versionierung.
+birkenhain-data/
+*.sqlite
+*.sqlite-wal
+*.sqlite-shm
+mail.log

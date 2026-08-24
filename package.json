@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "engines": {
-    "node": ">=20.11"
+    "node": ">=22"
   },
   "scripts": {
     "dev": "astro dev",
@@ -14,8 +14,8 @@
     "check:data": "node scripts/check-data.mjs",
     "fonts": "node scripts/fetch-fonts.mjs",
     "format": "prettier --write .",
-    "dev:functions": "wrangler pages dev dist",
-    "check:functions": "tsc -p functions/tsconfig.json"
+    "check:php": "find public/api -name \"*.php\" -print0 | xargs -0 -n1 php -l",
+    "test:endpoint": "./scripts/test-endpoint.sh"
   },
   "dependencies": {
     "astro": "^5.6.1",
@@ -25,12 +25,10 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.4",
-    "@cloudflare/workers-types": "^4.20250410.0",
     "@types/leaflet": "^1.9.17",
     "@types/node": "^22.14.0",
     "prettier": "^3.5.3",
     "prettier-plugin-astro": "^0.14.1",
-    "typescript": "^5.8.3",
-    "wrangler": "^4.12.0"
+    "typescript": "^5.8.3"
   }
 }

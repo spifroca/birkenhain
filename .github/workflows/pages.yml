@@ -1,0 +1,107 @@
+name: Vorschau
+
+# Statische Vorschau auf GitHub Pages. Sie ersetzt das Deployment nicht:
+# produktiv laeuft die Site auf klassischem PHP-Hosting, und dort auch das
+# Anmeldeformular. Auf Pages laeuft kein PHP, der Endpoint ist dort also ohne
+# Funktion — das Formular sagt es selbst (features.staticPreview).
+#
+# Voraussetzung, einmalig und von Hand:
+#   Settings -> Pages -> Build and deployment -> Source: GitHub Actions
+#
+# Das laesst sich nicht automatisieren. Eine Pages-Site anzulegen ist eine
+# Admin-Operation, die der GITHUB_TOKEN eines Workflows nicht hat; der
+# permissions-Block kann Rechte nur einschraenken, nie hinzufuegen.
+on:
+  workflow_dispatch:
+  push:
+    branches: [main, claude/new-session-1fphb2]
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    # Der Name sagt bewusst nicht "veroeffentlichen": solange Pages aus ist,
+    # ueberspringt der Lauf alles und endet gruen mit einer Warnung. Eine
+    # offene Voraussetzung ist kein Build-Fehler und soll am Pull Request
+    # kein rotes X erzeugen, das keinen Defekt bezeichnet.
+    name: Vorschau (sofern Pages aktiv)
+    runs-on: ubuntu-latest
+
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      # Liefert Origin und Basispfad als Outputs. Schlaegt fehl, solange
+      # Pages nicht eingeschaltet ist — deshalb tolerant, und alles Weitere
+      # haengt an ihrem Ergebnis.
+      - name: Pages abfragen
+        id: pages
+        continue-on-error: true
+        uses: actions/configure-pages@v5
+
+      - name: Offene Voraussetzung melden
+        if: steps.pages.outcome != 'success'
+        run: |
+          echo "::warning title=GitHub Pages ist nicht eingeschaltet::\
+          Einmalig setzen: Settings → Pages → Build and deployment → \
+          Source: GitHub Actions. Danach deployt dieser Workflow bei jedem \
+          Push von selbst. Ein Workflow-Token darf Pages nicht anlegen."
+          echo "Pages ist aus — nichts zu veröffentlichen. Lauf endet grün."
+
+      - name: Abhängigkeiten
+        if: steps.pages.outcome == 'success'
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+
+      - name: Schriften
+        if: steps.pages.outcome == 'success'
+        run: npm run fonts
+
+      - name: Build für den Unterpfad
+        if: steps.pages.outcome == 'success'
+        run: npm run build
+        env:
+          SITE_ORIGIN: ${{ steps.pages.outputs.origin }}
+          SITE_BASE: ${{ steps.pages.outputs.base_path }}
+          STATIC_PREVIEW: 'true'
+
+      # Der Nachweis, dass der Basispfad in den Links steht, laeuft in der CI
+      # (Job "Build unter Unterpfad") und haengt nicht an Pages. Hier nur die
+      # Sperren, weil das Ergebnis oeffentlich erreichbar wird.
+      - name: Sperren prüfen
+        if: steps.pages.outcome == 'success'
+        run: |
+          grep -q 'name="robots" content="noindex' dist/index.html \
+            || { echo "::error::Vorschau ohne noindex"; exit 1; }
+          grep -q 'Disallow: /' dist/robots.txt \
+            || { echo "::error::robots.txt sperrt die Vorschau nicht"; exit 1; }
+          echo "noindex und robots.txt in Ordnung."
+
+      - name: Artefakt
+        if: steps.pages.outcome == 'success'
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+      - name: Veröffentlichen
+        id: deployment
+        if: steps.pages.outcome == 'success'
+        uses: actions/deploy-pages@v4
+
+      - name: URL
+        if: steps.pages.outcome == 'success'
+        run: echo "::notice::Vorschau unter ${{ steps.deployment.outputs.page_url }}"

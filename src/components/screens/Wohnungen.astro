@@ -19,6 +19,10 @@ const t = useTranslations(locale);
   title={t('wohnungen.metaTitle')}
   description={t('wohnungen.metaDescription')}
 >
-  <Hero title={t('wohnungen.title')} lead={t('wohnungen.lead')} />
+  <Hero
+    eyebrow={t('wohnungen.kicker')}
+    title={t('wohnungen.title')}
+    lead={t('wohnungen.lead')}
+  />
   <Wohnungsspiegel locale={locale} />
 </BaseLayout>

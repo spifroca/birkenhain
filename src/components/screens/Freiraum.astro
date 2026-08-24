@@ -19,6 +19,10 @@ const t = useTranslations(locale);
   title={t('freiraum.metaTitle')}
   description={t('freiraum.metaDescription')}
 >
-  <Hero title={t('freiraum.title')} lead={t('freiraum.lead')} />
+  <Hero
+    eyebrow={t('freiraum.kicker')}
+    title={t('freiraum.title')}
+    lead={t('freiraum.lead')}
+  />
   <Galerie locale={locale} />
 </BaseLayout>

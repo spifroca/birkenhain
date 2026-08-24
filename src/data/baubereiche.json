@@ -1,240 +1,240 @@
 [
   {
     "id": "bb-01",
-    "label": "1",
-    "vollgeschosse": null,
+    "label": "01D",
+    "vollgeschosse": 8,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 12.6,
+      "y": 18.2
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Achtgeschossiger Kopfbau an der Nordwest-Ecke, der hoechste im Quartier.",
+      "en": "Eight-storey head building on the north-west corner, the tallest in the quarter."
     }
   },
   {
     "id": "bb-02",
-    "label": "2",
-    "vollgeschosse": null,
+    "label": "02D",
+    "vollgeschosse": 6,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 23.9,
+      "y": 20.5
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Zeile am Waldrand, gestaffelt zum Hang.",
+      "en": "Row along the forest edge, stepped with the slope."
     }
   },
   {
     "id": "bb-03",
-    "label": "3",
-    "vollgeschosse": null,
+    "label": "03D",
+    "vollgeschosse": 6,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 33.6,
+      "y": 19.6
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Zeile am Waldrand, gestaffelt zum Hang.",
+      "en": "Row along the forest edge, stepped with the slope."
     }
   },
   {
     "id": "bb-04",
-    "label": "4",
-    "vollgeschosse": null,
+    "label": "04D",
+    "vollgeschosse": 6,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 43,
+      "y": 21.9
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Zeile am Waldrand, gestaffelt zum Hang.",
+      "en": "Row along the forest edge, stepped with the slope."
     }
   },
   {
     "id": "bb-05",
-    "label": "5",
-    "vollgeschosse": null,
+    "label": "05D",
+    "vollgeschosse": 5,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 53.6,
+      "y": 21.4
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Mit Passage im Erdgeschoss: Durchgang vom Waldweg auf den Quartierplatz.",
+      "en": "With a ground-floor passage linking the forest path to the neighbourhood square."
     }
   },
   {
     "id": "bb-06",
-    "label": "6",
-    "vollgeschosse": null,
+    "label": "06D",
+    "vollgeschosse": 4,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 63.9,
+      "y": 23.6
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Hangparalleler Bau am oestlichen Waldrand.",
+      "en": "Building parallel to the slope on the eastern forest edge."
     }
   },
   {
     "id": "bb-07",
-    "label": "7",
-    "vollgeschosse": null,
+    "label": "07F",
+    "vollgeschosse": 3,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 73.6,
+      "y": 30.9
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Dreigeschossiger Abschluss gegen den Wald im Osten.",
+      "en": "Three-storey end building towards the forest in the east."
     }
   },
   {
     "id": "bb-08",
-    "label": "8",
-    "vollgeschosse": null,
+    "label": "08F",
+    "vollgeschosse": 6,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 25.4,
+      "y": 41.8
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Am Quartierplatz, mit Gym im Natursteinsockel.",
+      "en": "On the neighbourhood square, with the gym in the stone plinth."
     }
   },
   {
     "id": "bb-09",
-    "label": "9",
-    "vollgeschosse": null,
+    "label": "09F",
+    "vollgeschosse": 5,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 35.8,
+      "y": 39.2
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Hangparalleler Bau ueber dem Quartierplatz.",
+      "en": "Building parallel to the slope above the neighbourhood square."
     }
   },
   {
     "id": "bb-10",
-    "label": "10",
-    "vollgeschosse": null,
+    "label": "10F",
+    "vollgeschosse": 5,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 56.6,
+      "y": 42.9
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Am Quartierplatz, mit Kita von 290 m2 im Erdgeschoss.",
+      "en": "On the neighbourhood square, with a 290 m2 day-care centre on the ground floor."
     }
   },
   {
     "id": "bb-11",
-    "label": "11",
-    "vollgeschosse": null,
+    "label": "11F",
+    "vollgeschosse": 3,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 66,
+      "y": 48.7
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Kleinster Bau der Mittelzeile, Hauptausrichtung West.",
+      "en": "Smallest building of the middle row, mainly facing west."
     }
   },
   {
     "id": "bb-12",
-    "label": "12",
-    "vollgeschosse": null,
+    "label": "12F",
+    "vollgeschosse": 4,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 38,
+      "y": 56.6
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Mit Passage im Erdgeschoss: Durchgang zur unteren Quartierebene.",
+      "en": "With a ground-floor passage through to the lower level of the quarter."
     }
   },
   {
     "id": "bb-13",
-    "label": "13",
-    "vollgeschosse": null,
+    "label": "13F",
+    "vollgeschosse": 4,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 38,
+      "y": 72.9
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Familienhaus an der Obere Dorfstrasse.",
+      "en": "Family building on Obere Dorfstrasse."
     }
   },
   {
     "id": "bb-14",
-    "label": "14",
-    "vollgeschosse": null,
+    "label": "14F",
+    "vollgeschosse": 4,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 50.7,
+      "y": 64.1
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Familienhaus an der Obere Dorfstrasse.",
+      "en": "Family building on Obere Dorfstrasse."
     }
   },
   {
     "id": "bb-15",
-    "label": "15",
-    "vollgeschosse": null,
+    "label": "15B",
+    "vollgeschosse": 3,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 41.1,
+      "y": 86.1
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Best-Ager-Haus am suedlichen Quartierrand, schwellenlos erschlossen.",
+      "en": "Best-ager building on the southern edge, stepless throughout."
     }
   },
   {
     "id": "bb-16",
-    "label": "16",
-    "vollgeschosse": null,
+    "label": "16B",
+    "vollgeschosse": 3,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 55.1,
+      "y": 76.7
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Best-Ager-Haus an der Obere Dorfstrasse, schwellenlos erschlossen.",
+      "en": "Best-ager building on Obere Dorfstrasse, stepless throughout."
     }
   },
   {
     "id": "bb-17",
     "label": "17",
-    "vollgeschosse": null,
+    "vollgeschosse": 4,
     "wohnungen": null,
     "plan": {
-      "x": null,
-      "y": null
+      "x": 11.6,
+      "y": 39.7
     },
     "text": {
-      "de": "",
-      "en": ""
+      "de": "Ostzeile quer zum Hang, mit Bistro und Co-Working am Quartierplatz.",
+      "en": "East row across the slope, with the bistro and co-working on the square."
     }
   }
 ]

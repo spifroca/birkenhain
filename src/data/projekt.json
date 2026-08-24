@@ -5,15 +5,18 @@
   "angebot": "miete",
   "wohnungen": 278,
   "baubereiche": 17,
-  "vollgeschosse": { "min": 3, "max": 8 },
+  "vollgeschosse": {
+    "min": 3,
+    "max": 8
+  },
   "oberirdischAutofrei": true,
   "publikation": {
     "mietpreise": false,
     "vermietungsstart": false
   },
   "koordinaten": {
-    "lat": null,
-    "lng": null,
+    "lat": 47.36438,
+    "lng": 8.37068,
     "zoom": 16
   }
 }

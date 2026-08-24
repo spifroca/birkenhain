@@ -20,7 +20,11 @@ const t = useTranslations(locale);
   title={t('lage.metaTitle')}
   description={t('lage.metaDescription')}
 >
-  <Hero title={t('lage.title')} lead={t('lage.lead')} />
+  <Hero
+    eyebrow={t('lage.kicker')}
+    title={t('lage.title')}
+    lead={t('lage.lead')}
+  />
   <DistanzTabelle locale={locale} />
   <Karte locale={locale} />
 </BaseLayout>

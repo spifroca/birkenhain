@@ -28,7 +28,15 @@ const baubereiche = defineCollection({
   }),
 });
 
-/** Galerie. `src` wird von astro:assets zur Buildzeit optimiert. */
+/**
+ * Galerie. `src` wird von astro:assets zur Buildzeit optimiert.
+ *
+ * Die Daten aus dem Handoff liegen in `src/data/galerie.pending.json` und
+ * warten auf die Bilder: `image()` loest den Pfad zur Buildzeit auf, ein
+ * fehlendes Bild bricht den Build. Sobald die acht Dateien in `src/assets/`
+ * liegen, `galerie.pending.json` nach `galerie.json` umbenennen — dann sind
+ * Galerie, Lightbox und das Hero-Bild da.
+ */
 const galerie = defineCollection({
   loader: file('src/data/galerie.json'),
   schema: ({ image }) =>

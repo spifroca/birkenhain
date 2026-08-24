@@ -1,0 +1,60 @@
+---
+import Icon from './Icon.astro';
+import type { Locale } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+import { features } from '../lib/flags';
+
+/**
+ * Leiste ueber dem Header, solange die Site nicht freigegeben ist.
+ *
+ * Haengt am selben Schalter wie robots.txt und das noindex: wird
+ * `features.indexable` zum Launch auf true gesetzt, verschwindet dieser
+ * Hinweis von selbst. Es gibt also keinen zweiten Schritt, den man
+ * vergessen kann.
+ */
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const t = useTranslations(locale);
+---
+
+{
+  !features.indexable && (
+    <div class="vorschau" role="note">
+      <p class="vorschau__inner container">
+        <Icon name="info" />
+        <span>
+          <strong>{t('preview.label')}</strong> {t('preview.body')}
+          {features.staticPreview && <> {t('preview.noForm')}</>}
+        </span>
+      </p>
+    </div>
+  )
+}
+
+<style>
+  .vorschau {
+    background: var(--c-bg-inverse);
+    color: var(--c-text-inverse);
+    border-bottom: var(--hairline-inverse);
+  }
+
+  .vorschau__inner {
+    display: flex;
+    align-items: baseline;
+    gap: var(--space-2xs);
+    max-width: var(--container);
+    margin: 0 auto;
+    padding-block: var(--space-2xs);
+    font-size: var(--fs-caption);
+    line-height: 1.5;
+  }
+
+  .vorschau__inner strong {
+    font-weight: var(--fw-semibold);
+    letter-spacing: var(--ls-caps);
+    text-transform: uppercase;
+  }
+</style>

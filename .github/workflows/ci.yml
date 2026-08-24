@@ -1,0 +1,275 @@
+name: CI
+
+on:
+  push:
+    branches: [main, claude/new-session-1fphb2]
+  pull_request:
+
+# Ein überholter Lauf auf demselben Branch wird abgebrochen.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Typen, Daten, Build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      # Kein `cache: npm`: setup-node bricht ohne Lockfile ab, und zwar
+      # bevor der Fallback unten greift. Sobald package-lock.json im Repo
+      # liegt, `cache: npm` hier wieder ergaenzen — dann spart es Zeit.
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      # `npm ci` braucht ebenfalls ein Lockfile. Solange keines committet
+      # ist, greift `npm install` — sonst wäre der erste Lauf rot, ohne dass
+      # etwas kaputt ist. Sobald das Lockfile da ist, gilt automatisch der
+      # reproduzierbare Pfad.
+      - name: Abhängigkeiten
+        run: |
+          if [ -f package-lock.json ]; then
+            npm ci
+          else
+            echo "::warning::Kein package-lock.json im Repo — es läuft 'npm install' statt 'npm ci'. Lockfile committen für reproduzierbare Builds."
+            npm install --no-audit --no-fund
+          fi
+
+      # Erzeugt .astro/types.d.ts für die Content-Collections; ohne das
+      # kennt astro check die Typen der Datenfiles nicht.
+      - name: Astro sync
+        run: npx astro sync
+
+      - name: Astro check
+        run: npm run check
+
+      - name: Endpoint-Syntax
+        run: npm run check:php
+
+      # Der Endpoint ist der einzige Teil mit echter Logik. 19 Fälle gegen
+      # PHPs eingebauten Server: Validierung, Honeypot, Double-Opt-In,
+      # Replay-Schutz, gefälschte Signatur, Rate-Limit, Locale-Zuordnung.
+      - name: Endpoint-Verhalten
+        run: npm run test:endpoint
+
+      # Prüft die zugesagten Projektfakten: 278 Mietwohnungen, 17 Baubereiche,
+      # 3–8 Vollgeschosse, autofrei, keine Mietpreise, kein Vermietungsstart.
+      # Bricht ab, wenn eine davon verletzt wird.
+      - name: Projektfakten
+        run: npm run check:data
+
+      # Die woff2 ist gitignored, muss aber ins Artefakt: sonst zeigt
+      # fonts/readex-pro.css auf eine 404 und der Browser faellt still auf
+      # system-ui zurueck. Tolerant, weil Google Fonts ein externer Dienst
+      # ist und den Lauf nicht roeten soll — die Pruefung unten macht ein
+      # unvollstaendiges Artefakt aber sichtbar.
+      - name: Schriften für das Artefakt
+        id: artifact_fonts
+        continue-on-error: true
+        run: npm run fonts
+
+      - name: Build
+        run: npm run build
+
+      - name: Ausgabe prüfen
+        run: |
+          test -f dist/index.html
+          test -f dist/en/index.html
+          test -f dist/robots.txt
+          # Genau die Pfade, auf die ErrorDocument in der .htaccess zeigt.
+          test -f dist/404.html
+          test -f dist/en/404/index.html
+          test -f dist/.htaccess
+          test -f dist/api/anmeldung.php
+          test -f dist/api/bestaetigen.php
+          # Die @font-face-Regel liegt in public/ und muss mitkommen.
+          test -f dist/fonts/readex-pro.css
+          # Die Schriftdatei selbst entscheidet, ob das Artefakt direkt
+          # hochladbar ist. Fehlt sie, ist der Lauf nicht falsch — aber das
+          # Artefakt taugt nicht zum Deployen, und das muss man sehen.
+          if [ -s dist/fonts/readex-pro-variable.woff2 ]; then
+            echo "Schriftdatei im Artefakt: $(du -h dist/fonts/readex-pro-variable.woff2 | cut -f1)"
+          else
+            echo "::warning title=Artefakt ohne Schriftdatei::\
+            readex-pro-variable.woff2 fehlt — dieses dist/ nicht direkt \
+            deployen, sonst laeuft die Site auf system-ui. Ursache: der \
+            Schritt 'Schriften für das Artefakt' ist fehlgeschlagen."
+          fi
+          echo "Erzeugte Seiten:"
+          find dist -name '*.html' | sort
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist
+          retention-days: 7
+
+  fonts:
+    name: Schriften abrufbar
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      # Nur dieser Schritt darf scheitern, ohne den PR zu blockieren:
+      # Google Fonts ist ein externer Dienst. `continue-on-error` gehoert
+      # deshalb hierhin und nicht an den Job — job-weit wuerde es auch die
+      # Pruefung unten verschlucken und einen echten Fehler gruen melden.
+      - name: Readex Pro holen
+        id: fetch
+        continue-on-error: true
+        run: node scripts/fetch-fonts.mjs
+
+      # Ein Dedup-Fehler dagegen muss den Lauf roeten — also ohne
+      # continue-on-error, und nur wenn der Download ueberhaupt klappte.
+      - name: Schnitte prüfen
+        if: steps.fetch.outcome == 'success'
+        run: |
+          ls -la public/fonts/
+          test -s public/fonts/readex-pro-variable.woff2
+          # Identische Checksummen heissen: dieselbe Datei mehrfach geladen.
+          # Genau das war der Fehler, den diese Prüfung fernhalten soll.
+          dupes=$(sha256sum public/fonts/*.woff2 | awk '{print $1}' | sort | uniq -d)
+          if [ -n "$dupes" ]; then
+            echo "::error::Mehrere woff2-Dateien sind byte-identisch — Deduplizierung im Font-Skript kaputt."
+            sha256sum public/fonts/*.woff2
+            exit 1
+          fi
+
+  subpath:
+    name: Build unter Unterpfad
+    runs-on: ubuntu-latest
+    # Beweist die Basispfad-Unterstützung, ohne von GitHub Pages abzuhängen.
+    # Der Pages-Workflow kann erst laufen, wenn Pages von Hand eingeschaltet
+    # ist — diese Prüfung soll bis dahin nicht ausfallen.
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Abhängigkeiten
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+
+      - name: Build mit Basispfad
+        run: npm run build
+        env:
+          SITE_ORIGIN: https://example.invalid
+          SITE_BASE: /unterpfad
+          STATIC_PREVIEW: 'true'
+
+      - name: Pfade prüfen
+        run: |
+          fail() { echo "::error::$1"; exit 1; }
+
+          # Navigation, Schrift-Stylesheet, Preload und Formular müssen den
+          # Basispfad tragen — das sind die vier Stellen, die vorher absolut
+          # verdrahtet waren.
+          grep -q 'href="/unterpfad/architektur/"' dist/index.html \
+            || fail "Navigation ohne Basispfad oder ohne Slash"
+          grep -q 'href="/unterpfad/fonts/readex-pro.css"' dist/index.html \
+            || fail "Schrift-Stylesheet ohne Basispfad"
+          grep -q 'href="/unterpfad/fonts/readex-pro-variable.woff2"' dist/index.html \
+            || fail "Font-Preload ohne Basispfad"
+          grep -q 'action="/unterpfad/api/anmeldung.php"' dist/anmeldung/index.html \
+            || fail "Formular-Action ohne Basispfad"
+          grep -q 'href="/unterpfad/en/architecture/"' dist/en/index.html \
+            || fail "Sprachumschalter ohne Basispfad oder ohne Slash"
+
+          # Die @font-face-URL muss geschwister-relativ bleiben, sonst zeigt
+          # sie unter einem Unterpfad ins Leere.
+          grep -q "url('readex-pro-variable.woff2')" dist/fonts/readex-pro.css \
+            || fail "@font-face-URL ist nicht geschwister-relativ"
+
+          # Kein absoluter Rest-Pfad in der Navigation. Als if geschrieben,
+          # weil `grep -q X && fail` von der set-e-Semantik fuer AND-Listen
+          # abhaengt — sie greift hier, aber lesbar ist das nicht.
+          if grep -qE 'href="/architektur/?"' dist/index.html; then
+            fail "absoluter Pfad ohne Basispfad übrig geblieben"
+          fi
+
+          # Vorschau muss sich als solche zeigen und gesperrt sein.
+          grep -q 'name="robots" content="noindex' dist/index.html \
+            || fail "Vorschau ohne noindex"
+          grep -q 'Disallow: /' dist/robots.txt \
+            || fail "robots.txt sperrt die Vorschau nicht"
+          grep -qi 'Vorschau' dist/index.html \
+            || fail "Vorschau-Hinweis fehlt"
+          grep -q 'data-submit disabled' dist/anmeldung/index.html \
+            || grep -q 'disabled data-submit' dist/anmeldung/index.html \
+            || fail "Absende-Knopf in der statischen Vorschau nicht gesperrt"
+
+          echo "Basispfad, Vorschau-Hinweis und Sperren in Ordnung."
+
+  deploy-branch:
+    name: Deploy-Branch aktualisieren
+    runs-on: ubuntu-latest
+    # Nur beim Push auf den Default-Branch des Repos, nie von einem Pull
+    # Request. An den Default gekoppelt statt an einen festen Namen, damit es
+    # heute stimmt (Default ist noch der Arbeitsbranch) und nach dem
+    # Umstellen auf main weiter stimmt — ohne diese Datei erneut anzufassen.
+    # Zwei Quellen fuer denselben Branch waeren ein Wettlauf mit force-push.
+    if: >-
+      github.event_name == 'push' &&
+      github.ref_name == github.event.repository.default_branch
+    needs: [build, subpath]
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version-file: .nvmrc
+
+      - name: Abhängigkeiten
+        run: |
+          if [ -f package-lock.json ]; then npm ci; else npm install --no-audit --no-fund; fi
+
+      - name: Schriften
+        run: npm run fonts
+
+      - name: Build
+        run: npm run build
+
+      # Der Branch traegt ausschliesslich den Inhalt von dist/ — genau das,
+      # was ins Webroot gehoert. Plesks Git-Extension kann ihn direkt dorthin
+      # ziehen, ohne Node auf dem Server und ohne Zip-Hantieren.
+      #
+      # Historie wird bewusst nicht aufbewahrt: ein Build-Ergebnis ist kein
+      # Quellcode, und ohne --orphan waechst das Repo mit jedem Deploy um die
+      # vollen Assets.
+      - name: dist/ auf den Deploy-Branch schreiben
+        run: |
+          test -f dist/index.html
+          test -f dist/.htaccess
+          test -f dist/api/anmeldung.php
+          test -s dist/fonts/readex-pro-variable.woff2
+
+          SRC_SHA="$(git rev-parse HEAD)"
+          cd dist
+          git init -q
+          git config user.email "actions@github.com"
+          git config user.name "GitHub Actions"
+          git checkout -q --orphan deploy
+          git add -A
+          git commit -q -m "Build von ${SRC_SHA}
+
+          Erzeugt aus ${GITHUB_REF_NAME} durch .github/workflows/ci.yml.
+          Dieser Branch enthaelt nur Build-Ergebnis, keinen Quellcode —
+          nicht hier committen, Aenderungen gehoeren in den Quellbranch."
+          git push -q --force \
+            "https://x-access-token:${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git" \
+            deploy
+          echo "::notice::Deploy-Branch aktualisiert auf Basis von ${SRC_SHA}"

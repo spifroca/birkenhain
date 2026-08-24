@@ -22,9 +22,9 @@ npm run dev
 | `npm run build` | Static build nach `dist/` |
 | `npm run preview` | Build lokal ausliefern |
 | `npm run check` | `astro check` — Typen und Templates |
-| `npm run check:functions` | Typen des Formular-Endpoints |
+| `npm run check:php` | PHP-Syntax des Endpoints |
+| `npm run test:endpoint` | 19 Endpoint-Tests gegen PHPs Server |
 | `npm run check:data` | Lücken in den Datenfiles auflisten |
-| `npm run dev:functions` | Pages Functions gegen `dist/` (Wrangler) |
 | `npm run fonts` | Schriften selbst hosten |
 | `npm run format` | Prettier |
 
@@ -42,8 +42,9 @@ Echte Routen, kein clientseitiger State. DE ohne Prefix, EN unter `/en/`.
 | `/wohnungen` | `/en/apartments` |
 | `/anmeldung` | `/en/register` |
 
-Dazu die statischen Statusseiten der Anmeldung (`/anmeldung/gesendet`,
-`/anmeldung/bestaetigt`, …). Sie sind echte Seiten, damit das Formular und
+Dazu `/impressum` und `/datenschutz` (bzw. `/en/imprint`, `/en/privacy`),
+eine 404-Seite je Sprache und die statischen Statusseiten der Anmeldung
+(`/anmeldung/gesendet`, `/anmeldung/bestaetigt`, …). Sie sind echte Seiten, damit das Formular und
 der Double-Opt-In-Link auch ohne JavaScript funktionieren — im static output
 steht `Astro.url.searchParams` zur Buildzeit nicht zur Verfügung.
 
@@ -118,32 +119,38 @@ Leaflet keine Marker-PNGs nachlädt.
 
 ## Formular und Endpoint
 
-`functions/api/anmeldung.ts` ist eine Cloudflare Pages Function und liegt
-bewusst ausserhalb des Astro-Builds, damit `output: 'static'` rein bleibt.
+`public/api/anmeldung.php` und `public/api/bestaetigen.php`, gemeinsame Logik
+in `public/api/lib/`. Astro kopiert `public/` unverändert nach `dist/`, die
+Dateien landen also direkt im Webroot. Kein Composer, keine Extensions ausser
+`pdo_sqlite`.
 
 Ablauf: serverseitige Validierung → Honeypot → Rate-Limit → unbestätigt in
-KV ablegen → Double-Opt-In-Mail. Erst der Klick auf den Link
-(`functions/api/anmeldung/bestaetigen.ts`) macht daraus eine Anmeldung; die
-interne Benachrichtigung geht auch erst dann raus.
+die SQLite-Datenbank → Double-Opt-In-Mail. Erst der Klick auf den Link macht
+daraus eine Anmeldung; die interne Benachrichtigung geht auch erst dann raus.
 
 - Verbindlich validiert wird auf dem Server; die Prüfung im Browser ist nur
   Bequemlichkeit.
 - Honeypot `website`: ist es gefüllt, wird still verworfen und Erfolg
-  gemeldet.
-- Rate-Limit auf KV: 5 pro IP und 3 pro E-Mail-Adresse pro Stunde.
+  gemeldet — es wird nicht einmal eine Datenbank angelegt.
+- Rate-Limit: 10 pro IP und 3 pro E-Mail-Adresse pro Stunde.
 - Der Opt-In-Link trägt eine ID plus HMAC-Signatur, nicht die
   E-Mail-Adresse. Er ist sieben Tage gültig und nur einmal einlösbar;
-  unbestätigte Anmeldungen laufen per KV-TTL von selbst ab.
+  unbestätigte Anmeldungen werden automatisch gelöscht.
 - E-Mail-Adressen werden als HMAC-Hash indexiert, nicht als Klartext-Key.
+  Signaturen werden mit `hash_equals` in konstanter Zeit verglichen.
 - Ohne JavaScript antwortet der Endpoint mit einer 303-Redirect auf die
   passende Statusseite, mit JavaScript mit JSON.
-- Keine Daten an Dritte: angesprochen wird nur der eigene Versanddienst
-  (`MAIL_PROVIDER`), keine Analytics, keine Formulardienste.
+- Keine Daten an Dritte: die Mail geht über den Mailserver des Hosters,
+  keine Analytics, keine Formulardienste.
 
-Konfiguration: `.env.example` und `wrangler.toml`. `MAIL_API_KEY`,
-`MAIL_FROM`, `MAIL_NOTIFY_TO` und `OPT_IN_SECRET` sind Secrets
-(`wrangler pages secret put …`); `OPT_IN_SECRET` braucht mindestens 32
-Zeichen, sonst verweigert der Endpoint den Dienst.
+Konfiguration und Datenbank liegen **über** dem Webroot, in
+`birkenhain-data/`. Vorlage: `docs/config.sample.php`. Ohne
+`opt_in_secret` mit mindestens 32 Zeichen verweigert der Endpoint den
+Dienst.
+
+`npm run test:endpoint` fährt 19 Fälle gegen PHPs eingebauten Server:
+Validierung, Honeypot, Double-Opt-In, Replay-Schutz, gefälschte Signatur,
+Rate-Limit, Locale-Zuordnung. Läuft auch in der CI.
 
 ## Accessibility
 
@@ -166,18 +173,28 @@ Zeichen, sonst verweigert der Endpoint den Dienst.
 
 ## Deployment
 
-Cloudflare Pages: Build `npm run build`, Output `dist/`, Functions aus
-`functions/` werden automatisch unter `/api/` montiert. KV-Namespace
-anlegen und die ID in `wrangler.toml` eintragen:
+Klassisches PHP-Hosting. Runbook und Launch-Checkliste:
+[`docs/DEPLOY.md`](docs/DEPLOY.md).
 
-```bash
-wrangler kv namespace create BIRKENHAIN_KV
-```
+Statische Vorschau des jeweils letzten Stands:
+<https://spifroca.github.io/birkenhain/> — zum Anschauen, nicht als
+Deployment. Dort läuft kein PHP, das Anmeldeformular kann nicht absenden.
 
-Anderer Host: `dist/` ist statisch und läuft überall; der Endpoint muss
-dann als Netlify- bzw. Vercel-Function portiert werden. Die Logik in
-`functions/_lib/` ist Web-Standard (Fetch, Web Crypto, FormData) — nur
-KV-Zugriff und Export-Signatur sind plattformspezifisch.
+`npm run build` erzeugt `dist/`; dessen Inhalt gehört ins Webroot. Darin
+sind auch `.htaccess` (Caching, Security-Header, CSP, Fehlerseiten),
+`404.html`, `robots.txt`, `sitemap.xml` und `api/`.
+
+Als Build-Schritt gehört `npm run fonts && npm run build` hinterlegt, nicht
+nur `npm run build` — die woff2-Datei ist gitignored, sonst deployt die Site
+ohne Schriften.
+
+Bis zur Freigabe ist die Site für Suchmaschinen gesperrt:
+`features.indexable` in `src/lib/flags.ts` ist `false`, `robots.txt`
+liefert `Disallow: /` und jede Seite `noindex`. Das ist der Launch-Schalter.
+
+Anforderungen: PHP 8.1+, `pdo_sqlite`, Mailversand über den Hoster,
+Schreibrechte auf ein Verzeichnis über dem Webroot. Kein Node auf dem
+Server, kein Composer.
 
 ## Stand
 
