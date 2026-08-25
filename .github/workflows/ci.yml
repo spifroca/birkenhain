@@ -4,6 +4,14 @@ on:
   push:
     branches: [main, claude/new-session-1fphb2]
   pull_request:
+  # Von Hand ausloesbar, damit ein Deploy auch ohne Codeaenderung geht —
+  # etwa wenn nur der Server nachziehen soll.
+  #
+  # Achtung beim Ausloesen: GitHub belegt die Branch-Auswahl mit dem
+  # Default-Branch des Repos vor, und der ist noch der alte Arbeitsbranch.
+  # Der Deploy-Job laeuft nur auf main, also dort main waehlen. Sonst
+  # laufen die Pruefungen, der Deploy-Job wird uebersprungen.
+  workflow_dispatch:
 
 # Ein überholter Lauf auf demselben Branch wird abgebrochen.
 concurrency:
@@ -253,7 +261,7 @@ jobs:
     # Eine feste Quelle, nicht zwei — zwei waeren ein Wettlauf um denselben
     # Branch mit force-push.
     if: >-
-      github.event_name == 'push' &&
+      (github.event_name == 'push' || github.event_name == 'workflow_dispatch') &&
       github.ref_name == 'main'
     needs: [build, subpath]
     permissions:
