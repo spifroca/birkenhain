@@ -39,9 +39,17 @@ export function lucide(name: string, options: IconOptions = {}): string {
     `class="icon${className ? ` ${className}` : ''}"`,
   ].join(' ');
 
+  // Kein `^`-Anker: lucide-static stellt jeder Datei einen Lizenzkommentar
+  // voran (`<!-- @license lucide-static … -->`), der String beginnt also nicht
+  // mit `<svg`. Mit dem Anker griff die Ersetzung nie — die Originalattribute
+  // waren durch die Zeile darueber schon entfernt, die neuen kamen nicht dazu.
+  // Ergebnis: SVG ohne width/height, also 0x0 Pixel, und stroke-width zurueck
+  // auf Lucides Vorgabe statt der projektweiten 1.5. Alle 62 Icons der Site
+  // waren unsichtbar, im DOM vorhanden und korrekt gefaerbt. Ein Fehler, den
+  // man im HTML nicht sieht: dort steht ein vollstaendiges SVG.
   const svg = raw
     .replace(/\s(?:width|height|stroke-width|class|aria-hidden|role|aria-label)="[^"]*"/g, '')
-    .replace(/^<svg/, `<svg ${attrs}`)
+    .replace(/<svg\b/, `<svg ${attrs}`)
     .trim();
 
   cache.set(key, svg);
