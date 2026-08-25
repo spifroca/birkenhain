@@ -1,4 +1,5 @@
 ---
+import Icon from './Icon.astro';
 import { useTranslations } from '../i18n/ui';
 import type { Locale } from '../i18n/routes';
 
@@ -9,11 +10,16 @@ interface Props {
 const { locale } = Astro.props;
 const t = useTranslations(locale);
 
+/**
+ * Die Icon-Namen sind nicht gewaehlt, sondern aus `src/data/energie.json`
+ * uebernommen: dort steht die Zuordnung Thema → Icon seit dem Handoff, und
+ * die vier Karten hier sind vier der neun Themen von dort.
+ */
 const cards = [
-  { kicker: t('nachhaltigkeit.e1Kicker'), title: t('nachhaltigkeit.e1'), text: t('nachhaltigkeit.e1Text') },
-  { kicker: t('nachhaltigkeit.e2Kicker'), title: t('nachhaltigkeit.e2'), text: t('nachhaltigkeit.e2Text') },
-  { kicker: t('nachhaltigkeit.e3Kicker'), title: t('nachhaltigkeit.e3'), text: t('nachhaltigkeit.e3Text') },
-  { kicker: t('nachhaltigkeit.e4Kicker'), title: t('nachhaltigkeit.e4'), text: t('nachhaltigkeit.e4Text') },
+  { icon: 'thermometer', kicker: t('nachhaltigkeit.e1Kicker'), title: t('nachhaltigkeit.e1'), text: t('nachhaltigkeit.e1Text') },
+  { icon: 'sun', kicker: t('nachhaltigkeit.e2Kicker'), title: t('nachhaltigkeit.e2'), text: t('nachhaltigkeit.e2Text') },
+  { icon: 'battery-charging', kicker: t('nachhaltigkeit.e3Kicker'), title: t('nachhaltigkeit.e3'), text: t('nachhaltigkeit.e3Text') },
+  { icon: 'layers', kicker: t('nachhaltigkeit.e4Kicker'), title: t('nachhaltigkeit.e4'), text: t('nachhaltigkeit.e4Text') },
 ];
 
 const rejected = [t('nachhaltigkeit.rejected1'), t('nachhaltigkeit.rejected2'), t('nachhaltigkeit.rejected3')];
@@ -36,6 +42,7 @@ const flat = [
       {
         cards.map((card) => (
           <article class="card">
+            <span class="energie__icon"><Icon name={card.icon} /></span>
             <p class="card__eyebrow">{card.kicker}</p>
             <h3 class="energie__title">{card.title}</h3>
             <p>{card.text}</p>
@@ -69,6 +76,15 @@ const flat = [
 <style>
   .energie .cards {
     --card-min: 15rem;
+  }
+
+  /* Wie bei den Services, nur auf hellem Grund: dort traegt das Icon
+     --c-accent-light, hier den vollen Akzent. */
+  .energie__icon {
+    display: block;
+    margin-bottom: var(--space-2xs);
+    font-size: 1.375rem;
+    color: var(--c-accent);
   }
 
   .energie__title {
