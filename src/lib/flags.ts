@@ -20,6 +20,19 @@ export const features = {
   indexable: false,
 
   /**
+   * Vorschau-Band ueber dem Header. Hing bis hierher an `indexable`, damit
+   * es zum Launch von selbst verschwindet. Es ist auf Wunsch entfernt,
+   * bevor die Freigabe da ist — darum ein eigener Schalter: `indexable`
+   * steuert weiterhin allein die Suchmaschinen, und das Band laesst sich
+   * fuer eine Kundenvorschau wieder einschalten, ohne die Sperre
+   * anzufassen.
+   *
+   * In der statischen Vorschau erscheint es unabhaengig davon, siehe
+   * VorschauHinweis.astro.
+   */
+  previewNotice: false,
+
+  /**
    * Statische Vorschau ohne PHP (GitHub Pages). Dort kann das Formular
    * nicht absenden — der Endpoint ist eine PHP-Datei, die auf einem
    * statischen Host nicht ausgefuehrt wird. Der Hinweis am Formular haengt

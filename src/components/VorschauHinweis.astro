@@ -5,12 +5,17 @@ import { useTranslations } from '../i18n/ui';
 import { features } from '../lib/flags';
 
 /**
- * Leiste ueber dem Header, solange die Site nicht freigegeben ist.
+ * Leiste ueber dem Header.
  *
- * Haengt am selben Schalter wie robots.txt und das noindex: wird
- * `features.indexable` zum Launch auf true gesetzt, verschwindet dieser
- * Hinweis von selbst. Es gibt also keinen zweiten Schritt, den man
- * vergessen kann.
+ * Sie hing am selben Schalter wie robots.txt und das noindex und ist
+ * inzwischen entfernt — `features.previewNotice` steht auf false. Die
+ * Suchmaschinen-Sperre ist davon unberuehrt: `indexable` bleibt false,
+ * also traegt jede Seite weiter noindex.
+ *
+ * In der statischen Vorschau erscheint die Leiste trotzdem. Dort ist der
+ * Absende-Knopf des Formulars deaktiviert, und dieser Text ist die einzige
+ * Stelle, die das erklaert — ohne ihn stuende dort ein toter Knopf ohne
+ * Begruendung.
  */
 interface Props {
   locale: Locale;
@@ -21,7 +26,7 @@ const t = useTranslations(locale);
 ---
 
 {
-  !features.indexable && (
+  (features.previewNotice || features.staticPreview) && (
     <div class="vorschau" role="note">
       <p class="vorschau__inner container">
         <Icon name="info" />
