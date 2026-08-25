@@ -336,3 +336,34 @@ jobs:
 
           test -n "${pushed}"
           echo "::notice::Deploy-Branch aktualisiert auf Basis von ${SRC_SHA}"
+
+      # Der letzte Meter: Plesk zieht den Branch nicht von selbst. Bisher
+      # hing er an einem Klick im Git-Modul, und genau dort blieb die
+      # Website mehrfach stehen — gruener Lauf, geschriebener Branch, alter
+      # Stand live. Dasselbe Muster wie beim Orphan-Commit, nur eine Stufe
+      # weiter aussen.
+      #
+      # Liegt das Secret PLESK_DEPLOY_HOOK, ruft dieser Schritt die
+      # Webhook-URL aus dem Plesk-Git-Modul auf und der Server holt sich den
+      # neuen Stand. Ohne Secret wird der Schritt uebersprungen; der Lauf
+      # bleibt gruen, sagt aber im Log, dass der Deploy an dieser Stelle
+      # endet.
+      #
+      # Die URL traegt ein Token und wird nie ausgegeben — weder bei Erfolg
+      # noch im Fehlerfall. Antwortet Plesk nicht mit 2xx, faellt der Job:
+      # ein Deploy, der nicht deployt, soll nicht wie ein Deploy aussehen.
+      - name: Plesk anstossen
+        env:
+          HOOK: ${{ secrets.PLESK_DEPLOY_HOOK }}
+        run: |
+          if [ -z "${HOOK}" ]; then
+            echo "::notice::Kein PLESK_DEPLOY_HOOK gesetzt — der Server muss den Branch selbst ziehen."
+            exit 0
+          fi
+
+          code="$(curl -sS -o /dev/null -w '%{http_code}' -X POST --max-time 60 "${HOOK}" || echo 000)"
+          case "${code}" in
+            2??) echo "::notice::Plesk angestossen, HTTP ${code}" ;;
+            000) echo "::error::Plesk-Webhook nicht erreichbar (Verbindung fehlgeschlagen)."; exit 1 ;;
+            *)   echo "::error::Plesk-Webhook antwortete HTTP ${code}."; exit 1 ;;
+          esac
