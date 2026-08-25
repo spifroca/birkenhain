@@ -254,6 +254,14 @@ function markerLabel(area: (typeof areas)[number]): string {
 
   .rows--panel .row {
     padding-block: 0.625rem;
+    /* Die Karte ist EINE Flaeche. `.section--alt .row` in design.css setzt
+       jede Zeile auf --c-bg-alt, das Panel selbst steht auf --c-bg: das gab
+       im fertigen Feld hellere Raender um beige Streifen, zwei Toene statt
+       einem. `transparent` laesst die Zeilen die Farbe des Panels annehmen —
+       auch dann noch, wenn die Panelfarbe einmal wechselt. Ein fester Wert
+       waere hier eine zweite Wahrheit, die beim naechsten Umbau auseinander
+       laeuft. */
+    background: transparent;
   }
 
   .rows--panel dt,

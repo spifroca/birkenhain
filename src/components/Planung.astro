@@ -28,6 +28,23 @@ const downloads = [
 }));
 
 /**
+ * Logo des Planungsbueros unter den Unterlagen.
+ *
+ * Liegt als SVG in `public/logos/`, nicht in `src/assets/`: es ist Vektor,
+ * astro:assets hat daran nichts zu optimieren, und aus `public/` bricht der
+ * Build nicht ab, wenn die Datei fehlt.
+ *
+ * Fehlt sie, wird nichts gerendert — kein Rahmen, kein Alt-Text, keine
+ * kaputte Bildreferenz. Genauso wie bei den PDFs oben: eine sichtbare
+ * Luecke ist besser als ein defektes Element. Sobald das SVG liegt,
+ * erscheint es von selbst.
+ */
+const PARTNER_LOGO = 'suisse-plan.svg';
+const partnerLogo = existsSync(new URL(`../../public/logos/${PARTNER_LOGO}`, import.meta.url))
+  ? withBase(`/logos/${PARTNER_LOGO}`)
+  : null;
+
+/**
  * Acht Stationen, aus dem Woerterbuch. Rueckt der Gestaltungsplan weiter,
  * ist AKTUELL die einzige Zahl, die mitwandern muss — das Abzeichen hing
  * vorher am Schluesselnamen und damit fest an einer Station.
@@ -78,6 +95,21 @@ const timeline = Array.from({ length: STATIONEN }, (_, i) => {
           )
         }
       </ul>
+
+      {
+        partnerLogo && (
+          <p class="planung__partner">
+            <img
+              src={partnerLogo}
+              alt={t('home.planungPartner')}
+              width="104"
+              height="30"
+              loading="lazy"
+              decoding="async"
+            />
+          </p>
+        )
+      }
     </div>
 
     <ol class="timeline">
@@ -97,6 +129,20 @@ const timeline = Array.from({ length: STATIONEN }, (_, i) => {
 </section>
 
 <style>
+  /* Logo des Planungsbueros: klein, unten links, mit Luft zu den
+     Unterlagen. Hoehe fest, Breite automatisch — so bleibt das
+     Seitenverhaeltnis erhalten, was auch immer die Datei mitbringt. */
+  .planung__partner {
+    max-width: none;
+    margin: var(--space-l) 0 0;
+  }
+
+  .planung__partner img {
+    display: block;
+    width: auto;
+    height: 1.875rem;
+  }
+
   .planung h2 {
     margin-bottom: var(--space-m);
     line-height: 1.08;

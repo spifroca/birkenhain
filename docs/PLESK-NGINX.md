@@ -8,19 +8,26 @@
 antwortet 404. Diese Datei ist damit von der Anleitung zur Referenz
 geworden — sie dokumentiert, was gesetzt ist.
 
-**Ein Punkt fehlt weiterhin:** `strict-transport-security` erscheint in
-keiner Antwort, obwohl die Direktive unten steht. Zu prüfen, in dieser
-Reihenfolge, statt zu raten:
+**Auch HSTS ist inzwischen gesetzt** (nachgemessen 11:32Z), allerdings nicht
+mit dem Wert aus der Direktive unten:
 
-1. Ob der Block wirklich in **beiden** Vhosts steht — `birkenhain.ch` und
-   `www.birkenhain.ch` sind in Plesk getrennte Einträge.
-2. Ob Plesk unter *Hosting & DNS → Hosting-Einstellungen* eine eigene
-   HSTS-Option führt, die die manuelle Direktive überschreibt.
-3. Ob ein `add_header` weiter oben ohne `always` steht — dann verliert der
-   Block bei 301/304-Antworten alle Header darüber.
+```
+strict-transport-security: max-age=15768000; includeSubDomains
+```
 
-Bis das geklärt ist, bleibt der erste Aufruf über `http://` angreifbar. Alles
-andere ist gesetzt.
+Das sind 182 Tage, nicht das dokumentierte Jahr — und damit vermutlich Plesks
+eigene HSTS-Option, nicht dieser Block. Wer die Direktive unten anpasst und
+sich wundert, dass der Wert gleich bleibt: die Einstellung im Panel gewinnt.
+Der Header liegt auf Seiten, `/_assets/` und dem Endpoint.
+
+Ein kleiner Rest bleibt: die 301 von `www.birkenhain.ch` trägt **keinen**
+HSTS-Header. Weil `includeSubDomains` auf der Apex-Domain `www.` mitabdeckt,
+greift der Schutz, sobald ein Browser die Apex-Domain einmal gesehen hat —
+offen ist nur der allererste Aufruf, der über `http://www.` einsteigt. Wer das
+schliessen will, setzt den Header auch im www-Vhost.
+
+`preload` ist absichtlich nicht gesetzt: der Eintrag in die Browser-Liste ist
+praktisch nicht zurücknehmbar, und die Site ist noch nicht einmal indexierbar.
 
 **Warum es nötig war:** nginx bedient die statischen Dateien selbst, und damit
 wird die mitgelieferte `.htaccess` **ignoriert**. Ohne die Regeln unten fehlten:
