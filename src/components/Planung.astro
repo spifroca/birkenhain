@@ -2,7 +2,7 @@
 import { existsSync } from 'node:fs';
 import Icon from './Icon.astro';
 import { withBase, type Locale } from '../i18n/routes';
-import { useTranslations } from '../i18n/ui';
+import { useTranslations, type TranslationKey } from '../i18n/ui';
 
 interface Props {
   locale: Locale;
@@ -27,14 +27,22 @@ const downloads = [
   vorhanden: existsSync(new URL(`../../public/dokumente/${item.file}`, import.meta.url)),
 }));
 
-const timeline = [
-  { time: t('home.tl1Time'), text: t('home.tl1') },
-  { time: t('home.tl2Time'), text: t('home.tl2') },
-  { time: t('home.tl3Time'), text: t('home.tl3') },
-  { time: t('home.tl4Time'), text: t('home.tl4'), badge: t('home.tl4Badge') },
-  { time: t('home.tl5Time'), text: t('home.tl5') },
-  { time: t('home.tl6Time'), text: t('home.tl6') },
-];
+/**
+ * Acht Stationen, aus dem Woerterbuch. Rueckt der Gestaltungsplan weiter,
+ * ist AKTUELL die einzige Zahl, die mitwandern muss — das Abzeichen hing
+ * vorher am Schluesselnamen und damit fest an einer Station.
+ */
+const STATIONEN = 8;
+const AKTUELL = 6;
+
+const timeline = Array.from({ length: STATIONEN }, (_, i) => {
+  const n = i + 1;
+  return {
+    time: t(`home.tl${n}Time` as TranslationKey),
+    text: t(`home.tl${n}` as TranslationKey),
+    badge: n === AKTUELL ? t('home.tlBadge') : undefined,
+  };
+});
 ---
 
 <section class="planung section" aria-labelledby="planung-heading">
