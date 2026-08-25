@@ -30,6 +30,8 @@ const seo = buildSeo({ page, locale, title, description, site: Astro.site ?? Ast
 // sein kann und unter jedem Basispfad stimmt.
 const fontFile = withBase('/fonts/readex-pro-variable.woff2');
 const fontCss = withBase('/fonts/readex-pro.css');
+const favicon = withBase('/favicon.svg');
+const touchIcon = withBase('/apple-touch-icon.png');
 ---
 
 <!doctype html>
@@ -48,6 +50,12 @@ const fontCss = withBase('/fonts/readex-pro.css');
     <meta property="og:description" content={description} />
     <meta property="og:url" content={seo.canonical} />
     <meta property="og:locale" content={seo.ogLocale} />
+
+    {/* Signet aus logo.svg, creme auf Waldgruen: hell auf dunkel bleibt bei
+        16 px lesbar, dunkel auf hell verschwindet. Ueber withBase, damit es
+        auch unter einem Basispfad stimmt. */}
+    <link rel="icon" type="image/svg+xml" href={favicon} />
+    <link rel="apple-touch-icon" href={touchIcon} />
 
     <link rel="preload" href={fontFile} as="font" type="font/woff2" crossorigin="anonymous" />
     <link rel="stylesheet" href={fontCss} />
