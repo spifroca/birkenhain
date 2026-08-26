@@ -220,7 +220,9 @@ try {
       winzig,
       strichbreiten: [...strichbreiten],
     };
-  });  pruefe(
+  });
+
+  pruefe(
     'Icons vorhanden',
     icons.anzahl > 0,
     `${icons.anzahl} gerendert` + (icons.verborgen ? `, ${icons.verborgen} verborgen (Dialog zu)` : ''),
