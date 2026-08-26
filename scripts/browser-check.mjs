@@ -178,6 +178,46 @@ try {
   ]);
   pruefe('Zeilenbeschriftungen einfarbig', labelFarben.length === 1, labelFarben.join(', '));
 
+  // --- Icons: im DOM ist nicht dasselbe wie sichtbar ---------------------
+  // Alle 62 Icons der Site waren einmal 0x0 Pixel gross: lucide-static stellt
+  // jeder Datei einen Lizenzkommentar voran, deshalb griff der `^<svg`-Anker
+  // im Helfer nicht, die Originalmasse waren aber schon entfernt. Im HTML
+  // stand ein vollstaendiges, korrekt gefaerbtes SVG — zu sehen war nichts.
+  // Darum wird hier die gerenderte Groesse gemessen, nicht die Existenz.
+  console.log('\nIcons');
+  // Auf die Startseite wechseln: /architektur/ traegt kein einziges Icon im
+  // Markup, nur die CSS-Regel dazu. Ein Zaehler, der die Regel mitzaehlt,
+  // meldet Icons, wo keine sind.
+  await p.goto(`${basis}/`, { waitUntil: 'load' });
+  const icons = await p.evaluate(() => {
+    // Bewusst ueber `.icon-wrap svg` statt `svg.icon`: die Klasse `icon` setzt
+    // derselbe Helfer, der die Masse setzt. Fehlt sie, findet ein
+    // Klassenselektor null Icons und meldet «keine da» statt «alle 0x0» — die
+    // Pruefung waere richtig rot, aber aus dem falschen Grund.
+    const alle = [...document.querySelectorAll('.icon-wrap svg')];
+    const winzig = [];
+    const strichbreiten = new Set();
+    for (const svg of alle) {
+      const box = svg.getBoundingClientRect();
+      if (box.width < 8 || box.height < 8) {
+        winzig.push(`${Math.round(box.width)}x${Math.round(box.height)}`);
+      }
+      strichbreiten.add(getComputedStyle(svg).strokeWidth);
+    }
+    return { anzahl: alle.length, winzig, strichbreiten: [...strichbreiten] };
+  });
+  pruefe('Icons vorhanden', icons.anzahl > 0, `${icons.anzahl} auf dieser Seite`);
+  pruefe(
+    'Icons haben eine Groesse',
+    icons.winzig.length === 0,
+    icons.winzig.length ? `${icons.winzig.length} unter 8px: ${[...new Set(icons.winzig)].join(', ')}` : 'alle >= 8px',
+  );
+  pruefe(
+    'Strichbreite 1.5',
+    icons.strichbreiten.every((b) => b === '1.5px'),
+    icons.strichbreiten.join(', ') || 'keine gemessen',
+  );
+
   // --- Sprachumschalter: nicht nur Farbe --------------------------------
   console.log('\nSprachumschalter');
   for (const [seite, aktiv] of [
