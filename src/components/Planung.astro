@@ -28,21 +28,26 @@ const downloads = [
 }));
 
 /**
- * Logo des Planungsbueros unter den Unterlagen.
+ * Logos der Beteiligten unter den Unterlagen.
  *
- * Liegt als SVG in `public/logos/`, nicht in `src/assets/`: es ist Vektor,
- * astro:assets hat daran nichts zu optimieren, und aus `public/` bricht der
- * Build nicht ab, wenn die Datei fehlt.
+ * Sie liegen in `public/logos/`, nicht in `src/assets/`: an Vektoren hat
+ * astro:assets nichts zu optimieren, und aus `public/` bricht der Build
+ * nicht ab, wenn eine Datei fehlt — sie wird dann einfach nicht gerendert.
+ * Genauso wie bei den PDFs oben: eine sichtbare Luecke ist besser als ein
+ * defektes Element. Sobald die Datei liegt, erscheint sie von selbst.
  *
- * Fehlt sie, wird nichts gerendert — kein Rahmen, kein Alt-Text, keine
- * kaputte Bildreferenz. Genauso wie bei den PDFs oben: eine sichtbare
- * Luecke ist besser als ein defektes Element. Sobald das SVG liegt,
- * erscheint es von selbst.
+ * `rudolfstetten.png` ist die eine Ausnahme von der SVG-Regel: die Gemeinde
+ * fuehrt ihr Logo nur als Pixelgrafik (325x99), und ein nachgezeichnetes
+ * Wappen waere eine Verfaelschung. 99 px Quellhoehe decken die 44 px
+ * Anzeigehoehe bis Retina-2x.
  */
-const PARTNER_LOGO = 'suisse-plan.svg';
-const partnerLogo = existsSync(new URL(`../../public/logos/${PARTNER_LOGO}`, import.meta.url))
-  ? withBase(`/logos/${PARTNER_LOGO}`)
-  : null;
+const PARTNER_LOGOS = [
+  { file: 'suisse-plan.svg', alt: t('home.planungPartner'), width: 86 },
+  { file: 'rudolfstetten.png', alt: t('home.planungGemeinde'), width: 144 },
+];
+const partnerLogos = PARTNER_LOGOS.filter((logo) =>
+  existsSync(new URL(`../../public/logos/${logo.file}`, import.meta.url)),
+).map((logo) => ({ ...logo, src: withBase(`/logos/${logo.file}`) }));
 
 /**
  * Acht Stationen, aus dem Woerterbuch. Rueckt der Gestaltungsplan weiter,
@@ -97,16 +102,18 @@ const timeline = Array.from({ length: STATIONEN }, (_, i) => {
       </ul>
 
       {
-        partnerLogo && (
+        partnerLogos.length > 0 && (
           <p class="planung__partner">
-            <img
-              src={partnerLogo}
-              alt={t('home.planungPartner')}
-              width="86"
-              height="44"
-              loading="lazy"
-              decoding="async"
-            />
+            {partnerLogos.map((logo) => (
+              <img
+                src={logo.src}
+                alt={logo.alt}
+                width={logo.width}
+                height="44"
+                loading="lazy"
+                decoding="async"
+              />
+            ))}
           </p>
         )
       }
@@ -133,6 +140,9 @@ const timeline = Array.from({ length: STATIONEN }, (_, i) => {
      Unterlagen. Hoehe fest, Breite automatisch — so bleibt das
      Seitenverhaeltnis erhalten, was auch immer die Datei mitbringt. */
   .planung__partner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-l);
     max-width: none;
     margin: var(--space-l) 0 0;
   }
