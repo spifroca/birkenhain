@@ -9,10 +9,11 @@ steht in `src/assets/`.
 | --- | --- |
 | `suisse-plan.svg` | Abschnitt «Planung & Mitwirkung», unter den Unterlagen |
 
-**Diese Datei fehlt noch.** Solange sie fehlt, rendert `Planung.astro` an der
-Stelle **nichts** — kein Rahmen, kein Alt-Text, keine kaputte Bildreferenz.
-Sobald das SVG hier liegt, erscheint das Logo beim nächsten Build von selbst.
-Es ist keine Codeänderung nötig.
+Die Datei liegt vor: das offizielle Logo (Fassung 2023) von suisseplan.ch,
+Glyphen als Pfade, keine Nachzeichnung. Entfernt wurden nur
+Editor-Metadaten (Illustrator/Inkscape) sowie feste Masse; die `viewBox`
+ist unverändert. Fehlte sie, würde `Planung.astro` an der Stelle nichts
+rendern — kein Rahmen, kein Alt-Text, keine kaputte Bildreferenz.
 
 ## Anforderungen an die Datei
 
