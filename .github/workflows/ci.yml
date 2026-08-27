@@ -130,6 +130,44 @@ jobs:
             grep -rl --include='*.html' 'https://www\.birkenhain\.ch' dist
             exit 1
           fi
+          # Das Vorschaubild fuer geteilte Links. Es entsteht zur Buildzeit
+          # aus arrival.jpg; faellt getImage aus oder verschwindet das Tag,
+          # zeigt jeder geteilte Link wieder kein Bild — und das sieht man
+          # erst, wenn jemand teilt.
+          OG=$(grep -o 'property="og:image" content="[^"]*"' dist/index.html \
+               | head -1 | sed 's/.*content="//;s/"$//')
+          echo "og:image der Startseite: $OG"
+          case "$OG" in
+            "$ORIGIN"/*.jpg) ;;
+            *) echo "::error title=og:image fehlt oder ist relativ::erwartet eine absolute URL unter $ORIGIN, gefunden '$OG'"
+               exit 1 ;;
+          esac
+          # Die Datei muss auch wirklich im Artefakt liegen, nicht nur im Tag.
+          OG_PFAD="dist${OG#"$ORIGIN"}"
+          if [ ! -s "$OG_PFAD" ]; then
+            echo "::error title=og:image zeigt ins Leere::$OG_PFAD fehlt im Build"
+            exit 1
+          fi
+          echo "og:image im Artefakt: $(du -h "$OG_PFAD" | cut -f1)"
+          # Strukturierte Daten: nur die Startseite, und valides JSON.
+          LD=$(grep -c 'application/ld+json' dist/index.html || true)
+          if [ "$LD" != "1" ]; then
+            echo "::error title=JSON-LD auf der Startseite::erwartet genau 1 Block, gefunden $LD"
+            exit 1
+          fi
+          node -e "
+            const fs = require('fs');
+            const html = fs.readFileSync('dist/index.html', 'utf8');
+            const m = html.match(/<script[^>]*application\/ld\+json[^>]*>([\s\S]*?)<\/script>/);
+            if (!m) { console.error('::error title=JSON-LD nicht lesbar::Block nicht gefunden'); process.exit(1); }
+            const d = JSON.parse(m[1]);
+            const soll = JSON.parse(fs.readFileSync('src/data/projekt.json', 'utf8')).wohnungen;
+            if (d.numberOfAccommodationUnits?.value !== soll) {
+              console.error('::error title=JSON-LD widerspricht projekt.json::' + d.numberOfAccommodationUnits?.value + ' statt ' + soll);
+              process.exit(1);
+            }
+            console.log('JSON-LD: ' + d['@type'] + ', ' + soll + ' Wohnungen, ' + d.address.addressLocality);
+          "
           echo "Erzeugte Seiten:"
           find dist -name '*.html' | sort
 
