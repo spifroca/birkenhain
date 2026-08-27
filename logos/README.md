@@ -17,7 +17,7 @@ rendern — kein Rahmen, kein Alt-Text, keine kaputte Bildreferenz.
 
 ## Anforderungen an die Datei
 
-- **SVG**, keine Pixelgrafik. Das Logo wird auf 30 px Höhe skaliert und muss
+- **SVG**, keine Pixelgrafik. Das Logo wird auf 44 px Höhe skaliert und muss
   auch auf Bildschirmen mit hoher Auflösung scharf bleiben.
 - **Ohne feste Breite und Höhe** im `<svg>`-Tag, aber **mit `viewBox`** —
   sonst lässt sich die Höhe nicht per CSS setzen und das Seitenverhältnis
