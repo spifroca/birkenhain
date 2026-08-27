@@ -63,7 +63,7 @@ jobs:
       - name: Endpoint-Verhalten
         run: npm run test:endpoint
 
-      # Prüft die zugesagten Projektfakten: 278 Mietwohnungen, 17 Baubereiche,
+      # Prüft die zugesagten Projektfakten: 300 Mietwohnungen, 17 Baubereiche,
       # 3–8 Vollgeschosse, autofrei, keine Mietpreise, kein Vermietungsstart.
       # Bricht ab, wenn eine davon verletzt wird.
       - name: Projektfakten

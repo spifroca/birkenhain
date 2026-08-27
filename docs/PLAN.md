@@ -1,7 +1,7 @@
 # Umsetzungsplan — Projektwebsite «Im Birkenhain»
 
 Wohnüberbauung Im Birkenhain, Rudolfstetten-Friedlisberg (AG).
-278 Mietwohnungen, 17 Baubereiche, 3–8 Vollgeschosse, oberirdisch autofrei.
+300 Mietwohnungen, 17 Baubereiche, 3–8 Vollgeschosse, oberirdisch autofrei.
 
 ## 1. Framework-Entscheid: Astro (static output) + TypeScript
 
@@ -34,7 +34,7 @@ astro.config.mjs          i18n, Image-Service, Build-Optionen
 src/
   content.config.ts       Zod-Schemas für alle Datenfiles
   data/                   Inhalte als JSON, nichts im Markup
-    projekt.json          harte Projektfakten (278, 17, 3–8, autofrei)
+    projekt.json          harte Projektfakten (300, 17, 3–8, autofrei)
     baubereiche.json      17 Baubereiche, Vollgeschosse aus Gestaltungsplan
     galerie.json          Bilder + Legenden DE/EN
     distanzen.json        Distanztabelle Lage & Mobilität
@@ -81,7 +81,7 @@ Alle Zahlen liegen in `src/data/*.json` und werden über Zod-Schemas in
 Markup — die Werte ändern im Projektverlauf.
 
 - **`projekt.json`** — die nicht verhandelbaren Fakten an einer Stelle:
-  `wohnungen: 278`, `baubereiche: 17`, `vollgeschosse: { min: 3, max: 8 }`,
+  `wohnungen: 300`, `baubereiche: 17`, `vollgeschosse: { min: 3, max: 8 }`,
   `oberirdischAutofrei: true`, `angebot: "miete"`. Dazu die Sperren
   `mietpreisePubliziert: false` und `vermietungsstartPubliziert: false` —
   als Flag, damit ein Verstoss auffällt und nicht stillschweigend passiert.

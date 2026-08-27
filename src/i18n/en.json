@@ -3,7 +3,8 @@
     "name": "Im Birkenhain",
     "location": "Rudolfstetten-Friedlisberg",
     "canton": "AG",
-    "tagline": "Residential development in Rudolfstetten-Friedlisberg"
+    "tagline": "Residential development in Rudolfstetten-Friedlisberg",
+    "ogImageAlt": "Visualisation of the Im Birkenhain quarter: arrival at Alpenweg, birches as the gateway."
   },
   "nav": {
     "label": "Main navigation",
@@ -53,10 +54,10 @@
     "oev": "to the S17"
   },
   "home": {
-    "metaTitle": "Im Birkenhain — residential development in Rudolfstetten-Friedlisberg",
-    "metaDescription": "Im Birkenhain: 278 rental apartments on the forest edge in Rudolfstetten-Friedlisberg. 17 building areas, car-free at ground level, natural pool, bistro, day-care and gym.",
+    "metaTitle": "Im Birkenhain — apartments in Rudolfstetten-Friedlisberg",
+    "metaDescription": "Im Birkenhain: 300 rental apartments on the forest edge in Rudolfstetten-Friedlisberg. 17 building areas, car-free at ground level, pool, bistro and gym.",
     "heroTitle": "Spacious, sustainable living on the edge of the Isleren forest",
-    "heroLead": "On the Isleren site a quarter of 17 staggered houses is taking shape between the Mutschellen junction and the forest: 278 rental apartments, a square under birches, and not a single car above ground.",
+    "heroLead": "On the Isleren site a quarter of 17 staggered houses is taking shape between the Mutschellen junction and the forest: 300 rental apartments, a square under birches, and not a single car above ground.",
     "situationsplanHeading": "Site plan",
     "situationsplanHint": "Click a building for details",
     "galerieHeading": "Images",
@@ -131,7 +132,7 @@
   },
   "architektur": {
     "metaTitle": "Architecture — Im Birkenhain",
-    "metaDescription": "17 building areas of three to eight full storeys, stepped towards the forest edge. Beige Eternit façade, dark bronze and a stone plinth — materials and phasing at a glance.",
+    "metaDescription": "17 building areas of three to eight full storeys, stepped towards the forest. Beige Eternit façade, dark bronze, stone plinth — materials and phasing.",
     "title": "Seventeen town houses, stepped towards the forest",
     "lead": "The houses do not stand in a row but offset: each has its own address, each leaves its neighbour a view. From eight storeys on the north-west corner they step down towards the forest edge.",
     "baubereicheHeading": "The 17 building areas",
@@ -168,7 +169,7 @@
   },
   "freiraum": {
     "metaTitle": "Open spaces — Im Birkenhain",
-    "metaDescription": "A path network like the roots of a tree, the birch grove as signature tree, a square with water feature, seating steps and bistro terrace. Landscape design deltavormgroep.",
+    "metaDescription": "A path network like tree roots, the birch grove as signature tree, a square with water feature, seating steps and bistro terrace. Design deltavormgroep.",
     "title": "The forest continues into the quarter",
     "lead": "What lies between the houses is not leftover space but a continuous landscape: paths branch like roots, differences in level are taken up by planted walls, and at the centre stands the birch grove.",
     "kicker": "Open spaces & landscape",
@@ -210,7 +211,7 @@
   },
   "lage": {
     "metaTitle": "Location & mobility — Im Birkenhain",
-    "metaDescription": "On the edge of the Mutschellen junction: the S17 every 15 minutes, Zurich HB in 31 minutes, two stops within a ten-minute walk. Car-free above ground, garage at the entrance.",
+    "metaDescription": "At the Mutschellen junction: the S17 every 15 minutes, Zurich HB in 31 minutes, two stops within a ten-minute walk. Car-free above ground, garage below.",
     "title": "Between the Mutschellen junction and the forest",
     "lead": "Well connected and yet at the end of the road. Cars go underground right at the entrance to the site; above ground the quarter stays car-free — open only to deliveries, emergency vehicles and moving days.",
     "distanzenHeading": "Distances",
@@ -244,7 +245,7 @@
   },
   "nachhaltigkeit": {
     "metaTitle": "Sustainability — Im Birkenhain",
-    "metaDescription": "A ground-source heat pump with 22,000 m of probes, 2,900 m2 of photovoltaics, battery storage, free cooling and on-site retention — the energy concept in detail.",
+    "metaDescription": "A ground-source heat pump with 22,000 m of probes, 2,900 m2 of photovoltaics, battery storage, free cooling and on-site retention — the energy concept.",
     "title": "Density where the infrastructure already is",
     "lead": "Instead of new building land at the edges, the quarter uses a key site inside the existing settlement, ten minutes from the railway. That is the most effective sustainability measure in the whole project.",
     "energieHeading": "Energy concept",
@@ -290,8 +291,8 @@
   },
   "wohnungen": {
     "metaTitle": "Apartments — Im Birkenhain",
-    "metaDescription": "278 rental apartments from 2.5 to 5.5 rooms, designed for DINKs, families and best agers. Layouts and areas are provisional; rents and letting start follow later.",
-    "title": "278 apartments to rent, 2.5 to 5.5 rooms",
+    "metaDescription": "300 rental apartments from 2.5 to 5.5 rooms for DINKs, families and best agers. Layouts provisional; rents and letting start follow later.",
+    "title": "300 apartments to rent, 2.5 to 5.5 rooms",
     "lead": "All apartments are for rent — none are for sale. The mix runs from the 2.5-room flat to the 5.5-room family apartment, with the three-and-a-half and four-and-a-half-room flats forming the core. Layouts and areas are provisional; rents and the letting schedule follow later.",
     "spiegelHeading": "Apartment overview",
     "spiegelPending": "The apartment overview will be published as soon as the apartment data is available.",
@@ -356,7 +357,7 @@
   },
   "anmeldung": {
     "metaTitle": "Register — Im Birkenhain",
-    "metaDescription": "Join the registration list for the Im Birkenhain residential development.",
+    "metaDescription": "Join the interest list for 300 rental apartments on the forest edge in Rudolfstetten-Friedlisberg. Sign up with a confirmation link, revocable at any time.",
     "title": "Hear it first",
     "lead": "Tell us what you are looking for. We will get in touch as soon as floor plans, areas and the letting schedule for your apartment type are settled — no newsletter, no advertising.",
     "legendContact": "Contact",
@@ -428,7 +429,7 @@
     "legalHeading": "Legal",
     "imprint": "Imprint",
     "privacy": "Privacy",
-    "rentalNote": "278 rental apartments. Not for sale.",
+    "rentalNote": "300 rental apartments. Not for sale.",
     "copyright": "© {year} Im Birkenhain",
     "owner": "Client: Real North AG",
     "contactPending": "Contact details to follow.",
@@ -450,7 +451,7 @@
   },
   "impressum": {
     "metaTitle": "Imprint — Im Birkenhain",
-    "metaDescription": "Imprint of the project website for the Im Birkenhain residential development in Rudolfstetten-Friedlisberg.",
+    "metaDescription": "Imprint of the «Im Birkenhain» project website: Real North AG as developer, 300 rental apartments across 17 building areas in Rudolfstetten-Friedlisberg.",
     "title": "Imprint",
     "kicker": "Legal",
     "reviewNote": "Draft. To be reviewed by legal counsel and completed before the site is released.",
@@ -460,7 +461,7 @@
     "contactHeading": "Contact",
     "contactPendingBody": "To be added: email address and telephone number for enquiries about the project.",
     "projectHeading": "Project",
-    "projectBody": "«Im Birkenhain» residential development, Isleren site, Rudolfstetten-Friedlisberg (Canton of Aargau). 278 rental apartments across 17 building areas. This is a rental project; no residential property is being sold.",
+    "projectBody": "«Im Birkenhain» residential development, Isleren site, Rudolfstetten-Friedlisberg (Canton of Aargau). 300 rental apartments across 17 building areas. This is a rental project; no residential property is being sold.",
     "contentHeading": "About the content of this website",
     "contentBody": "Figures on storeys, areas and dates reflect the current planning status and may change as the project proceeds. Visualisations are illustrations and not binding. Rents and a letting start date are not published on this website."
   },

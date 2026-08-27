@@ -1,0 +1,62 @@
+---
+import projekt from '../data/projekt.json';
+import type { Locale, PageId } from '../i18n/routes';
+import { useTranslations } from '../i18n/ui';
+
+interface Props {
+  page: PageId;
+  locale: Locale;
+  canonical: string;
+  image: string;
+}
+
+const { page, locale, canonical, image } = Astro.props;
+const t = useTranslations(locale);
+
+/**
+ * Strukturierte Daten, nur auf der Startseite. Auf jeder Unterseite dasselbe
+ * Objekt zu wiederholen bringt nichts und riskiert, dass Suchmaschinen die
+ * falsche Seite als Einstieg waehlen.
+ *
+ * Jede Angabe stammt aus `src/data/projekt.json` oder aus dem Woerterbuch —
+ * es steht nichts drin, was nicht auch auf der Seite selbst steht. Kein
+ * `Offer`, keine Preise, kein Datum: die Zahlen dazu sind nicht publiziert,
+ * und ein Offer ohne Preis waere eine leere Behauptung.
+ *
+ * Wirksam wird das erst mit `features.indexable`. Bis dahin liegt es bereit,
+ * ohne die Sperre zu beruehren.
+ */
+const zeigen = page === 'home';
+
+const daten = {
+  '@context': 'https://schema.org',
+  '@type': 'ApartmentComplex',
+  name: t('site.name'),
+  url: canonical,
+  description: t('home.metaDescription'),
+  image,
+  numberOfAccommodationUnits: {
+    '@type': 'QuantitativeValue',
+    value: projekt.wohnungen,
+    unitText: locale === 'de' ? 'Mietwohnungen' : 'rental apartments',
+  },
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: projekt.gemeinde,
+    addressRegion: projekt.kanton,
+    addressCountry: 'CH',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: projekt.koordinaten.lat,
+    longitude: projekt.koordinaten.lng,
+  },
+  inLanguage: locale === 'de' ? 'de-CH' : 'en',
+};
+---
+
+{
+  zeigen && (
+    <script type="application/ld+json" set:html={JSON.stringify(daten)} is:inline />
+  )
+}

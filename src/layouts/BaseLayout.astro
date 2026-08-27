@@ -1,9 +1,12 @@
 ---
+import { getImage } from 'astro:assets';
 import '../styles/base.css';
 import SiteHeader from '../components/SiteHeader.astro';
 import SiteFooter from '../components/SiteFooter.astro';
 import StickyBar from '../components/StickyBar.astro';
+import StructuredData from '../components/StructuredData.astro';
 import VorschauHinweis from '../components/VorschauHinweis.astro';
+import ogQuelle from '../assets/arrival.jpg';
 import { withBase, type Locale, type PageId } from '../i18n/routes';
 import { useTranslations } from '../i18n/ui';
 import { buildSeo } from '../lib/seo';
@@ -32,6 +35,27 @@ const fontFile = withBase('/fonts/readex-pro-variable.woff2');
 const fontCss = withBase('/fonts/readex-pro.css');
 const favicon = withBase('/favicon.svg');
 const touchIcon = withBase('/apple-touch-icon.png');
+
+/**
+ * Vorschaubild fuer geteilte Links. Vorher gab es keines: WhatsApp, LinkedIn
+ * und Slack zeigten die Seite ohne Bild, und das ist der Ort, an dem ein
+ * Link ueberhaupt angeklickt wird.
+ *
+ * 1200x630 ist das Format, das alle drei erwarten. Das Original ist
+ * 1920x1080 (Verhaeltnis 1.778), das Ziel 1.905 — sharp schneidet also oben
+ * und unten etwas weg, statt zu verzerren. Hochskaliert wird nichts: 1920
+ * Pixel Breite reichen fuer 1200.
+ *
+ * Die URL muss absolut sein: Scraper loesen relative Pfade nicht auf.
+ */
+const ogBild = await getImage({
+  src: ogQuelle,
+  width: 1200,
+  height: 630,
+  format: 'jpg',
+  quality: 78,
+});
+const ogBildUrl = new URL(ogBild.src, seo.canonical).href;
 ---
 
 <!doctype html>
@@ -50,6 +74,17 @@ const touchIcon = withBase('/apple-touch-icon.png');
     <meta property="og:description" content={description} />
     <meta property="og:url" content={seo.canonical} />
     <meta property="og:locale" content={seo.ogLocale} />
+    <meta property="og:image" content={ogBildUrl} />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={t('site.ogImageAlt')} />
+
+    {/* Twitter liest og:title und og:description mit; nur die Kartenart und
+        das Bild brauchen eigene Tags, sonst bleibt die Vorschau klein. */}
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:image" content={ogBildUrl} />
+    <meta name="twitter:image:alt" content={t('site.ogImageAlt')} />
 
     {/* Signet aus logo.svg, creme auf Waldgruen: hell auf dunkel bleibt bei
         16 px lesbar, dunkel auf hell verschwindet. Ueber withBase, damit es
@@ -61,6 +96,8 @@ const touchIcon = withBase('/apple-touch-icon.png');
     <link rel="stylesheet" href={fontCss} />
 
     <meta name="robots" content={blockIndex ? 'noindex, follow' : 'index, follow'} />
+
+    <StructuredData page={page} locale={locale} canonical={seo.canonical} image={ogBildUrl} />
   </head>
 
   <body>

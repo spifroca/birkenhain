@@ -1,7 +1,7 @@
 # Im Birkenhain
 
 Projektwebsite der Wohnüberbauung «Im Birkenhain» in
-Rudolfstetten-Friedlisberg (AG). 278 Mietwohnungen, 17 Baubereiche,
+Rudolfstetten-Friedlisberg (AG). 300 Mietwohnungen, 17 Baubereiche,
 3–8 Vollgeschosse, oberirdisch autofrei.
 
 Astro 5 (static output) mit TypeScript. Der Framework-Entscheid, die
@@ -80,9 +80,12 @@ noch fehlt.
   `projekt.publikation.mietpreise` und `.vermietungsstart` sind `false`;
   `check-data.mjs` bricht ab, wenn das jemand ändert. Das Schema des
   Wohnungsspiegels hat kein Preisfeld.
-- **278 Wohnungen, 17 Baubereiche, 3–8 Vollgeschosse.** Geprüft; die
+- **300 Wohnungen, 17 Baubereiche, 3–8 Vollgeschosse.** Geprüft; die
   Vollgeschosszahlen je Baubereich stammen aus dem Gestaltungsplan und
-  werden exakt übernommen.
+  werden exakt übernommen. Die 300 stehen im Planungsbericht zur
+  öffentlichen Auflage vom 26.08.2026 («Das Richtprojekt der Real North AG
+  schafft 300 Wohnungen mit 2.5 bis 5.5 Zimmer»); vorher stand hier 278 aus
+  dem älteren Projektstand.
 - **Wohnungsspiegel deaktiviert.** Die Komponente ist vollständig gebaut,
   `features.wohnungsspiegel` in `src/lib/flags.ts` ist `false` und
   `wohnungen.json` leer — die Wohnungsdaten im Prototyp waren prozedural
