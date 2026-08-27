@@ -67,7 +67,7 @@ function markerLabel(area: (typeof areas)[number]): string {
               <span class="plate plate--water" style="left: 57%; top: 8.5%">
                 {t('architektur.plateNaturpool')}
               </span>
-              <span class="plate plate--accent" style="left: 45%; top: 49.5%; max-width: 11%">
+              <span class="plate plate--accent plate--platz" style="left: 33.5%; top: 47.5%">
                 {t('architektur.platePlatz')}
               </span>
               <span class="plate plate--forest" style="left: 2.5%; top: 2%">
@@ -216,6 +216,14 @@ function markerLabel(area: (typeof areas)[number]): string {
   .plate--forest { color: var(--c-plate-forest); }
   .plate--accent { color: var(--c-accent); }
 
+  /* Das Platz-Label blieb mit max-width haengen: der Blocksatzumbruch riss
+     die Flaeche in ragged Zeilenkaesten. Eine Zeile, eine Flaeche, etwas
+     mehr Luft — platziert im freien Platzbereich zwischen 10F und 12F. */
+  .plate--platz {
+    padding: 4px 8px;
+    white-space: nowrap;
+  }
+
   /* --- Seitenfeld -------------------------------------------------------- */
 
   .panel {
@@ -254,14 +262,11 @@ function markerLabel(area: (typeof areas)[number]): string {
 
   .rows--panel .row {
     padding-block: 0.625rem;
-    /* Die Karte ist EINE Flaeche. `.section--alt .row` in design.css setzt
-       jede Zeile auf --c-bg-alt, das Panel selbst steht auf --c-bg: das gab
-       im fertigen Feld hellere Raender um beige Streifen, zwei Toene statt
-       einem. `transparent` laesst die Zeilen die Farbe des Panels annehmen —
-       auch dann noch, wenn die Panelfarbe einmal wechselt. Ein fester Wert
-       waere hier eine zweite Wahrheit, die beim naechsten Umbau auseinander
-       laeuft. */
-    background: transparent;
+    /* Die Zeilen muessen dieselbe Flaeche haben wie das Panel (--c-bg).
+       `transparent` waere falsch: .rows malt --c-hairline als Raster
+       hinter den Zeilen, und durch transparente Zeilen scheint die ganze
+       Flaeche grau durch — nicht nur die 1-px-Trennlinien. */
+    background: var(--c-bg);
   }
 
   .rows--panel dt,

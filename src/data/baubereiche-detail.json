@@ -5,8 +5,8 @@
       "en": "west"
     },
     "nutzung": {
-      "de": "Wohnen, Bistro",
-      "en": "Residential, bistro"
+      "de": "Wohnen",
+      "en": "Residential"
     },
     "lage": {
       "de": "Ostzeile, quer zum Hang",
@@ -15,8 +15,8 @@
   },
   "01D": {
     "ausrichtung": {
-      "de": "Süd-Ost",
-      "en": "south-east"
+      "de": "Nord-Ost / Süd-West",
+      "en": "north-east / south-west"
     },
     "nutzung": {
       "de": "Wohnen",
@@ -29,8 +29,8 @@
   },
   "02D": {
     "ausrichtung": {
-      "de": "Süd-Ost",
-      "en": "south-east"
+      "de": "West",
+      "en": "west"
     },
     "nutzung": {
       "de": "Wohnen",
@@ -43,8 +43,8 @@
   },
   "03D": {
     "ausrichtung": {
-      "de": "Süd-Ost",
-      "en": "south-east"
+      "de": "West",
+      "en": "west"
     },
     "nutzung": {
       "de": "Wohnen",
@@ -57,12 +57,12 @@
   },
   "04D": {
     "ausrichtung": {
-      "de": "Süd-Ost",
-      "en": "south-east"
+      "de": "West",
+      "en": "west"
     },
     "nutzung": {
-      "de": "Wohnen",
-      "en": "Residential"
+      "de": "Wohnen und Gewerbe",
+      "en": "Residential and commercial"
     },
     "lage": {
       "de": "Waldrand",
@@ -71,12 +71,12 @@
   },
   "05D": {
     "ausrichtung": {
-      "de": "Süd",
-      "en": "south"
+      "de": "West",
+      "en": "west"
     },
     "nutzung": {
-      "de": "Wohnen, Durchgang",
-      "en": "Residential, passage"
+      "de": "Wohnen, Gewerbe, Gym",
+      "en": "Residential, commercial, gym"
     },
     "lage": {
       "de": "mit Passage im EG",
@@ -85,12 +85,12 @@
   },
   "06D": {
     "ausrichtung": {
-      "de": "Süd",
-      "en": "south"
+      "de": "West",
+      "en": "west"
     },
     "nutzung": {
-      "de": "Wohnen",
-      "en": "Residential"
+      "de": "Wohnen, Kita, Kindergarten",
+      "en": "Residential, day-care, kindergarten"
     },
     "lage": {
       "de": "hangparallel",
@@ -99,8 +99,8 @@
   },
   "07F": {
     "ausrichtung": {
-      "de": "Süd-West",
-      "en": "south-west"
+      "de": "Süd-Ost",
+      "en": "south-east"
     },
     "nutzung": {
       "de": "Wohnen",
@@ -117,8 +117,8 @@
       "en": "south-west"
     },
     "nutzung": {
-      "de": "Wohnen, Gym",
-      "en": "Residential, gym"
+      "de": "Wohnen",
+      "en": "Residential"
     },
     "lage": {
       "de": "am Quartierplatz",
@@ -127,8 +127,8 @@
   },
   "09F": {
     "ausrichtung": {
-      "de": "Süd-Ost",
-      "en": "south-east"
+      "de": "Nord-Ost",
+      "en": "north-east"
     },
     "nutzung": {
       "de": "Wohnen",
@@ -141,12 +141,12 @@
   },
   "10F": {
     "ausrichtung": {
-      "de": "Süd",
-      "en": "south"
+      "de": "Nord-West",
+      "en": "north-west"
     },
     "nutzung": {
-      "de": "Wohnen, Kita 290 m²",
-      "en": "Residential, day-care 290 m²"
+      "de": "Wohnen, Bistro, Co-Working",
+      "en": "Residential, bistro, co-working"
     },
     "lage": {
       "de": "am Quartierplatz",
@@ -155,8 +155,8 @@
   },
   "11F": {
     "ausrichtung": {
-      "de": "West",
-      "en": "west"
+      "de": "Süd-Ost",
+      "en": "south-east"
     },
     "nutzung": {
       "de": "Wohnen",
@@ -173,8 +173,8 @@
       "en": "south"
     },
     "nutzung": {
-      "de": "Wohnen, Durchgang",
-      "en": "Residential, passage"
+      "de": "Wohnen",
+      "en": "Residential"
     },
     "lage": {
       "de": "mit Passage im EG",
@@ -197,8 +197,8 @@
   },
   "14F": {
     "ausrichtung": {
-      "de": "Süd-Ost",
-      "en": "south-east"
+      "de": "Süd",
+      "en": "south"
     },
     "nutzung": {
       "de": "Wohnen",
@@ -211,8 +211,8 @@
   },
   "15B": {
     "ausrichtung": {
-      "de": "Süd-West",
-      "en": "south-west"
+      "de": "Süd",
+      "en": "south"
     },
     "nutzung": {
       "de": "Wohnen",
@@ -225,8 +225,8 @@
   },
   "16B": {
     "ausrichtung": {
-      "de": "Süd-West",
-      "en": "south-west"
+      "de": "Süd",
+      "en": "south"
     },
     "nutzung": {
       "de": "Wohnen",
