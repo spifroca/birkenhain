@@ -93,23 +93,55 @@ jedem Lauf.
 `src/data/wohnungen.json` bleibt weiter leer, `features.wohnungsspiegel` bleibt
 `false`: das ist der Wohnungsspiegel je Wohnung, nicht je Baubereich.
 
-## 5. Drei Unterlagen als PDF
+## 5. Drei Unterlagen als PDF — erledigt
 
-Der Abschnitt «Planung & Mitwirkung» und die Footer-Spalte «Planung» sind
-fertig verdrahtet und warten nur auf die Dateien. Liegt eine nicht in
-`public/dokumente/`, bleibt die Zeile stehen — ohne Link und ohne Pfeil. Ein
-toter Download wäre schlimmer als eine sichtbare Lücke, darum prüft
-`Planung.astro` zur Buildzeit, ob die Datei da ist.
+Die Dateien liegen seit dem 27.08.2026 in `public/dokumente/`, alle drei aus
+der Fassung **öffentliche Auflage vom 26.08.2026**. Damit sind die drei Zeilen
+im Abschnitt «Planung & Mitwirkung» und der Link in der Footer-Spalte
+«Planung» verlinkt statt grau.
 
-| Datei in `public/dokumente/` | Beschriftung im Entwurf |
-| --- | --- |
-| `planungsbericht-gp-birkenhain.pdf` | Planungsbericht nach Art. 47 RPV · PDF · 3.12.2025 |
-| `situationsplan-1-500.pdf` | Situationsplan 1:500 · PDF · 6.11.2025 |
-| `sondernutzungsvorschriften.pdf` | Sondernutzungsvorschriften · PDF · 3.12.2025 |
+| Datei in `public/dokumente/` | Quelle | Beschriftung |
+| --- | --- | --- |
+| `planungsbericht-gp-birkenhain.pdf` | `260826Bericht_GP_Birkenhain_öA_V1.pdf` | Planungsbericht nach Art. 47 RPV · PDF · 26.8.2026 |
+| `situationsplan-1-500.pdf` | `260826_GP_Im_Birkenhain_öA.pdf` | Situationsplan 1:500 · PDF · 26.8.2026 |
+| `sondernutzungsvorschriften.pdf` | `260826_SNV_GP_Birkenhain_öA_V1.pdf` | Sondernutzungsvorschriften · PDF · 26.8.2026 |
 
-**Welche Fassung öffentlich wird, entscheidet die Bauherrschaft, nicht der
-Build.** Es liegen mehrere Versionen des Planungsberichts vor; die falsche zu
-publizieren wäre schlimmer als eine Woche ohne Download.
+Die Dateinamen im Repo bleiben absichtlich ohne Datum und ohne Version: so
+bleibt jeder veröffentlichte Link gültig, wenn eine neue Fassung kommt. Die
+Fassung steht im Dokument selbst und in der Metazeile daneben.
+
+**Der Mechanismus bleibt:** liegt eine Datei nicht in `public/dokumente/`,
+bleibt die Zeile stehen — ohne Link und ohne Pfeil. Ein toter Download wäre
+schlimmer als eine sichtbare Lücke, darum prüft `Planung.astro` zur Buildzeit,
+ob die Datei da ist. **Welche Fassung öffentlich wird, entscheidet die
+Bauherrschaft, nicht der Build.**
+
+Kein README in `public/dokumente/`: was dort liegt, ist live abrufbar. Diese
+Notizen gehören hierher.
+
+### Was in den Dateien steht
+
+Alle drei sind von suisseplan Ingenieure AG raum + landschaft, Aarau, im
+Auftrag der Real North AG. Formate: Planungsbericht A4 mit 57 Seiten,
+Situationsplan A1 quer (841 × 594 mm) mit 28 Seiten, Sondernutzungs-
+vorschriften A4.
+
+Das Deckblatt der Sondernutzungsvorschriften nennt den Verfahrensstand:
+
+- Mitwirkung vom **15. Juni 2026** bis 14. Juli 2026
+- Öffentliche Auflage vom **31. August 2026** bis 29. September 2026
+
+Ihr Änderungsverzeichnis: 03.12.2025 Vorprüfung, 28.05.2026 Vorprüfung V02 /
+Mitwirkung, 26.08.2026 öffentliche Auflage. Die alten Metadaten (3.12.2025
+bzw. 6.11.2025) bezogen sich also auf die Vorprüfungsfassung und sind mit
+diesen Dateien hinfällig — deshalb steht jetzt bei allen drei 26.8.2026.
+
+**Offen, nicht eigenmächtig geändert:** die Zeitleiste nennt bei
+«Mitwirkungsverfahren» den 11.06.2026, das Dokument nennt als Fenster den
+15. Juni bis 14. Juli 2026. Möglicherweise ist 11.06. der Beschluss und der
+15.06. der Beginn der Auflage — das gehört von der Bauherrschaft bestätigt,
+bevor eine der beiden Zahlen wandert. Die Station «Öffentliche Auflage» mit
+31.08.2026 deckt sich mit dem Dokument.
 
 ## Nicht gerendert, aber gepflegt
 

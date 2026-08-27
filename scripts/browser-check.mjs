@@ -194,19 +194,39 @@ try {
     // derselbe Helfer, der die Masse setzt. Fehlt sie, findet ein
     // Klassenselektor null Icons und meldet «keine da» statt «alle 0x0» — die
     // Pruefung waere richtig rot, aber aus dem falschen Grund.
+    //
+    // Nur gerenderte Icons zaehlen. Was in einem geschlossenen <dialog> oder
+    // unter einem [hidden] liegt, hat null Groesse — korrektes Verhalten des
+    // Browsers, kein Defekt. Die erste Fassung mass alles und meldete deshalb
+    // die drei Lightbox-Knoepfe als kaputt, obwohl der Dialog nur zu war.
+    // Ein Waechter, der richtiges Verhalten anzeigt, kostet Vertrauen.
+    const gerendert = (el) =>
+      !el.closest('dialog:not([open])') && !el.closest('[hidden]') && el.checkVisibility?.() !== false;
+
     const alle = [...document.querySelectorAll('.icon-wrap svg')];
+    const sichtbar = alle.filter(gerendert);
     const winzig = [];
     const strichbreiten = new Set();
-    for (const svg of alle) {
+    for (const svg of sichtbar) {
       const box = svg.getBoundingClientRect();
       if (box.width < 8 || box.height < 8) {
         winzig.push(`${Math.round(box.width)}x${Math.round(box.height)}`);
       }
       strichbreiten.add(getComputedStyle(svg).strokeWidth);
     }
-    return { anzahl: alle.length, winzig, strichbreiten: [...strichbreiten] };
+    return {
+      anzahl: sichtbar.length,
+      verborgen: alle.length - sichtbar.length,
+      winzig,
+      strichbreiten: [...strichbreiten],
+    };
   });
-  pruefe('Icons vorhanden', icons.anzahl > 0, `${icons.anzahl} auf dieser Seite`);
+
+  pruefe(
+    'Icons vorhanden',
+    icons.anzahl > 0,
+    `${icons.anzahl} gerendert` + (icons.verborgen ? `, ${icons.verborgen} verborgen (Dialog zu)` : ''),
+  );
   pruefe(
     'Icons haben eine Groesse',
     icons.winzig.length === 0,
@@ -217,6 +237,35 @@ try {
     icons.strichbreiten.every((b) => b === '1.5px'),
     icons.strichbreiten.join(', ') || 'keine gemessen',
   );
+
+  // Die Lightbox-Knoepfe sind der Ort, an dem unsichtbare Icons wirklich
+  // wehtun: ein Schliessen-Knopf, den man nicht sieht. Uebersprungen werden
+  // sie oben nur, WEIL der Dialog zu ist — also einmal aufmachen und dann
+  // messen. Sonst waere die Ausnahme eine Luecke.
+  const lbTrigger = p.locator('button[aria-label^="Bild vergr"]').first();
+  if ((await lbTrigger.count()) > 0) {
+    await lbTrigger.click();
+    await p.waitForTimeout(250);
+    const lb = await p.evaluate(() => {
+      const d = document.querySelector('dialog[open]');
+      if (!d) return null;
+      const svgs = [...d.querySelectorAll('.icon-wrap svg')];
+      return {
+        anzahl: svgs.length,
+        winzig: svgs
+          .map((s) => s.getBoundingClientRect())
+          .filter((b) => b.width < 8 || b.height < 8)
+          .map((b) => `${Math.round(b.width)}x${Math.round(b.height)}`),
+      };
+    });
+    pruefe(
+      'Icons der offenen Lightbox haben eine Groesse',
+      lb !== null && lb.anzahl > 0 && lb.winzig.length === 0,
+      lb === null ? 'Dialog nicht offen' : `${lb.anzahl} Icons, ${lb.winzig.length} zu klein`,
+    );
+    await p.keyboard.press('Escape');
+    await p.waitForTimeout(200);
+  }
 
   // --- Sprachumschalter: nicht nur Farbe --------------------------------
   console.log('\nSprachumschalter');
