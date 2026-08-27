@@ -9,8 +9,8 @@
       "y": 18.2
     },
     "text": {
-      "de": "Achtgeschossiger Kopfbau an der Nordwest-Ecke, der höchste im Quartier.",
-      "en": "Eight-storey head building on the north-west corner, the tallest in the quarter."
+      "de": "Der achtgeschossige Solitär an der Nordwest-Ecke ist das höchste Haus im Quartier. Die Wohnungen sind nach Nord-Ost und Süd-West ausgerichtet.",
+      "en": "The freestanding eight-storey building on the north-west corner is the tallest in the quarter. Its apartments face north-east and south-west."
     }
   },
   {
@@ -23,8 +23,8 @@
       "y": 20.5
     },
     "text": {
-      "de": "Zeile am Waldrand, gestaffelt zum Hang.",
-      "en": "Row along the forest edge, stepped with the slope."
+      "de": "Sechsgeschossiges Haus in der ersten Reihe am Wald. Die Wohnungen sind nach Westen ausgerichtet.",
+      "en": "Six-storey building in the first row along the forest. The apartments face west."
     }
   },
   {
@@ -37,8 +37,8 @@
       "y": 19.6
     },
     "text": {
-      "de": "Zeile am Waldrand, gestaffelt zum Hang.",
-      "en": "Row along the forest edge, stepped with the slope."
+      "de": "Sechs Geschosse mitten in der Waldrandzeile, mit Wohnungen nach Westen.",
+      "en": "Six storeys in the middle of the forest-edge row, with apartments facing west."
     }
   },
   {
@@ -51,8 +51,8 @@
       "y": 21.9
     },
     "text": {
-      "de": "Zeile am Waldrand, gestaffelt zum Hang.",
-      "en": "Row along the forest edge, stepped with the slope."
+      "de": "Sechsgeschossiges Haus am Waldrand mit Gewerbe im Erdgeschoss. Die Wohnungen sind nach Westen ausgerichtet.",
+      "en": "Six-storey building on the forest edge with commercial space on the ground floor. The apartments face west."
     }
   },
   {
@@ -65,8 +65,8 @@
       "y": 21.4
     },
     "text": {
-      "de": "Mit Passage im Erdgeschoss: Durchgang vom Waldweg auf den Quartierplatz.",
-      "en": "With a ground-floor passage linking the forest path to the neighbourhood square."
+      "de": "Fünf Geschosse mit Gewerbe und Gym im Erdgeschoss. Die Passage verbindet den Waldweg mit dem Quartierplatz.",
+      "en": "Five storeys with commercial space and the gym on the ground floor. The passage links the forest path with the neighbourhood square."
     }
   },
   {
@@ -79,8 +79,8 @@
       "y": 23.6
     },
     "text": {
-      "de": "Hangparalleler Bau am östlichen Waldrand.",
-      "en": "Building parallel to the slope on the eastern forest edge."
+      "de": "Viergeschossiges Haus am östlichen Waldrand. Im Erdgeschoss sind Kita und Kindergarten untergebracht.",
+      "en": "Four-storey building on the eastern forest edge. The ground floor houses the day-care and kindergarten."
     }
   },
   {
@@ -93,8 +93,8 @@
       "y": 30.9
     },
     "text": {
-      "de": "Dreigeschossiger Abschluss gegen den Wald im Osten.",
-      "en": "Three-storey end building towards the forest in the east."
+      "de": "Drei Geschosse am östlichen Ende des Quartiers, wo der Wald beginnt. Die Wohnungen sind nach Süd-Ost ausgerichtet.",
+      "en": "Three storeys at the eastern end of the quarter, where the forest begins. The apartments face south-east."
     }
   },
   {
@@ -107,8 +107,8 @@
       "y": 41.8
     },
     "text": {
-      "de": "Am Quartierplatz, mit Gym im Natursteinsockel.",
-      "en": "On the neighbourhood square, with the gym in the stone plinth."
+      "de": "Das grösste Familienhaus steht mit sechs Geschossen direkt am Quartierplatz und ist nach Süd-West ausgerichtet.",
+      "en": "The largest family building stands six storeys tall directly on the neighbourhood square and faces south-west."
     }
   },
   {
@@ -121,8 +121,8 @@
       "y": 39.2
     },
     "text": {
-      "de": "Hangparalleler Bau ueber dem Quartierplatz.",
-      "en": "Building parallel to the slope above the neighbourhood square."
+      "de": "Fünfgeschossiges Haus in der zweiten Reihe über dem Quartierplatz, mit Wohnungen nach Nord-Ost.",
+      "en": "Five-storey building in the second row above the neighbourhood square, with apartments facing north-east."
     }
   },
   {
@@ -135,8 +135,8 @@
       "y": 42.9
     },
     "text": {
-      "de": "Am Quartierplatz, mit Kita von 290 m2 im Erdgeschoss.",
-      "en": "On the neighbourhood square, with a 290 m2 day-care centre on the ground floor."
+      "de": "Fünf Geschosse am Quartierplatz. Im Erdgeschoss liegen Bistro und Co-Working.",
+      "en": "Five storeys on the neighbourhood square. The ground floor holds the bistro and co-working space."
     }
   },
   {
@@ -149,8 +149,8 @@
       "y": 48.7
     },
     "text": {
-      "de": "Kleinster Bau der Mittelzeile, Hauptausrichtung West.",
-      "en": "Smallest building of the middle row, mainly facing west."
+      "de": "Das kleinste Haus der Mittelzeile hat drei Geschosse. Die Wohnungen sind nach Süd-Ost ausgerichtet.",
+      "en": "The smallest building of the middle row has three storeys. The apartments face south-east."
     }
   },
   {
@@ -163,8 +163,8 @@
       "y": 56.6
     },
     "text": {
-      "de": "Mit Passage im Erdgeschoss: Durchgang zur unteren Quartierebene.",
-      "en": "With a ground-floor passage through to the lower level of the quarter."
+      "de": "Viergeschossiges Haus mit Südausrichtung. Die Passage im Erdgeschoss führt auf die untere Quartierebene.",
+      "en": "Four-storey building facing south. The ground-floor passage leads to the lower level of the quarter."
     }
   },
   {
@@ -177,8 +177,8 @@
       "y": 72.9
     },
     "text": {
-      "de": "Familienhaus an der Obere Dorfstrasse.",
-      "en": "Family building on Obere Dorfstrasse."
+      "de": "Viergeschossiges Familienhaus an der Oberen Dorfstrasse, nach Süden ausgerichtet.",
+      "en": "Four-storey family building on Obere Dorfstrasse, facing south."
     }
   },
   {
@@ -191,8 +191,8 @@
       "y": 64.1
     },
     "text": {
-      "de": "Familienhaus an der Obere Dorfstrasse.",
-      "en": "Family building on Obere Dorfstrasse."
+      "de": "Vier Geschosse zwischen Quartierplatz und Oberer Dorfstrasse, mit Wohnungen nach Süden.",
+      "en": "Four storeys between the neighbourhood square and Obere Dorfstrasse, with apartments facing south."
     }
   },
   {
@@ -205,8 +205,8 @@
       "y": 86.1
     },
     "text": {
-      "de": "Best-Ager-Haus am südlichen Quartierrand, schwellenlos erschlossen.",
-      "en": "Best-ager building on the southern edge, stepless throughout."
+      "de": "Dreigeschossiges Best-Ager-Haus am südlichen Quartierrand, nach Süden ausgerichtet und schwellenlos erschlossen.",
+      "en": "Three-storey 50+ building on the southern edge of the quarter, facing south, with step-free access."
     }
   },
   {
@@ -219,8 +219,8 @@
       "y": 76.7
     },
     "text": {
-      "de": "Best-Ager-Haus an der Obere Dorfstrasse, schwellenlos erschlossen.",
-      "en": "Best-ager building on Obere Dorfstrasse, stepless throughout."
+      "de": "Dreigeschossiges Best-Ager-Haus an der Oberen Dorfstrasse, nach Süden ausgerichtet und schwellenlos erschlossen.",
+      "en": "Three-storey 50+ building on Obere Dorfstrasse, facing south, with step-free access."
     }
   },
   {
@@ -233,8 +233,8 @@
       "y": 39.7
     },
     "text": {
-      "de": "Ostzeile quer zum Hang, mit Bistro und Co-Working am Quartierplatz.",
-      "en": "East row across the slope, with the bistro and co-working on the square."
+      "de": "Fünfgeschossige Zeile am Quartierrand, quer zu den Nachbarhäusern gestellt. Die Wohnungen sind nach Westen ausgerichtet.",
+      "en": "Five-storey row on the edge of the quarter, set at right angles to its neighbours. The apartments face west."
     }
   }
 ]
