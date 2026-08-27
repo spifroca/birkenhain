@@ -8,6 +8,7 @@ steht in `src/assets/`.
 | Datei | Wo es erscheint |
 | --- | --- |
 | `suisse-plan.svg` | Abschnitt «Planung & Mitwirkung», unter den Unterlagen |
+| `rudolfstetten.png` | ebenda, rechts daneben |
 
 Die Datei liegt vor: das offizielle Logo (Fassung 2023) von suisseplan.ch,
 Glyphen als Pfade, keine Nachzeichnung. Entfernt wurden nur
@@ -19,6 +20,9 @@ rendern — kein Rahmen, kein Alt-Text, keine kaputte Bildreferenz.
 
 - **SVG**, keine Pixelgrafik. Das Logo wird auf 44 px Höhe skaliert und muss
   auch auf Bildschirmen mit hoher Auflösung scharf bleiben.
+  Die eine Ausnahme ist `rudolfstetten.png`: die Gemeinde führt ihr Logo nur
+  als Pixelgrafik (325 × 99), und ein nachgezeichnetes Wappen wäre eine
+  Verfälschung. Die 99 px Quellhöhe decken 44 px Anzeigehöhe bis Retina-2x.
 - **Ohne feste Breite und Höhe** im `<svg>`-Tag, aber **mit `viewBox`** —
   sonst lässt sich die Höhe nicht per CSS setzen und das Seitenverhältnis
   bricht.
