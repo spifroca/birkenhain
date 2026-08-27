@@ -125,7 +125,7 @@ Platzhalter-Hero wäre der erste Eindruck im Suchergebnis.
 Diese Zahlen sind zugesagt und werden von `npm run check:data` erzwungen —
 ein Verstoss macht die CI rot:
 
-- **278 Mietwohnungen**, Miete, kein Verkauf
+- **300 Mietwohnungen**, Miete, kein Verkauf
 - **17 Baubereiche**, **3–8 Vollgeschosse**
 - **oberirdisch autofrei**
 - **keine Mietpreise, kein Vermietungsstart** publizieren
@@ -133,7 +133,9 @@ ein Verstoss macht die CI rot:
 Weiter gilt:
 
 - `wohnungen` je Baubereich bleibt `null` — die Zahlen im Prototyp waren
-  prozedural erzeugt. Die Gesamtzahl 278 ist gesichert.
+  prozedural erzeugt, und der Entwurfsexport summierte auf 278, den älteren
+  Projektstand. Gesichert ist die Gesamtzahl **300** aus dem Planungsbericht
+  zur öffentlichen Auflage vom 26.08.2026.
 - `src/data/wohnungen.json` bleibt leer, `features.wohnungsspiegel` bleibt
   `false`. Die Komponente ist gebaut, das Schema hat kein Preisfeld.
 - Keine Farb- oder Grössenliteral ausserhalb `src/styles/tokens.css`.

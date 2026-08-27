@@ -3,7 +3,8 @@
     "name": "Im Birkenhain",
     "location": "Rudolfstetten-Friedlisberg",
     "canton": "AG",
-    "tagline": "Wohnüberbauung in Rudolfstetten-Friedlisberg"
+    "tagline": "Wohnüberbauung in Rudolfstetten-Friedlisberg",
+    "ogImageAlt": "Visualisierung des Quartiers Im Birkenhain: Ankunft am Alpenweg, Birken als Eingangstor."
   },
   "nav": {
     "label": "Hauptnavigation",
@@ -54,9 +55,9 @@
   },
   "home": {
     "metaTitle": "Im Birkenhain — Wohnüberbauung in Rudolfstetten-Friedlisberg",
-    "metaDescription": "Im Birkenhain: 278 Mietwohnungen am Waldrand in Rudolfstetten-Friedlisberg. 17 Baubereiche, oberirdisch autofrei, Naturpool, Bistro, Kita und Gym im Quartier.",
+    "metaDescription": "Im Birkenhain: 300 Mietwohnungen am Waldrand in Rudolfstetten-Friedlisberg. 17 Baubereiche, oberirdisch autofrei, Naturpool, Bistro, Kita und Gym im Quartier.",
     "heroTitle": "Grosszügig und nachhaltig wohnen am Rand des Isleren-Walds",
-    "heroLead": "Auf dem Areal Isleren entsteht ein Quartier aus 17 gestaffelten Häusern zwischen Mutschellen-Knoten und Wald: 278 Mietwohnungen, ein Quartierplatz unter Birken, und oberirdisch kein einziges Auto.",
+    "heroLead": "Auf dem Areal Isleren entsteht ein Quartier aus 17 gestaffelten Häusern zwischen Mutschellen-Knoten und Wald: 300 Mietwohnungen, ein Quartierplatz unter Birken, und oberirdisch kein einziges Auto.",
     "situationsplanHeading": "Situationsplan",
     "situationsplanHint": "Gebäude anklicken für Details",
     "galerieHeading": "Bilder",
@@ -131,7 +132,7 @@
   },
   "architektur": {
     "metaTitle": "Architektur — Im Birkenhain",
-    "metaDescription": "17 Baubereiche mit 3 bis 8 Vollgeschossen, gestaffelt zum Waldrand. Beige Eternit-Fassade, dunkle Bronze und Steinsockel — Materialisierung und Etappierung im Überblick.",
+    "metaDescription": "17 Baubereiche mit 3 bis 8 Vollgeschossen, gestaffelt zum Waldrand. Beige Eternit-Fassade, dunkle Bronze, Steinsockel — Materialien und Etappen im Überblick.",
     "title": "Siebzehn Townhouses, zum Wald hin gestaffelt",
     "lead": "Die Häuser stehen nicht in Reihe, sondern versetzt: jedes hat seine eigene Adresse, jedes gibt dem Nachbarn Aussicht. Von acht Geschossen an der Nordwest-Ecke nehmen sie zum Waldrand hin ab.",
     "baubereicheHeading": "Die 17 Baubereiche",
@@ -168,7 +169,7 @@
   },
   "freiraum": {
     "metaTitle": "Freiraum — Im Birkenhain",
-    "metaDescription": "Wegnetz wie die Wurzeln eines Baumes, der Birkenhain als Signaturbaum, Quartierplatz mit Wasserspiel, Sitzstufen und Bistro-Terrasse. Umgebungsgestaltung deltavormgroep.",
+    "metaDescription": "Wegnetz wie Baumwurzeln, der Birkenhain als Signaturbaum, Quartierplatz mit Wasserspiel, Sitzstufen und Bistro-Terrasse. Freiraum von deltavormgroep.",
     "title": "Der Wald setzt sich ins Quartier fort",
     "lead": "Zwischen den Häusern liegt keine Restfläche, sondern ein durchgehender Freiraum: Wege verzweigen sich wie Wurzeln, Höhenunterschiede werden begrünt überwunden, und in der Mitte steht der Birkenhain.",
     "kicker": "Freiraum & Landschaft",
@@ -210,7 +211,7 @@
   },
   "lage": {
     "metaTitle": "Lage & Mobilität — Im Birkenhain",
-    "metaDescription": "Am Rand des Mutschellen-Knotens: S17 im 15-Minuten-Takt, Zürich HB in 31 Minuten, zwei Haltestellen in zehn Gehminuten. Oberirdisch autofrei, Tiefgarage beim Arealzugang.",
+    "metaDescription": "Am Mutschellen-Knoten: S17 im 15-Minuten-Takt, Zürich HB in 31 Minuten, zwei Haltestellen in zehn Gehminuten. Oberirdisch autofrei, Tiefgarage am Zugang.",
     "title": "Zwischen Mutschellen-Knoten und Wald",
     "lead": "Gut erschlossen und doch am Ende der Strasse. Die Autos verschwinden direkt beim Arealzugang unter Terrain; oberirdisch bleibt das Quartier autofrei — befahrbar nur für Anlieferung, Notfahrzeuge und Zügeltage.",
     "distanzenHeading": "Distanzen",
@@ -290,8 +291,8 @@
   },
   "wohnungen": {
     "metaTitle": "Wohnungen — Im Birkenhain",
-    "metaDescription": "278 Mietwohnungen von 2.5 bis 5.5 Zimmern, ausgelegt auf DINKs, Familien und Best Ager. Grundrisse und Flächen provisorisch, Mietpreise und Vermietungsstart folgen.",
-    "title": "278 Mietwohnungen, 2.5 bis 5.5 Zimmer",
+    "metaDescription": "300 Mietwohnungen von 2.5 bis 5.5 Zimmern, für DINKs, Familien und Best Ager. Grundrisse provisorisch, Mietpreise und Vermietungsstart folgen.",
+    "title": "300 Mietwohnungen, 2.5 bis 5.5 Zimmer",
     "lead": "Alle Wohnungen werden vermietet – es sind keine Eigentumswohnungen. Der Mix reicht von der 2.5-Zimmer-Wohnung bis zur 5.5-Zimmer-Familienwohnung, den Schwerpunkt bilden die 3.5- und 4.5-Zimmer-Wohnungen. Grundrisse und Flächen sind provisorisch; Mietpreise und Vermietungsstart folgen später.",
     "spiegelHeading": "Wohnungsspiegel",
     "spiegelPending": "Der Wohnungsspiegel wird veröffentlicht, sobald die Wohnungsdaten vorliegen.",
@@ -356,7 +357,7 @@
   },
   "anmeldung": {
     "metaTitle": "Anmeldung — Im Birkenhain",
-    "metaDescription": "Für die Anmeldeliste der Wohnüberbauung Im Birkenhain eintragen.",
+    "metaDescription": "Auf die Interessentenliste für 300 Mietwohnungen am Waldrand in Rudolfstetten-Friedlisberg. Eintrag mit Bestätigungslink, jederzeit widerrufbar.",
     "title": "Zuerst erfahren",
     "lead": "Sagen Sie uns, was Sie suchen. Wir melden uns, sobald Grundrisse, Flächen und der Vermietungsstart für Ihren Wohnungstyp feststehen – kein Newsletter, keine Werbung.",
     "legendContact": "Kontakt",
@@ -428,7 +429,7 @@
     "legalHeading": "Rechtliches",
     "imprint": "Impressum",
     "privacy": "Datenschutz",
-    "rentalNote": "278 Mietwohnungen. Kein Verkauf.",
+    "rentalNote": "300 Mietwohnungen. Kein Verkauf.",
     "copyright": "© {year} Im Birkenhain",
     "owner": "Bauherrin: Real North AG",
     "contactPending": "Kontaktangaben folgen.",
@@ -450,7 +451,7 @@
   },
   "impressum": {
     "metaTitle": "Impressum — Im Birkenhain",
-    "metaDescription": "Impressum der Projektwebsite der Wohnüberbauung Im Birkenhain in Rudolfstetten-Friedlisberg.",
+    "metaDescription": "Impressum der Projektwebsite «Im Birkenhain»: Real North AG als Bauherrin, 300 Mietwohnungen in 17 Baubereichen in Rudolfstetten-Friedlisberg (AG).",
     "title": "Impressum",
     "kicker": "Rechtliches",
     "reviewNote": "Entwurf. Vor der Freigabe der Website juristisch prüfen und die offenen Angaben ergänzen.",
@@ -460,7 +461,7 @@
     "contactHeading": "Kontakt",
     "contactPendingBody": "Zu ergänzen: E-Mail-Adresse und Telefonnummer für Anfragen zum Projekt.",
     "projectHeading": "Projekt",
-    "projectBody": "Wohnüberbauung «Im Birkenhain», Areal Isleren, Rudolfstetten-Friedlisberg (AG). 278 Mietwohnungen in 17 Baubereichen. Es handelt sich um ein Vermietungsprojekt; ein Verkauf von Wohneigentum findet nicht statt.",
+    "projectBody": "Wohnüberbauung «Im Birkenhain», Areal Isleren, Rudolfstetten-Friedlisberg (AG). 300 Mietwohnungen in 17 Baubereichen. Es handelt sich um ein Vermietungsprojekt; ein Verkauf von Wohneigentum findet nicht statt.",
     "contentHeading": "Zum Inhalt dieser Website",
     "contentBody": "Angaben zu Geschosszahlen, Flächen und Terminen entsprechen dem Planungsstand und können sich im Projektverlauf ändern. Visualisierungen sind Illustrationen und nicht verbindlich. Mietpreise und ein Vermietungsstart werden auf dieser Website nicht publiziert."
   },

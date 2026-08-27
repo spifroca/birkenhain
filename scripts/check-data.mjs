@@ -31,7 +31,7 @@ const energie = await load('energie.json');
 const wohnungen = await load('wohnungen.json');
 
 // --- Projektfakten: fest zugesagt, hier gegen Abdriften gesichert ----------
-if (projekt.wohnungen !== 278) problem(`projekt.wohnungen ist ${projekt.wohnungen}, erwartet 278`);
+if (projekt.wohnungen !== 300) problem(`projekt.wohnungen ist ${projekt.wohnungen}, erwartet 300`);
 if (projekt.baubereiche !== 17)
   problem(`projekt.baubereiche ist ${projekt.baubereiche}, erwartet 17`);
 if (projekt.vollgeschosse?.min !== 3 || projekt.vollgeschosse?.max !== 8) {
@@ -74,6 +74,14 @@ if (unitsKnown.length === baubereiche.length) {
 } else if (unitsKnown.length > 0) {
   note(
     `Wohnungszahlen erst für ${unitsKnown.length} von ${baubereiche.length} Baubereichen erfasst`,
+  );
+} else {
+  // Der Fall «keine einzige erfasst» war vorher stumm: die Bedingung oben
+  // greift erst ab einer Zahl. Eine Luecke, die nichts sagt, sieht aus wie
+  // eine Pruefung, die nichts findet.
+  note(
+    `Wohnungszahlen je Baubereich sind alle offen — die Detailkarten zeigen «—». ` +
+      `Die frueheren 17 Werte summierten auf 278 und passen nicht mehr zu ${projekt.wohnungen}.`,
   );
 }
 

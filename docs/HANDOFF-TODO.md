@@ -16,7 +16,7 @@ der Rest — und warum er offen ist.
 | Koordinaten | 47.36438 / 8.37068 — die Karte rendert |
 | Projekttexte | Meta, Titel, Lead und Kicker für 6 Screens, DE und EN |
 | Domain | `birkenhain.ch` ohne www, live nachgemessen — `www.` leitet pfadtreu per 301 dorthin |
-| Wohnungen je Baubereich | 17 Werte aus dem Entwurfsexport, Summe exakt 278 — `check:data` erzwingt sie |
+| Wohnungen je Baubereich | offen (`null`) — der Entwurfsexport summierte auf 278, die Gesamtzahl ist heute 300 |
 | Anmeldeformular | Feldsatz des Entwurfs: Fläche ab, Bezugstermin als Auswahl, unterstrichene Felder, Knopf über die ganze Breite |
 | Karte | im Planrahmen mit Adresszeile und Google-Maps-Link, wie im Entwurf — die Tiles bleiben von OpenStreetMap |
 
@@ -82,13 +82,42 @@ Rechtsberatung.
 
 Adresse, Telefon und E-Mail fehlen im Handoff.
 
-## 4. Wohnungen je Baubereich — eingearbeitet
+## 4. Wohnungen je Baubereich — wieder offen
 
-Nicht mehr offen. Der Entwurfsexport vom 24.08.2026 trägt alle 17 Werte, und
-sie ergeben in der Summe genau **278** — die Zahl, die `check:data` ohnehin
-erzwingt. Damit sind sie kein prozeduraler Platzhalter mehr, sondern ein
-konsistenter Datensatz aus dem Entwurf; die Prüfung der Summe belegt es bei
-jedem Lauf.
+War eingearbeitet: der Entwurfsexport vom 24.08.2026 trug alle 17 Werte, Summe
+genau 278. Mit der Gesamtzahl **300** aus dem Planungsbericht zur öffentlichen
+Auflage vom 26.08.2026 passt diese Verteilung nicht mehr, und die Summenprüfung
+in `check:data` zeigte das sofort.
+
+Die 17 Werte stehen deshalb wieder auf `null`. Die Detailkarten auf
+`/architektur/` zeigen dort «—», der Build läuft durch, und `check:data`
+notiert den offenen Punkt bei jedem Lauf — der Fall «alle 17 offen» war vorher
+stumm, weil die Bedingung erst ab einem erfassten Wert griff.
+
+**Nicht selbst neu verteilen.** Eine Aufteilung von 300 auf 17 Baubereiche
+steht in keinem der gelieferten Dokumente: die Sondernutzungsvorschriften geben
+je Baubereich die anrechenbare Geschossfläche, die maximale Vollgeschosszahl
+und die Höhenkote vor, keine Wohnungszahlen. Sobald eine Verteilung von der
+Bauherrschaft kommt, tragen die 17 Werte sie und die Summenprüfung greift
+wieder.
+
+### Dabei aufgefallen: Baubereich 17
+
+Die Vollgeschosstabelle der Sondernutzungsvorschriften (öffentliche Auflage,
+Art. 5 Abs. 2 «Grundmasse») nennt für `17a./b.` **fünf** Vollgeschosse; in
+`baubereiche.json` standen vier. Auf 5 korrigiert — die Vollgeschosszahlen
+stammen aus dem Gestaltungsplan und werden exakt übernommen. Die übrigen
+sechzehn Werte stimmen mit der Tabelle überein:
+
+`01D 8 · 02D 6 · 03D 6 · 04D 6 · 05D 5 · 06D 4 · 07F 3 · 08F 6 · 09F 5 ·
+10F 5 · 11F 3 · 12F 4 · 13F 4 · 14F 4 · 15B 3 · 16B 3 · 17 5`
+
+Die Spanne 3–8 bleibt damit unverändert.
+
+**Offen und beim Nutzer:** dieselbe Tabelle führt zusätzlich `05Dc.` mit 120 m²
+und **einem** Vollgeschoss. Der Baubereich fehlt in unseren 17, und ihn
+aufzunehmen hiesse 18 Baubereiche und eine Vollgeschossspanne ab 1 — zwei
+zugesagte Projektfakten. Das gehört bestätigt, nicht angenommen.
 
 `src/data/wohnungen.json` bleibt weiter leer, `features.wohnungsspiegel` bleibt
 `false`: das ist der Wohnungsspiegel je Wohnung, nicht je Baubereich.
