@@ -135,7 +135,8 @@ Geheimnis und Anmeldedaten per URL abrufbar.
 ### 5. config.php erzeugen
 
 In `birkenhain-data/` eine neue Datei `config.php` mit diesem Inhalt. Setze
-die vier Werte aus den Angaben der Person ein:
+die Werte aus den Angaben der Person ein; die Empfängeradresse steht
+bereits richtig drin:
 
 ```php
 <?php
@@ -148,7 +149,7 @@ return [
     'mail_from' => 'Im Birkenhain <noreply@birkenhain.ch>',
 
     // Interne Benachrichtigung nach bestätigter Anmeldung.
-    'mail_notify_to' => 'HIER_EINSETZEN',
+    'mail_notify_to' => 'birkenhain@realnorth.ch',
 
     // Erst 'log' zum Testen, danach 'mail'.
     'mail_transport' => 'log',
