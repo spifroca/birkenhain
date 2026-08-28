@@ -73,8 +73,11 @@ Liegt in `httpdocs` etwas, das nicht aus dem Build kommt — eine
 ## Nach dem Deployment prüfen
 
 ```bash
-# muss www enthalten
+# muss ohne www sein — die Adresse, die 200 liefert
 curl -s https://birkenhain.ch/ | grep -o 'rel="canonical" href="[^"]*"'
+
+# muss fuenf Sicherheits-Header auf JEDER Zeile zeigen (siehe PLESK-NGINX.md)
+npm run check:live-headers
 
 # muss 200 sein
 curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/architektur/
@@ -85,6 +88,16 @@ curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/api/lib/birkenhain.
 # muss 405 sein
 curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/api/anmeldung.php
 ```
+
+**Plesk schreibt inkrementell, nicht nach einem Leerräumen.** Gemessen am
+28.08.2026 über drei Deploys: nach dem Deploy von `5c6e7b3` trugen die
+HTML-Dateien die neue mtime (12:48:30), `favicon.svg`, `robots.txt` und
+`movie.mp4` aber weiter die alte (12:34:34). Hätte Plesk den Zielordner
+geräumt und neu geschrieben, wäre überall dieselbe Zeit gestanden. Praktisch
+heisst das: eine Datei, die sich nicht geändert hat, bleibt liegen — und ein
+Deploy, der nur eine Datei ändert, ist von aussen nicht zu sehen. Für das
+403-Fenster, das ein Leerräumen erzwingen würde, ist damit die Grundlage
+fraglich; beobachtet habe ich heute keines.
 
 ## Was das nicht löst
 
