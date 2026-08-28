@@ -1,0 +1,1 @@
+const e=document.querySelector(".hero__video");if(e){const t=()=>{e.playbackRate=.6};t(),e.addEventListener("play",t),e.addEventListener("loadeddata",t);const a=window.matchMedia("(prefers-reduced-motion: reduce)"),d=()=>{a.matches&&(e.autoplay=!1,e.pause(),e.removeAttribute("src"),e.load())};d(),a.addEventListener("change",d)}

@@ -1,0 +1,1 @@
+const e=document.querySelector("[data-stickybar]"),t="birkenhain:sticky-closed";e&&(sessionStorage.getItem(t)!=="1"&&(e.hidden=!1),e.querySelector("[data-sticky-close]")?.addEventListener("click",()=>{e.hidden=!0,sessionStorage.setItem(t,"1")}));
