@@ -1,6 +1,8 @@
 ---
 import Picture from './Picture.astro';
 import type { ImageMetadata } from 'astro';
+import { existsSync } from 'node:fs';
+import { withBase } from '../i18n/routes';
 
 interface Props {
   kicker?: string;
@@ -8,6 +10,12 @@ interface Props {
   lead?: string;
   image?: ImageMetadata;
   imageAlt?: string;
+  /**
+   * Dateiname eines Films in `public/media/`, der im Bildband an die Stelle
+   * des Bildes tritt. Fehlt die Datei, bleibt das Bild — wie bei den Logos
+   * gilt: eine fehlende Datei darf den Build nicht kippen.
+   */
+  video?: string;
   /**
    * `band` legt Titel und Kicker ueber das Bild — der Auftritt der
    * Startseite. `text` setzt sie auf den Papier-Grund; das Bild folgt dann
@@ -26,6 +34,7 @@ const {
   lead,
   image,
   imageAlt,
+  video,
   variant = 'text',
   ctaHref,
   ctaLabel,
@@ -34,12 +43,27 @@ const {
 } = Astro.props;
 
 const band = variant === 'band' && image !== undefined;
+
+/**
+ * Der Film laeuft nur, wenn er auch daliegt — fehlt die Datei, bleibt es
+ * beim Bild. Das Bild liegt ohnehin immer darunter: es steht sofort da,
+ * waehrend der Film noch laedt, es vertritt ihn ohne JavaScript, und es
+ * bleibt stehen, wenn jemand weniger Bewegung eingestellt hat. Deshalb
+ * braucht das `video` kein eigenes `poster` — die Unterlage ist das Poster.
+ */
+const videoSrc =
+  band && video && existsSync(new URL(`../../public/media/${video}`, import.meta.url))
+    ? withBase(`/media/${video}`)
+    : null;
 ---
 
 {
   band ? (
     <section class="hero hero--band">
       <Picture src={image!} alt={imageAlt ?? ''} hero sizes="100vw" class="hero__image" />
+      {videoSrc && (
+        <video class="hero__video" src={videoSrc} autoplay muted loop playsinline preload="auto" />
+      )}
       <div class="hero__scrim" />
       <div class="hero__body container">
         {kicker && <p class="hero__kicker hero__kicker--inverse">{kicker}</p>}
@@ -72,6 +96,41 @@ const band = variant === 'band' && image !== undefined;
     </section>
   )
 }
+
+<script>
+  // Kein `is:inline`: die CSP erlaubt nur `script-src 'self'`, ein
+  // Inline-Skript wuerde blockiert. Astro buendelt dieses hier in eine
+  // eigene Datei — wie bei Lightbox und Situationsplan.
+  const film = document.querySelector<HTMLVideoElement>('.hero__video');
+
+  if (film) {
+    // Ruhiger als aufgenommen: der Film traegt Stimmung, nicht Handlung.
+    // Nach jedem Neustart der Schleife erneut setzen — manche Engine faellt
+    // sonst auf Normaltempo zurueck.
+    const langsam = () => {
+      film.playbackRate = 0.6;
+    };
+
+    langsam();
+    film.addEventListener('play', langsam);
+    film.addEventListener('loadeddata', langsam);
+
+    // Weniger Bewegung: das Bild darunter bleibt stehen, der Film haelt an
+    // und laedt nicht weiter. `display: none` allein wuerde ihn weiterladen.
+    const ruhe = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    const pruefen = () => {
+      if (!ruhe.matches) return;
+      film.autoplay = false;
+      film.pause();
+      film.removeAttribute('src');
+      film.load();
+    };
+
+    pruefen();
+    ruhe.addEventListener('change', pruefen);
+  }
+</script>
 
 <style>
   .hero {
@@ -119,12 +178,21 @@ const band = variant === 'band' && image !== undefined;
   }
 
   .hero--band :global(.hero__image),
-  .hero--band :global(.hero__image img) {
+  .hero--band :global(.hero__image img),
+  .hero__video {
     position: absolute;
     inset: 0;
     width: 100%;
     height: 100%;
     object-fit: cover;
+  }
+
+  /* Weniger Bewegung heisst: das Bild allein. Der Film wird zusaetzlich per
+     Skript angehalten — `display: none` beendet den Download nicht. */
+  @media (prefers-reduced-motion: reduce) {
+    .hero__video {
+      display: none;
+    }
   }
 
   .hero__scrim {
