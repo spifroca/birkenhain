@@ -25,6 +25,8 @@ node scripts/browser-check.mjs /tmp/site
 | Detailkarte | **eine** Hintergrundfarbe, Zeilenbeschriftungen einfarbig |
 | Sprachumschalter | beide Sprachen vorhanden, die aktive mit `aria-current` — nicht nur farblich |
 | Lightbox | öffnet auf Klick, schliesst auf Escape, Fokus kehrt zum Auslöser zurück |
+| Icons | gerendert, mindestens 8 px, Strichbreite 1.5 — auch die im geöffneten Dialog |
+| Hero-Film | `<video>` vorhanden, Datei liefert 200 mit `video/…`, Metadaten laden |
 | Suchmaschinen-Sperre | `Disallow: /` in `robots.txt` **und** `noindex` auf DE-, EN- und Rechtstextseiten |
 
 Die letzten zwei Punkte sind bewusst getrennt geprüft. Das Vorschau-Band
@@ -35,6 +37,14 @@ Der Punkt «Detailkarte ist eine Fläche» ist ein Regressionswächter. Die Kart
 hatte zwei Töne, weil `.section--alt .row` in `design.css` die Zeilen auf die
 Abschnittsfarbe setzte, während das Panel heller stand. Kommt das zurück,
 fällt der Test — mit den gemessenen Farbwerten im Klartext.
+
+**Der Film ist ein Sonderfall.** Playwrights Chromium ist ohne die
+lizenzpflichtigen Codecs gebaut: `canPlayType('video/mp4; codecs="avc1…"')`
+gibt hier den leeren String zurück, jede H.264-Datei endet in Fehlercode 4 —
+in Chrome, Safari, Firefox und Edge läuft dieselbe Datei. Die Prüfung fragt
+das vorher ab und sagt dann «nicht pruefbar», statt einen Befund zu
+erfinden. Liegt gar kein `<video>` im Dokument, sagt sie das ebenfalls: ohne
+`public/media/*.mp4` ist das der vorgesehene Zustand, kein Fehler.
 
 ## Zwei Eigenheiten dieser Umgebung
 

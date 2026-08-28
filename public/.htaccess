@@ -60,6 +60,12 @@ AddDefaultCharset UTF-8
 </IfModule>
 
 # --- Sicherheits-Header ---------------------------------------------------
+# Achtung: diese Header gelten nur fuer Antworten, die Apache selbst gibt. Auf
+# birkenhain.ch beantwortet nginx die haeufigen Dateitypen direkt — HTML
+# eingeschlossen — und liest diese Datei dabei nie. Am 28.08.2026 gemessen:
+# /robots.txt und /favicon.svg trugen alle vier Header, keine einzige Seite.
+# Die Regeln muessen deshalb zusaetzlich in den nginx-Direktiven stehen:
+# docs/PLESK-NGINX.md, nachzumessen mit `npm run check:live-headers`.
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"

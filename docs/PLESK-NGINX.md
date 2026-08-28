@@ -1,12 +1,53 @@
 # nginx-Direktiven für Plesk
 
-**Stand 24.08.2026, live nachgemessen:** die Direktiven unten sind auf
-`birkenhain.ch` **aktiv**. Der Server antwortet mit `x-content-type-options`,
-`referrer-policy`, `x-frame-options` und der vollen CSP; `/_assets/` liefert
-`cache-control: public, immutable` mit einem Jahr `expires`, das HTML
-`public, must-revalidate` mit fünf Minuten. `/api/lib/birkenhain.php`
-antwortet 404. Diese Datei ist damit von der Anleitung zur Referenz
-geworden — sie dokumentiert, was gesetzt ist.
+**Stand 28.08.2026 12:40Z, live nachgemessen — und das Ergebnis ist ein
+Befund:** auf `birkenhain.ch` trägt **keine einzige HTML-Seite** einen der
+vier Sicherheits-Header. Nicht `/`, nicht `/architektur/`, nicht `/en/`, nicht
+`/impressum/`. Was sie tragen, ist HSTS (das setzt Plesk selbst) und die
+Cache-Regeln. Es fehlen:
+
+```
+x-content-type-options   referrer-policy   x-frame-options   content-security-policy
+```
+
+Vorhanden sind sie dort, wo **Apache** antwortet: `/robots.txt`,
+`/sitemap.xml`, `/favicon.svg` und die Fehlerseite. Dort greift die
+`public/.htaccess`, in der die vier Header stehen. Alles, was **nginx** selbst
+ausliefert — HTML, CSS, JS, PNG, WOFF2, MP4 — geht ohne sie raus.
+
+Nachzumessen mit einem Befehl:
+
+```bash
+npm run check:live-headers
+```
+
+Er fragt eine Auswahl von Pfaden ab, die die Aufteilung sichtbar macht, und
+fällt, solange einer der fünf Header fehlt. Ein `curl -I` auf einen einzelnen
+Pfad hätte den Befund nie gezeigt: er hängt am Dateityp, nicht an der Domain.
+Genau daran ist die frühere Fassung dieses Dokuments gescheitert — sie hielt
+den Block für aktiv, weil die Stichprobe zufällig ein Apache-Pfad war.
+
+**Wer geantwortet hat, verrät der ETag.** Apache: Grösse in Hex, Bindestrich,
+dann ein langer Block aus mtime und Inode (`"2c3-65a1aacc5021d"`), dazu
+`x-accel-version`. nginx: acht Hex-Stellen mtime, Bindestrich, Grösse
+(`"6a91805a-80f"`) — und für alle Dateien desselben Deploys derselbe erste
+Block.
+
+**Was das praktisch heisst.** Ohne CSP auf den Seiten fehlt nicht nur eine
+Zeile im Kopf: `frame-ancestors`, `object-src 'none'`, `base-uri` und
+`form-action` sind auf den Seiten unwirksam, `x-frame-options` ebenso — die
+Site ist einbettbar. Und `script-src 'self'`, das der Build mit
+`npm run check:csp` und `vite.build.assetsInlineLimit: 0` bedient, wird auf
+den Seiten derzeit **nicht durchgesetzt**. Der Build passt zur Policy; die
+Policy kommt bei den Seiten nur nicht an. Die Reihenfolge ist damit richtig:
+erst passt der Build, dann darf der Header zurück, ohne etwas zu brechen.
+
+**Nur im Panel zu beheben.** Die `.htaccess` kann nichts dafür tun; nginx
+liest sie nicht. Die Regeln unten müssen in die nginx-Direktiven, und dabei
+zählt eine Eigenheit von nginx: **ein `location`-Block, der selbst ein
+`add_header` setzt, erbt keines von aussen.** Jeder Block mit einem
+`add_header Cache-Control` muss die Sicherheits-Header also wiederholen.
+Genau dort fallen sie sonst weg.
 
 **Auch HSTS ist inzwischen gesetzt** (nachgemessen 11:32Z), allerdings nicht
 mit dem Wert aus der Direktive unten:
@@ -29,8 +70,9 @@ schliessen will, setzt den Header auch im www-Vhost.
 `preload` ist absichtlich nicht gesetzt: der Eintrag in die Browser-Liste ist
 praktisch nicht zurücknehmbar, und die Site ist noch nicht einmal indexierbar.
 
-**Warum es nötig war:** nginx bedient die statischen Dateien selbst, und damit
-wird die mitgelieferte `.htaccess` **ignoriert**. Ohne die Regeln unten fehlten:
+**Warum es nötig ist:** nginx bedient die statischen Dateien selbst, und damit
+wird die mitgelieferte `.htaccess` für sie **ignoriert**. Ohne die Regeln unten
+fehlen:
 
 | fehlte | Folge |
 | --- | --- |
@@ -55,8 +97,9 @@ entfernen und erneut speichern, statt zu raten.
 ```nginx
 # --- Security-Header -------------------------------------------------------
 # In nginx erben location-Blöcke keine add_header-Direktiven, sobald sie
-# selbst eine setzen. Deshalb stehen sie unten in der Asset-Location noch
-# einmal — das ist keine Verdopplung aus Nachlässigkeit.
+# selbst eine setzen. Deshalb stehen sie unten in JEDEM location-Block noch
+# einmal — das ist keine Verdopplung aus Nachlässigkeit, sondern der Grund,
+# warum am 28.08.2026 keine Seite eine CSP trug.
 add_header X-Content-Type-Options "nosniff" always;
 add_header Referrer-Policy "strict-origin-when-cross-origin" always;
 add_header X-Frame-Options "SAMEORIGIN" always;
@@ -78,11 +121,19 @@ location ^~ /_assets/ {
     add_header Cache-Control "public, immutable" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+    add_header Content-Security-Policy "default-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'" always;
 }
 
 location ^~ /fonts/ {
     expires 30d;
     add_header Cache-Control "public" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+    add_header Content-Security-Policy "default-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'" always;
     # Nicht erforderlich bei gleicher Origin — CORS greift nur cross-origin,
     # und Preload wie CSS-Abruf sind beide anonym. Live nachgemessen: die
     # Schrift laedt ohne diesen Header korrekt. Steht hier fuer den Fall
@@ -91,12 +142,32 @@ location ^~ /fonts/ {
 }
 
 # HTML dagegen kurz: ein Deploy soll ankommen.
+#
+# Dieser Block ist der wichtigste der Datei — er greift auch für `/` und
+# `/architektur/`, weil nginx beim Auflösen des Index intern auf
+# `/index.html` umschreibt und die Location dann erneut wählt. Was hier
+# fehlt, fehlt auf jeder Seite der Site.
 location ~* \.html$ {
     expires 5m;
     add_header Cache-Control "public, must-revalidate" always;
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "strict-origin-when-cross-origin" always;
     add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+    add_header Content-Security-Policy "default-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'" always;
+}
+
+# Filme tragen keinen Hash im Namen — `immutable` würde einen Austausch bei
+# wiederkehrenden Besuchern nie ankommen lassen. Eine Woche reicht. Dieselben
+# Werte wie in der `.htaccess`, damit beide Wege dasselbe sagen.
+location ~* \.(mp4|webm)$ {
+    expires 7d;
+    add_header Cache-Control "public, max-age=604800" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy "strict-origin-when-cross-origin" always;
+    add_header X-Frame-Options "SAMEORIGIN" always;
+    add_header Permissions-Policy "geolocation=(), microphone=(), camera=()" always;
+    add_header Content-Security-Policy "default-src 'self'; img-src 'self' data: https://tile.openstreetmap.org; style-src 'self' 'unsafe-inline'; script-src 'self'; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'self'; base-uri 'self'; object-src 'none'" always;
 }
 
 # --- Nicht ausliefern -----------------------------------------------------
@@ -119,10 +190,31 @@ location ~* \.(sqlite|sqlite-wal|sqlite-shm)$ {
 }
 ```
 
+**Wenn im Panel schon andere Blöcke stehen:** dieselbe Regel gilt dort. Am
+28.08.2026 trug `/apple-touch-icon.png` `cache-control: public, immutable`,
+obwohl es nicht unter `/_assets/` liegt — es gibt also eine
+Endungsliste im Panel, die dieser Block nicht kennt. Was dort ein
+`add_header` setzt, braucht die fünf Header ebenfalls. Der Prüfbefehl unten
+findet solche Blöcke, ohne dass man sie sehen muss: er zeigt, welcher
+Dateityp ohne Header ausgeliefert wird.
+
 ## Danach prüfen
 
+Zuerst der Befehl, der alles auf einmal abfragt — eine Seite allein genügt
+nicht, weil je nach Dateityp nginx oder Apache antwortet:
+
 ```bash
-# Security-Header müssen jetzt da sein
+npm run check:live-headers
+```
+
+Erwartet: «Alle 10 Antworten tragen die fuenf Header.» Solange eine Zeile
+`nginx` in der Stack-Spalte und fehlende Header zeigt, greifen die Direktiven
+für diesen Dateityp nicht.
+
+Einzeln nachfassen:
+
+```bash
+# Security-Header müssen jetzt da sein — auf einer Seite, nicht auf robots.txt
 curl -sI https://birkenhain.ch/ | grep -i "x-content-type\|strict-transport\|content-security"
 
 # Assets müssen immutable sein

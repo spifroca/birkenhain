@@ -45,6 +45,11 @@ const TYPEN = {
   '.png': 'image/png',
   '.txt': 'text/plain; charset=utf-8',
   '.xml': 'application/xml; charset=utf-8',
+  // Ohne diesen Eintrag ging der Film als application/octet-stream raus und
+  // Chromium spielte ihn nicht — eine Pruefung, die am eigenen Server
+  // scheitert, sagt nichts ueber die Site.
+  '.mp4': 'video/mp4',
+  '.webm': 'video/webm',
 };
 
 /**
@@ -325,6 +330,67 @@ try {
       'Fokus kehrt zum Trigger zurueck',
       await trigger.evaluate((el) => el === document.activeElement),
     );
+  }
+
+  // --- Hero-Film ---------------------------------------------------------
+  // Der Film kam am 28.08.2026 dazu (`public/media/movie.mp4`, neu kodiert
+  // auf 5,6 MB). Vorher rendert die Startseite bewusst kein <video>: fehlt
+  // die Datei, bleibt es beim Bild. Genau deshalb wird hier zuerst gefragt,
+  // ob ueberhaupt ein <video> im Dokument steht — und nur dann geprueft.
+  // Ein stilles Ueberspringen ohne diese Zeile waere derselbe Fehler wie ein
+  // Pruefserver ohne CSP: gruen, weil nichts gemessen wurde.
+  console.log('\nHero-Film');
+  await p.goto(`${basis}/`, { waitUntil: 'load' });
+  const film = p.locator('video').first();
+  if ((await film.count()) === 0) {
+    console.log('  --    kein <video> im Dokument — ohne public/media/*.mp4 richtig, nichts zu pruefen');
+  } else {
+    const quelle = await film.getAttribute('src');
+    pruefe('Film hat eine Quelle', Boolean(quelle), quelle ?? 'kein src');
+
+    const antwort = await p.request.get(`${basis}${quelle}`);
+    pruefe(
+      'Filmdatei liegt im Build',
+      antwort.status() === 200 && (antwort.headers()['content-type'] ?? '').startsWith('video/'),
+      `${antwort.status()} ${antwort.headers()['content-type'] ?? ''}`,
+    );
+
+    // Ob der Film abspielbar ist, kann nur ein Browser sagen, der den Codec
+    // ueberhaupt kennt. Playwrights Chromium ist ohne die lizenzpflichtigen
+    // Codecs gebaut: `canPlayType('video/mp4; codecs="avc1..."')` gibt hier
+    // den leeren String zurueck, und jede H.264-Datei endet in Fehlercode 4 —
+    // in Chrome, Safari, Firefox und Edge laeuft dieselbe Datei. Diese
+    // Pruefung darf daraus keinen Befund machen; sie sagt stattdessen, warum
+    // sie nichts sagen kann. Laeuft sie einmal unter echtem Chrome, prueft
+    // sie mit.
+    const kannH264 = await p.evaluate(
+      () => document.createElement('video').canPlayType('video/mp4; codecs="avc1.640028"') !== '',
+    );
+    if (!kannH264) {
+      console.log('  --    Film ist abspielbar: dieser Chromium-Build kennt H.264 nicht — nicht pruefbar');
+    } else {
+      // `videoWidth` ist erst gesetzt, wenn der Browser die Metadaten wirklich
+      // gelesen hat. Das ist der Unterschied zwischen «Element steht da» und
+      // «Film ist abspielbar»: eine kaputte oder von der CSP abgewiesene Datei
+      // laesst das Element unberuehrt und die Masse auf 0.
+      const masse = await film
+        .evaluate(
+          (el) =>
+            new Promise((ok) => {
+              const melde = () => ok({ w: el.videoWidth, h: el.videoHeight, fehler: el.error?.code ?? null });
+              if (el.readyState >= 1) return melde();
+              el.addEventListener('loadedmetadata', melde, { once: true });
+              el.addEventListener('error', melde, { once: true });
+              setTimeout(melde, 8000);
+            }),
+        )
+        .catch(() => ({ w: 0, h: 0, fehler: 'Zeitueberschreitung' }));
+      pruefe(
+        'Film ist abspielbar',
+        masse.w > 0 && masse.h > 0,
+        masse.w > 0 ? `${masse.w}x${masse.h}` : `keine Metadaten (Fehlercode ${masse.fehler})`,
+      );
+    }
   }
 
   // --- Suchmaschinen-Sperre --------------------------------------------
