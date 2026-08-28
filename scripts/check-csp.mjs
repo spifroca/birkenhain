@@ -61,14 +61,43 @@ if (scriptSrc === '') {
 }
 const inlineErlaubt = /'unsafe-inline'|sha256-|sha384-|sha512-|nonce-/.test(scriptSrc);
 
+/**
+ * `script-src` gilt nur fuer ausfuehrbare Skripte. Ein `<script>` mit einem
+ * anderen Typ ist ein Datenblock: der Browser fuehrt ihn nicht aus, die CSP
+ * betrifft ihn nicht. Zwei solche stehen im Build — das JSON-LD der
+ * Startseiten und die Fehlertexte des Anmeldeformulars
+ * (`type="application/json"`, per `data-form-messages` gelesen). Sie als
+ * Verstoss zu zaehlen waere ein falscher Alarm; genau das tat die erste
+ * Fassung dieser Pruefung.
+ */
+const JS_TYPEN = new Set([
+  'module',
+  'text/javascript',
+  'application/javascript',
+  'application/ecmascript',
+  'text/ecmascript',
+  'importmap',
+  'speculationrules',
+]);
+
+function istAusfuehrbar(attribute) {
+  const typ = attribute.match(/\btype\s*=\s*["']?([^"'\s>]*)/i)?.[1];
+  if (typ === undefined || typ === '') return true;
+  return JS_TYPEN.has(typ.toLowerCase());
+}
+
 let alsDatei = 0;
 let inline = 0;
+let daten = 0;
 const betroffen = [];
 
 for (const seite of seiten(WURZEL)) {
   const html = readFileSync(seite, 'utf8');
-  // JSON-LD ist kein ausfuehrbares Skript und faellt nicht unter script-src.
-  for (const treffer of html.matchAll(/<script(?![^>]*application\/ld\+json)([^>]*)>/g)) {
+  for (const treffer of html.matchAll(/<script([^>]*)>/g)) {
+    if (!istAusfuehrbar(treffer[1])) {
+      daten++;
+      continue;
+    }
     if (/\bsrc=/.test(treffer[1])) alsDatei++;
     else {
       inline++;
@@ -78,7 +107,7 @@ for (const seite of seiten(WURZEL)) {
 }
 
 console.log(`script-src: ${scriptSrc}`);
-console.log(`Skripte: ${alsDatei} als Datei, ${inline} inline`);
+console.log(`Skripte: ${alsDatei} als Datei, ${inline} inline, ${daten} Datenbloecke (nicht ausfuehrbar)`);
 
 if (inline > 0 && !inlineErlaubt) {
   problems.push(
