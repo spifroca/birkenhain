@@ -56,11 +56,17 @@ export default defineConfig({
    * Skripte muessen als Datei ausgeliefert werden, nicht inline.
    *
    * Die .htaccess setzt `script-src 'self'` ohne `unsafe-inline`, ohne Nonce
-   * und ohne Hash. Ein Inline-Skript weist der Browser damit ab — und genau
-   * das geschah live: Astro buendelte die fuenf kleinen Skripte (Burger-Menue,
-   * Situationsplan, Sticky-Bar, Scroll-Reveal, Hero-Film) in das HTML, und
-   * keines lief. Gemessen am 28.08.2026 mit der echten CSP: «Refused to
-   * execute inline script», der Baubereich-Marker blieb auf aria-pressed=false.
+   * und ohne Hash. Astro buendelte die fuenf kleinen Skripte (Burger-Menue,
+   * Situationsplan, Sticky-Bar, Scroll-Reveal, Hero-Film) trotzdem in das
+   * HTML. Gemessen am 28.08.2026 gegen diese Policy: «Refused to execute
+   * inline script», der Baubereich-Marker blieb auf aria-pressed=false —
+   * unter der Policy laeuft davon nichts.
+   *
+   * Nachtrag vom selben Tag, 12:40Z: live trugen die HTML-Seiten diese CSP
+   * gar nicht (nginx liefert sie selbst aus und liest die .htaccess nicht,
+   * siehe docs/PLESK-NGINX.md). Die Skripte liefen also trotz Inline. Das
+   * aendert an dieser Einstellung nichts: die Policy ist die zugesagte, sie
+   * kommt zurueck, und dann muss der Build zu ihr passen — nicht umgekehrt.
    *
    * `assetsInlineLimit: 0` nimmt Vite die Erlaubnis, kleine Buendel in das
    * Dokument zu ziehen. Der Waechter im Schritt «Ausgabe pruefen» der CI

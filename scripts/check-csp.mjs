@@ -7,10 +7,16 @@
  * Skripte (Burger-Menue, Situationsplan, Sticky-Bar, Scroll-Reveal,
  * Hero-Film) trotzdem in das HTML. Der Browser weist Inline-Skripte unter
  * dieser Regel ab, und zwar still: die Seite rendert vollstaendig, nur
- * reagiert nichts von ihr. Gemessen am 28.08.2026 mit der echten CSP —
+ * reagiert nichts von ihr. Gemessen am 28.08.2026 gegen diese Policy —
  * «Refused to execute inline script», der Baubereich-Marker blieb auf
  * `aria-pressed=false`. Jede bisherige Pruefung war gruen, weil sie ohne
  * diesen Header servierte.
+ *
+ * Nachtrag, 12:40Z desselben Tages: live trugen die HTML-Seiten die CSP
+ * ueberhaupt nicht — nginx liefert sie selbst aus und liest die .htaccess
+ * nicht (docs/PLESK-NGINX.md, `npm run check:live-headers`). Diese Pruefung
+ * bleibt richtig und wird sogar wichtiger: sie stellt sicher, dass der Build
+ * die Policy vertraegt, wenn sie zurueckkommt.
  *
  * Aufruf: node scripts/check-csp.mjs [verzeichnis]   (Standard: dist)
  */
