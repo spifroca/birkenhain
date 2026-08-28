@@ -21,7 +21,7 @@ return [
 
     // Interne Benachrichtigung nach bestätigter Anmeldung. Leer lassen,
     // wenn keine gewünscht ist.
-    'mail_notify_to' => '',
+    'mail_notify_to' => 'birkenhain@realnorth.ch',
 
     // 'mail' = Mailserver des Hosters (Produktion).
     // 'log'  = nichts senden, nur nach birkenhain-data/mail.log schreiben.
