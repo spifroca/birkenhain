@@ -1,37 +1,38 @@
 # Filme
 
-Hierher gehört `move.mp4` — der Film, der auf der Startseite an die Stelle
-des Hero-Bildes tritt.
-
 | Datei | Wo sie erscheint |
 | --- | --- |
-| `move.mp4` | Startseite, Bildband ganz oben |
+| `movie.mp4` | Startseite, Bildband ganz oben |
 
-**Diese Datei fehlt noch.** Solange sie fehlt, zeigt der Bildband das
-Hero-Bild aus der Galerie — kein leerer Kasten, keine kaputte Referenz.
-Sobald das MP4 hier liegt, läuft es beim nächsten Build von selbst. Es ist
-keine Codeänderung nötig.
+Der Film liegt hier und nicht nur auf dem Server: Plesk räumt beim Deploy
+den Zielordner, bevor es schreibt. Was nicht aus dem Repository kommt, ist
+nach dem nächsten Merge weg.
 
-## Anforderungen
-
-- **MP4 mit H.264 und AAC** (oder ganz ohne Tonspur — der Film läuft stumm).
-  Das ist das Format, das jeder Browser abspielt.
-- **Unter 100 MB**, sonst nimmt GitHub die Datei nicht an. Richtwert für
-  1080p: 4–6 Mbit/s, also rund 35–45 MB je Minute. Kürzer ist besser: der
-  Film läuft in Schleife, 15–30 Sekunden genügen.
-- **Ohne Ton produzieren oder Tonspur entfernen.** Der Film startet von
-  selbst und muss dafür stumm sein; eine mitgelieferte Tonspur wäre nur
-  Ballast.
-- **Querformat**, ungefähr 16:9. Der Bildband schneidet mit `object-fit:
-  cover` zu, das Wichtige gehört in die Bildmitte.
-
-Die Datei gehört ins Repository, nicht per FTP auf den Server: Plesk räumt
-beim Deploy den Zielordner: was nicht im Build liegt, ist nach dem nächsten
-Merge weg.
+Der aktuelle Stand: 1470 × 630, 15 Sekunden, H.264, 18,2 MB.
 
 ## Wie er läuft
 
 Stumm, in Schleife, ohne Bedienelemente, mit 0.6-facher Geschwindigkeit —
 ruhiger als aufgenommen, weil er Stimmung trägt und nicht Handlung. Das
-Hero-Bild bleibt sein Poster: es steht, bis der Film Daten hat, und es
-bleibt stehen, wenn jemand `prefers-reduced-motion` gesetzt hat.
+Hero-Bild liegt darunter: es steht sofort da, während der Film lädt, es
+vertritt ihn ohne JavaScript, und es bleibt stehen, wenn jemand
+`prefers-reduced-motion` gesetzt hat.
+
+Fehlt die Datei, zeigt der Bildband das Bild allein — kein leerer Kasten,
+keine kaputte Referenz. `Hero.astro` entscheidet das zur Buildzeit.
+
+## Wenn der Film ersetzt wird
+
+- **MP4 mit H.264.** Das spielt jeder Browser ab.
+- **Unter 100 MB**, sonst nimmt GitHub die Datei nicht an.
+- **Querformat.** Der Bildband schneidet mit `object-fit: cover` zu, das
+  Wichtige gehört in die Bildmitte.
+- **Tonspur darf weg.** Der Film läuft stumm; die vorhandene Spur wird nie
+  abgespielt und kostet nur Bytes.
+- **Kürzer und stärker komprimiert ist besser.** 18,2 MB auf 15 Sekunden
+  sind rund 10 Mbit/s — für eine stumme Schleife im Hintergrund reichen 3
+  bis 4 Mbit/s, das wäre etwa ein Viertel der Datenmenge bei kaum
+  sichtbarem Unterschied.
+
+Der Dateiname wird in `Home.astro` gesetzt (`video="movie.mp4"`); ein
+anderer Name gehört dort nachgeführt.
