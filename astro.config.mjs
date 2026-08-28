@@ -52,5 +52,25 @@ export default defineConfig({
     assets: '_assets',
   },
 
+  /**
+   * Skripte muessen als Datei ausgeliefert werden, nicht inline.
+   *
+   * Die .htaccess setzt `script-src 'self'` ohne `unsafe-inline`, ohne Nonce
+   * und ohne Hash. Ein Inline-Skript weist der Browser damit ab — und genau
+   * das geschah live: Astro buendelte die fuenf kleinen Skripte (Burger-Menue,
+   * Situationsplan, Sticky-Bar, Scroll-Reveal, Hero-Film) in das HTML, und
+   * keines lief. Gemessen am 28.08.2026 mit der echten CSP: «Refused to
+   * execute inline script», der Baubereich-Marker blieb auf aria-pressed=false.
+   *
+   * `assetsInlineLimit: 0` nimmt Vite die Erlaubnis, kleine Buendel in das
+   * Dokument zu ziehen. Der Waechter im Schritt «Ausgabe pruefen» der CI
+   * prueft das Ergebnis, damit es nicht wieder still zurueckkippt.
+   */
+  vite: {
+    build: {
+      assetsInlineLimit: 0,
+    },
+  },
+
   devToolbar: { enabled: false },
 });
