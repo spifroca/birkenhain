@@ -47,13 +47,14 @@ const items = LOCALES.map((code) => ({
 </p>
 
 <style>
+  /* Keine eigene Trennlinie: `.header__aside` traegt bereits eine, und zwei
+     Haarlinien nebeneinander lasen sich als Versehen. Den Abstand nach der
+     Linie setzt das Umfeld, nicht dieser Schalter. */
   .lang {
     display: inline-flex;
     align-items: center;
     gap: var(--space-3xs);
     margin: 0;
-    padding-left: var(--space-2xs);
-    border-left: var(--hairline);
   }
 
   .lang__item {
