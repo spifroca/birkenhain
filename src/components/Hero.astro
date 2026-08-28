@@ -187,6 +187,17 @@ const videoSrc =
     object-fit: cover;
   }
 
+  /* Laeuft die Parallaxe, braucht das Bild Ueberlaenge nach unten: es wandert
+     um 8 % der Bandhoehe nach oben, und ohne diesen Vorrat risse unten eine
+     Luecke auf. Das Attribut setzt parallax.ts — steht es nicht (kein
+     JavaScript, `prefers-reduced-motion`), bleibt das Band unveraendert. */
+  .hero--band[data-parallax] :global(.hero__image),
+  .hero--band[data-parallax] :global(.hero__image img),
+  .hero--band[data-parallax] .hero__video {
+    height: 108%;
+    will-change: transform;
+  }
+
   /* Weniger Bewegung heisst: das Bild allein. Der Film wird zusaetzlich per
      Skript angehalten — `display: none` beendet den Download nicht. */
   @media (prefers-reduced-motion: reduce) {

@@ -416,8 +416,30 @@
   transform: translateY(var(--reveal-offset));
 }
 
+/* Gestaffelt: nicht der Container blendet auf, sondern seine Kacheln, eine
+   nach der anderen. Der Container selbst bleibt daher stehen — sonst laege
+   eine Blende ueber der anderen und das Ergebnis waere traeger statt feiner. */
+[data-stagger][data-reveal='pending'] {
+  opacity: 1;
+  transform: none;
+}
+
+[data-stagger] > * {
+  --reveal-delay: calc(var(--reveal-i, 0) * var(--reveal-step));
+
+  transition:
+    opacity var(--duration-reveal) var(--ease-reveal) var(--reveal-delay),
+    transform var(--duration-reveal) var(--ease-reveal) var(--reveal-delay);
+}
+
+[data-stagger][data-reveal='pending'] > * {
+  opacity: 0;
+  transform: translateY(var(--reveal-offset));
+}
+
 @media (prefers-reduced-motion: reduce) {
-  [data-reveal='pending'] {
+  [data-reveal='pending'],
+  [data-stagger][data-reveal='pending'] > * {
     opacity: 1;
     transform: none;
   }
