@@ -149,6 +149,12 @@ jobs:
             exit 1
           fi
           echo "og:image im Artefakt: $(du -h "$OG_PFAD" | cut -f1)"
+          # Skripte muessen Dateien sein, keine Inline-Bloecke: die .htaccess
+          # setzt script-src 'self' ohne unsafe-inline, ohne Nonce, ohne Hash.
+          # Ein Inline-Skript weist der Browser ab — und still: die Seite
+          # rendert, nur reagiert nichts von ihr. Genau so lag die Site live,
+          # waehrend jede Pruefung gruen war.
+          npm run check:csp
           # Strukturierte Daten: nur die Startseite, und valides JSON.
           LD=$(grep -c 'application/ld+json' dist/index.html || true)
           if [ "$LD" != "1" ]; then

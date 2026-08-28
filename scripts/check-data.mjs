@@ -65,6 +65,59 @@ for (const area of baubereiche) {
   }
 }
 
+/**
+ * Zehn der siebzehn Kurztexte nennen die Geschosszahl im Wort
+ * («achtgeschossiger Solitaer», «five-storey row»). Damit haengt der Text an
+ * einer Zahl, die woanders steht — und beim naechsten Korrigieren der Zahl
+ * bleibt der Text stumm falsch stehen. Genau das lag heute nahe: Baubereich
+ * 17 wurde nach der Grundmasse-Tabelle von 4 auf 5 Vollgeschosse korrigiert.
+ *
+ * Geprueft wird nur, wo der Text ueberhaupt eine Zahl nennt. Texte ohne
+ * Geschossangabe sind in Ordnung; sie sagen nichts, was falsch werden kann.
+ */
+const ZAHLWORT_DE = {
+  1: 'einge',
+  2: 'zweige',
+  3: 'dreige',
+  4: 'vierge',
+  5: 'fünfge',
+  6: 'sechsge',
+  7: 'siebenge',
+  8: 'achtge',
+};
+const ZAHLWORT_EN = {
+  1: 'one-storey',
+  2: 'two-storey',
+  3: 'three-storey',
+  4: 'four-storey',
+  5: 'five-storey',
+  6: 'six-storey',
+  7: 'seven-storey',
+  8: 'eight-storey',
+};
+
+function genanntZahl(text, woerter) {
+  const klein = String(text ?? '').toLowerCase();
+  const treffer = Object.entries(woerter).find(([, wort]) => klein.includes(wort));
+  return treffer ? Number(treffer[0]) : null;
+}
+
+for (const area of baubereiche) {
+  if (area.vollgeschosse === null) continue;
+  for (const [sprache, woerter] of [
+    ['de', ZAHLWORT_DE],
+    ['en', ZAHLWORT_EN],
+  ]) {
+    const genannt = genanntZahl(area.text?.[sprache], woerter);
+    if (genannt !== null && genannt !== area.vollgeschosse) {
+      problem(
+        `Baubereich ${area.label}: Text (${sprache}) nennt ${genannt} Geschosse, ` +
+          `die Daten ${area.vollgeschosse}`,
+      );
+    }
+  }
+}
+
 const unitsKnown = baubereiche.filter((area) => area.wohnungen !== null);
 if (unitsKnown.length === baubereiche.length) {
   const sum = unitsKnown.reduce((total, area) => total + area.wohnungen, 0);

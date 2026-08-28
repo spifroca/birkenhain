@@ -26,7 +26,7 @@
  */
 
 import { createServer } from 'node:http';
-import { createReadStream, existsSync, statSync } from 'node:fs';
+import { createReadStream, existsSync, readFileSync, statSync } from 'node:fs';
 import { readFile } from 'node:fs/promises';
 import { extname, join, resolve, sep } from 'node:path';
 
@@ -76,27 +76,51 @@ async function ladePlaywright() {
 }
 
 /**
+ * Die Content-Security-Policy, die der Server live mitschickt — wortgleich aus
+ * `public/.htaccess` gelesen, nicht abgeschrieben. Ein Server ohne sie ist
+ * kein ehrlicher Zwilling: `script-src 'self'` verbietet Inline-Skripte, und
+ * ob Astro ein Skript als Datei oder inline ausliefert, entscheidet sich erst
+ * im Build. Ohne diesen Header lief die Pruefung gruen, waehrend auf der
+ * Live-Site kein einziges Skript ausgefuehrt wurde.
+ */
+function lesePolicy() {
+  const htaccess = join(process.cwd(), 'public', '.htaccess');
+  if (!existsSync(htaccess)) return null;
+  const zeile = readFileSync(htaccess, 'utf8')
+    .split('\n')
+    .find((z) => /Content-Security-Policy/i.test(z) && z.includes('"'));
+  return zeile ? (zeile.match(/"([^"]*)"/)?.[1] ?? null) : null;
+}
+
+const POLICY = lesePolicy();
+
+/**
  * Statischer Server ueber dem gebauten Verzeichnis. Bewusst schmal: er muss
  * nur so viel koennen, wie die Site zum Rendern braucht — Verzeichnisse auf
- * index.html abbilden, Dateien mit dem richtigen Typ ausliefern, und Pfade
- * ausserhalb der Wurzel abweisen.
+ * index.html abbilden, Dateien mit dem richtigen Typ ausliefern, Pfade
+ * ausserhalb der Wurzel abweisen — und dieselbe CSP setzen wie der echte
+ * Server, damit hier nichts laeuft, was dort blockiert wird.
  */
 function starteServer(wurzel) {
   const server = createServer((req, res) => {
     const pfad = decodeURIComponent(new URL(req.url, 'http://x').pathname);
     let datei = resolve(join(wurzel, pfad));
+    const kopf = POLICY ? { 'content-security-policy': POLICY } : {};
     if (datei !== wurzel && !datei.startsWith(wurzel + sep)) {
-      res.writeHead(403).end();
+      res.writeHead(403, kopf).end();
       return;
     }
     if (existsSync(datei) && statSync(datei).isDirectory()) {
       datei = join(datei, 'index.html');
     }
     if (!existsSync(datei)) {
-      res.writeHead(404, { 'content-type': 'text/plain' }).end('404');
+      res.writeHead(404, { ...kopf, 'content-type': 'text/plain' }).end('404');
       return;
     }
-    res.writeHead(200, { 'content-type': TYPEN[extname(datei)] ?? 'application/octet-stream' });
+    res.writeHead(200, {
+      ...kopf,
+      'content-type': TYPEN[extname(datei)] ?? 'application/octet-stream',
+    });
     createReadStream(datei).pipe(res);
   });
 
