@@ -62,7 +62,7 @@
   --fw-bold: 700;
 
   /* Hero 38-92 px, Seitentitel 34-68 px, H2 26-44 px. */
-  --fs-display: clamp(2.375rem, 6vw, 5.75rem);
+  --fs-display: clamp(2.125rem, 5.1vw, 4.875rem);
   --fs-h1: clamp(2.125rem, 4.8vw, 4.25rem);
   --fs-h2: clamp(1.625rem, 3.2vw, 2.75rem);
   --fs-h3: clamp(1.1875rem, 1.6vw, 1.3125rem);
@@ -140,6 +140,8 @@
   --ease: cubic-bezier(0.2, 0, 0.2, 1);
   --ease-reveal: cubic-bezier(0.22, 0.61, 0.36, 1);
   --reveal-offset: 0.875rem;
+  /* Abstand zwischen zwei Kacheln einer gestaffelten Einblendung. */
+  --reveal-step: 70ms;
   --zoom-scale: 1.03;
 
   /* --- Icons -------------------------------------------------------------- */

@@ -18,7 +18,7 @@ const { items } = Astro.props;
 ---
 
 <section class="teaser container">
-  <ul class="teaser__grid" data-reveal>
+  <ul class="teaser__grid" data-reveal data-stagger>
     {
       items.map((item) => (
         <li>

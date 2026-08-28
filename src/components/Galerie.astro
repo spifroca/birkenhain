@@ -36,7 +36,7 @@ const images: LightboxImage[] = shown.map((entry) => ({
           <p class="credit">{t('home.galerieCredit')}</p>
         </div>
 
-        <ul class="galerie__grid" data-reveal>
+        <ul class="galerie__grid" data-reveal data-stagger>
           {
             images.map((image, index) => (
               <li class="galerie__cell">

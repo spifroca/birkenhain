@@ -20,9 +20,21 @@ if (!reduced && targets.length > 0 && 'IntersectionObserver' in window) {
     { rootMargin: '0px 0px -8% 0px', threshold: 0.06 },
   );
 
+  // Mehr als sechs Stufen liessen die letzte Kachel spuerbar hinterherhinken.
+  const STUFEN = 6;
+
   for (const el of targets) {
     // Was bereits im Bild steht, wird nicht erst versteckt.
     if (el.getBoundingClientRect().top < window.innerHeight * 0.94) continue;
+
+    // Raster kommen Kachel um Kachel statt als ein Block. Die Nummer steht
+    // als Custom Property am Kind; die Verzoegerung rechnet das CSS daraus.
+    if (el.hasAttribute('data-stagger')) {
+      Array.from(el.children).forEach((kind, i) => {
+        (kind as HTMLElement).style.setProperty('--reveal-i', String(Math.min(i, STUFEN)));
+      });
+    }
+
     el.setAttribute('data-reveal', 'pending');
     io.observe(el);
   }
