@@ -37,6 +37,15 @@ AddDefaultCharset UTF-8
     Header set Cache-Control "public, immutable"
   </FilesMatch>
 
+  # Filme tragen keinen Hash im Namen — `immutable` wuerde einen Austausch
+  # bei wiederkehrenden Besuchern nie ankommen lassen. Eine Woche frisch
+  # halten reicht: die Datei ist gross genug, dass sich das Sparen lohnt,
+  # und ein Ersatz ist nach spaetestens sieben Tagen ueberall zu sehen.
+  <FilesMatch "\.(mp4|webm)$">
+    ExpiresDefault "access plus 7 days"
+    Header set Cache-Control "public, max-age=604800"
+  </FilesMatch>
+
   # HTML dagegen kurz: ein Deploy soll ankommen.
   <FilesMatch "\.html$">
     ExpiresDefault "access plus 5 minutes"
