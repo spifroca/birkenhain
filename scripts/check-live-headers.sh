@@ -17,6 +17,14 @@
 # acht Hex-Stellen mtime plus Groesse ("6a91805a-80f") — bei allen Dateien
 # desselben Deploys mit demselben ersten Block.
 #
+# Gemessen wird mit GET, und das ist keine Nebensache: auf birkenhain.ch
+# antworten GET und HEAD auf demselben Pfad aus verschiedenen Haeusern. Ein
+# HEAD auf `/` reicht Plesk an Apache durch — Antwort mit allen vier Headern
+# und Apache-ETag. Der GET, den jeder Browser schickt, kommt von nginx: ohne
+# die Header. `curl -I https://birkenhain.ch/` meldet also Entwarnung fuer
+# etwas, das im Browser nie ankommt. Die Spalte HEAD unten macht genau diese
+# Luecke sichtbar, statt sie zu verschweigen.
+#
 # Aufruf:  bash scripts/check-live-headers.sh [basis-url]
 set -u
 
@@ -29,8 +37,9 @@ PFLICHT=(x-content-type-options referrer-policy x-frame-options content-security
 PFADE=(/ /architektur/ /en/ /impressum/ /robots.txt /sitemap.xml /favicon.svg /apple-touch-icon.png /fonts/readex-pro-variable.woff2 /gibt-es-nicht)
 
 fehler=0
-printf '%-40s %-7s %-8s %s\n' 'Pfad' 'Status' 'Stack' 'fehlende Header'
-printf '%s\n' '---------------------------------------------------------------------------------'
+taeuscht=0
+printf '%-40s %-7s %-8s %-9s %s\n' 'Pfad' 'Status' 'Stack' 'HEAD' 'fehlende Header (GET)'
+printf '%s\n' '-------------------------------------------------------------------------------------------'
 
 for pfad in "${PFADE[@]}"; do
   kopf=$(curl -sS -D- -o /dev/null -m 60 "$BASIS$pfad" 2>/dev/null)
@@ -51,8 +60,24 @@ for pfad in "${PFADE[@]}"; do
     printf '%s' "$kopf" | grep -qi "^$h:" || fehlt+=("$h")
   done
 
+  # Derselbe Pfad, einmal als HEAD. Wo die Antwort dann ploetzlich vollstaendig
+  # ist, hat Plesk sie an Apache durchgereicht — und ein `curl -I` wuerde hier
+  # Entwarnung geben, die der Browser nie zu sehen bekommt.
+  kopf_head=$(curl -sS -I -D- -o /dev/null -m 60 "$BASIS$pfad" 2>/dev/null)
+  fehlt_head=0
+  for h in "${PFLICHT[@]}"; do
+    printf '%s' "$kopf_head" | grep -qi "^$h:" || fehlt_head=$((fehlt_head + 1))
+  done
+  if [ ${#fehlt[@]} -gt 0 ] && [ "$fehlt_head" -eq 0 ]; then
+    spalte_head='taeuscht'; taeuscht=$((taeuscht + 1))
+  elif [ "$fehlt_head" -gt 0 ]; then
+    spalte_head='fehlt'
+  else
+    spalte_head='ok'
+  fi
+
   if [ ${#fehlt[@]} -gt 0 ]; then fehler=$((fehler + 1)); fi
-  printf '%-40s %-7s %-8s %s\n' "$pfad" "${status:-?}" "$stack" "$(IFS=', '; echo "${fehlt[*]:-—}")"
+  printf '%-40s %-7s %-8s %-9s %s\n' "$pfad" "${status:-?}" "$stack" "$spalte_head" "$(IFS=', '; echo "${fehlt[*]:-—}")"
 done
 
 # Informativ, nicht Pflicht: Permissions-Policy steht im nginx-Block in
@@ -68,6 +93,13 @@ if [ "$fehler" -gt 0 ]; then
   echo "::error title=Sicherheits-Header fehlen live::$fehler von ${#PFADE[@]} Antworten fehlt mindestens ein Pflicht-Header."
   echo "Wo 'nginx' steht, hat nginx die Datei selbst ausgeliefert — die .htaccess greift dort nicht."
   echo "Die Regeln gehoeren dann in die nginx-Direktiven: docs/PLESK-NGINX.md."
+  if [ "$taeuscht" -gt 0 ]; then
+    echo
+    echo "Achtung, $taeuscht Pfad(e) mit 'taeuscht': dort antwortet HEAD vollstaendig, GET nicht."
+    echo "Plesk reicht den HEAD an Apache durch, den GET beantwortet nginx selbst. Ein"
+    echo "'curl -I' meldet dort Entwarnung fuer etwas, das im Browser nie ankommt — nur der"
+    echo "GET zaehlt. Deshalb misst diese Pruefung mit GET."
+  fi
   exit 1
 fi
 echo "Alle ${#PFADE[@]} Antworten tragen die fuenf Header."

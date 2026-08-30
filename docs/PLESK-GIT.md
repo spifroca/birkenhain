@@ -76,7 +76,9 @@ Liegt in `httpdocs` etwas, das nicht aus dem Build kommt — eine
 # muss ohne www sein — die Adresse, die 200 liefert
 curl -s https://birkenhain.ch/ | grep -o 'rel="canonical" href="[^"]*"'
 
-# muss fuenf Sicherheits-Header auf JEDER Zeile zeigen (siehe PLESK-NGINX.md)
+# muss fuenf Sicherheits-Header auf JEDER Zeile zeigen (siehe PLESK-NGINX.md).
+# Nicht durch ein `curl -I` ersetzen: HEAD beantwortet Plesk aus Apache und
+# zeigt Header, die derselbe Pfad per GET nicht traegt. Nur der GET zaehlt.
 npm run check:live-headers
 
 # muss 200 sein

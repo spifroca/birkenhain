@@ -66,6 +66,10 @@ AddDefaultCharset UTF-8
 # /robots.txt und /favicon.svg trugen alle vier Header, keine einzige Seite.
 # Die Regeln muessen deshalb zusaetzlich in den nginx-Direktiven stehen:
 # docs/PLESK-NGINX.md, nachzumessen mit `npm run check:live-headers`.
+#
+# Beim Nachsehen von Hand kein `curl -I` nehmen: Plesk reicht HEAD an Apache
+# durch, und die Antwort traegt dann alle vier Header, die derselbe Pfad per
+# GET nicht hat. Nur der GET zaehlt — Browser laden mit GET.
 <IfModule mod_headers.c>
   Header always set X-Content-Type-Options "nosniff"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
