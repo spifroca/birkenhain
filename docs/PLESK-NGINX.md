@@ -33,6 +33,32 @@ dann ein langer Block aus mtime und Inode (`"2c3-65a1aacc5021d"`), dazu
 (`"6a91805a-80f"`) — und für alle Dateien desselben Deploys derselbe erste
 Block.
 
+**Und eine Falle, die den Befund unsichtbar macht: GET und HEAD antworten
+verschieden.** Nachgemessen am 30.08.2026 04:34Z, sechs Wiederholungen, jedes
+Mal gleich — auf demselben Pfad:
+
+| Anfrage | ETag auf `/` | Stack | Sicherheits-Header |
+|---|---|---|---|
+| `GET /` | `"6a919eda-d723"` | nginx | keiner |
+| `HEAD /` | `"d723-65a1c7e23ff98"` | Apache | alle vier, CSP vollständig |
+
+Plesk reicht den HEAD an Apache durch; den GET beantwortet nginx selbst. Das
+gilt für **jeden** Pfad, den nginx ausliefert — `/`, `/architektur/`, `/en/`,
+`/apple-touch-icon.png`, `/fonts/readex-pro-variable.woff2`,
+`/media/movie.mp4`. Nur die Apache-eigenen Typen (`/robots.txt`,
+`/favicon.svg`) antworten auf beides gleich.
+
+Praktisch heisst das: **`curl -I https://birkenhain.ch/` gibt Entwarnung für
+etwas, das im Browser nie ankommt.** Browser laden Seiten mit GET, und dort
+fehlen die Header. Wer den Zustand von Hand nachsehen will, nimmt darum
+`curl -sS -D- -o /dev/null`, nie `-I`. `check:live-headers` misst mit GET,
+fragt jeden Pfad zusätzlich als HEAD ab und schreibt `taeuscht` in die
+Spalte HEAD, wo die beiden auseinanderfallen — heute sechs von zehn.
+
+Das ist auch die Erklärung dafür, wie der Befund so lange stehen konnte, ohne
+aufzufallen: die naheliegendste Prüfung von Hand ist genau die, die ihn nicht
+sieht.
+
 **Was das praktisch heisst.** Ohne CSP auf den Seiten fehlt nicht nur eine
 Zeile im Kopf: `frame-ancestors`, `object-src 'none'`, `base-uri` und
 `form-action` sind auf den Seiten unwirksam, `x-frame-options` ebenso — die
