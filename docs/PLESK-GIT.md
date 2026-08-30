@@ -91,15 +91,34 @@ curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/api/lib/birkenhain.
 curl -so /dev/null -w '%{http_code}\n' https://birkenhain.ch/api/anmeldung.php
 ```
 
-**Plesk schreibt inkrementell, nicht nach einem Leerräumen.** Gemessen am
-28.08.2026 über drei Deploys: nach dem Deploy von `5c6e7b3` trugen die
-HTML-Dateien die neue mtime (12:48:30), `favicon.svg`, `robots.txt` und
-`movie.mp4` aber weiter die alte (12:34:34). Hätte Plesk den Zielordner
-geräumt und neu geschrieben, wäre überall dieselbe Zeit gestanden. Praktisch
-heisst das: eine Datei, die sich nicht geändert hat, bleibt liegen — und ein
-Deploy, der nur eine Datei ändert, ist von aussen nicht zu sehen. Für das
-403-Fenster, das ein Leerräumen erzwingen würde, ist damit die Grundlage
-fraglich; beobachtet habe ich heute keines.
+**Wie Plesk schreibt, ist nicht vorhersagbar — beide Male gemessen, beide
+Male anders.** Aus der mtime lässt sich deshalb nichts folgern:
+
+| Deploy | HTML | `favicon.svg`, `robots.txt`, `movie.mp4` |
+|---|---|---|
+| 28.08. 12:48Z (`5c6e7b3`) | neu, 12:48:30 | **alt**, 12:34:34 |
+| 30.08. 04:48Z (`c74c2bc`) | neu, 04:48:22 | **neu**, 04:48:22 — alle Typen |
+
+Beim ersten blieben unveränderte Dateien liegen, beim zweiten bekam jede
+Datei dieselbe neue Zeit, obwohl der Build sich nur in vier Kommentarzeilen
+der `.htaccess` unterschied. Die frühere Fassung dieses Absatzes machte aus
+der ersten Messung eine Regel («Plesk schreibt inkrementell»); die zweite
+widerlegt sie. Ob geräumt oder überschrieben wird, entscheidet der Server,
+und wir sehen es von aussen nicht.
+
+Was daraus folgt, gilt in beide Richtungen:
+
+- Ein **unverändertes** `last-modified` beweist nicht, dass der Deploy nicht
+  lief — er kann nur nichts Sichtbares geändert haben.
+- Ein **neues** `last-modified` beweist nicht, dass sich am Inhalt etwas
+  geändert hat — am 30.08. wurde alles neu geschrieben, ohne dass ein Byte
+  HTML anders war (`content-length` auf `/` blieb 55075).
+
+Der belastbare Beleg ist der Inhalt, nicht der Zeitstempel: `content-length`
+und ein Grep auf das, was neu sein soll. Und für das 403-Fenster, das ein
+Leerräumen erzwingt (CLAUDE.md nennt es): am 30.08. spricht die
+durchgehend gleiche mtime dafür, dass es eines gab — beobachtet haben wir
+bisher keines, aber ausschliessen lässt es sich nicht.
 
 ## Was das nicht löst
 
